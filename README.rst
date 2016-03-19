@@ -1,6 +1,6 @@
-=============================
-DCS GFX Rendering in Software
-=============================
+=========================================================
+Hull University Graphics Helper (HUGH) Software Rendering
+=========================================================
 
 :Author: Jan P Springer <regnirpsj@gmail.com>
 
@@ -23,7 +23,7 @@ DCS GFX Rendering in Software
 Introduction
 ============
 
-``dcs-gfx-render-sw`` is an (experimental) infrastructure project to support the various graphics modules at the `Department of Computer Science`_, `The University of Hull`_.
+``hugh-render-sw`` is an (experimental) infrastructure project to support the various graphics modules at the `Department of Computer Science`_, `The University of Hull`_.
 
 Building and Installation
 =========================
