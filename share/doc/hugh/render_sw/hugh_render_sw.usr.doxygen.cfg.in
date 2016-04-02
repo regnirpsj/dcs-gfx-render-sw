@@ -1,0 +1,6 @@
+## -*- Mode:Doxygen -*-
+
+@INCLUDE  = @CMAKE_CURRENT_BINARY_DIR@/base.usr.doxygen.cfg
+
+TAGFILES += "@CMAKE_INSTALL_PREFIX@/share/doc/hugh/support/hugh_support.usr.tag.xml=../../../support/usr/html/"
+TAGFILES += "@CMAKE_INSTALL_PREFIX@/share/doc/hugh/fields/hugh_fields.usr.tag.xml=../../../fields/usr/html/"
