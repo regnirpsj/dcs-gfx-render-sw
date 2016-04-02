@@ -49,9 +49,9 @@ namespace pipeline {
   // functions, exported
   
   /* explicit */
-  result::result(glm::vec3 const& a, glm::vec4 const& b, glm::vec4 const& c, glm::vec3 const& d,
-                 glm::vec3 const& e)
-    : world(a), homogeneous(b), clip(c), ndc(d), window(e)
+  result::result(glm::vec3 const& a, glm::vec4 const& b, glm::vec4 const& c, glm::vec4 const& d,
+                 glm::vec4 const& e, glm::vec3 const& f, glm::vec3 const& g)
+    : object(a), homogeneous(b), world(c), eye(d), clip(e), ndc(f), window(g)
   {
     TRACE("pipeline::result::result");
   }
@@ -68,11 +68,13 @@ namespace pipeline {
     TRACE("pipeline::base::transform");
 
     glm::vec4 const homogeneous(glm::vec4(a, (b ? 1 : 0)));
-    glm::vec4 const clip       (eye_to_clip(homogeneous));
-    glm::vec3 const ndc        (clip_to_ndc(clip));
-    glm::vec3 const window     (ndc_to_wc  (ndc));
+    glm::vec4 const world      (object_to_world  (homogeneous));
+    glm::vec4 const eye        (world_to_eye     (world));
+    glm::vec4 const clip       (eye_to_clip      (eye));
+    glm::vec3 const ndc        (b ? clip_to_ndc  (clip) : clip.xyz());
+    glm::vec3 const window     (b ? ndc_to_window(ndc)  : clip.xyz());
     
-    return result(a, homogeneous, clip, (b ? ndc : clip.xyz()), (b ? window : clip.xyz()));
+    return result(a, homogeneous, world, eye, clip, ndc, window);
   }
   
   /* virtual */ void
@@ -100,11 +102,27 @@ namespace pipeline {
   }
 
   glm::vec4
+  base::object_to_world(glm::vec4 const& a) const
+  {
+    TRACE("pipeline::base::object_to_world");
+
+    return (xform_model_ * a);
+  }
+
+  glm::vec4
+  base::world_to_eye(glm::vec4 const& a) const
+  {
+    TRACE("pipeline::base::world_to_eye");
+
+    return (xform_view_ * a);
+  }
+
+  glm::vec4
   base::eye_to_clip(glm::vec4 const& a) const
   {
     TRACE("pipeline::base::eye_to_clip");
 
-    return (xform_proj_ * xform_view_ * xform_model_ * a);
+    return (xform_proj_ * a);
   }
 
   glm::vec3
@@ -117,11 +135,11 @@ namespace pipeline {
 
   /* virtual */
   glm::vec3
-  base::ndc_to_wc(glm::vec3 const&) const
+  base::ndc_to_window(glm::vec3 const&) const
   {
-    TRACE("pipeline::base::ndc_to_wc");
+    TRACE("pipeline::base::ndc_to_window");
 
-    throw std::logic_error("pure virtual function 'pipeline::base::ndc_to_wc' called");
+    throw std::logic_error("pure virtual function 'pipeline::base::ndc_to_window' called");
     
     return glm::vec3();
   }
@@ -134,9 +152,9 @@ namespace pipeline {
   }
 
   /* virtual */ glm::vec3
-  d3d::ndc_to_wc(glm::vec3 const& a) const
+  d3d::ndc_to_window(glm::vec3 const& a) const
   {
-    TRACE("pipeline::d3d::ndc_to_wc");
+    TRACE("pipeline::d3d::ndc_to_window");
 
     glm::vec3 result;
 
@@ -156,9 +174,9 @@ namespace pipeline {
   }
 
   /* virtual */ glm::vec3
-  opengl::ndc_to_wc(glm::vec3 const& a) const
+  opengl::ndc_to_window(glm::vec3 const& a) const
   {
-    TRACE("pipeline::opengl::ndc_to_wc");
+    TRACE("pipeline::opengl::ndc_to_window");
 
     glm::vec3 result;
 
@@ -186,12 +204,14 @@ namespace pipeline {
     std::ostream::sentry const cerberus(os);
 
     if (cerberus) {
-      os << '['
-         << "w:" << a.world       << ','
-         << "h:" << a.homogeneous << ','
-         << "c:" << a.clip        << ','
-         << "n:" << a.ndc         << ','
-         << "r:" << a.window
+      os << '[' << '\n'
+         << " o:" << a.object      << ',' << '\n'
+         << " h:" << a.homogeneous << ',' << '\n'
+         << " m:" << a.world       << ',' << '\n'
+         << " v:" << a.eye         << ',' << '\n'
+         << " c:" << a.clip        << ',' << '\n'
+         << " n:" << a.ndc         << ',' << '\n'
+         << " w:" << a.window             << '\n'
          << ']';
     }
 

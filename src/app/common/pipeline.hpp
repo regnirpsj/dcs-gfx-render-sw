@@ -34,14 +34,18 @@ namespace pipeline {
 
   public:
 
-    glm::vec3 const world;
+    glm::vec3 const object;
     glm::vec4 const homogeneous;
+    glm::vec4 const world;
+    glm::vec4 const eye;
     glm::vec4 const clip;
     glm::vec3 const ndc;
     glm::vec3 const window;
 
-    explicit result(glm::vec3 const& /* world       */,
+    explicit result(glm::vec3 const& /* object      */,
                     glm::vec4 const& /* homogeneous */,
+                    glm::vec4 const& /* world       */,
+                    glm::vec4 const& /* eye         */,
                     glm::vec4 const& /* clip        */,
                     glm::vec3 const& /* ndc         */,
                     glm::vec3 const& /* window      */);
@@ -72,10 +76,12 @@ namespace pipeline {
                   glm::mat4 const& /* projection xform */ = glm::mat4(),
                   viewport const&  /* viewport         */ = viewport());
 
-    glm::vec4 eye_to_clip(glm::vec4 const& /* point/normal */) const;
-    glm::vec3 clip_to_ndc(glm::vec4 const& /* point/normal */) const;
+    glm::vec4 object_to_world(glm::vec4 const& /* point/normal */) const;
+    glm::vec4 world_to_eye   (glm::vec4 const& /* point/normal */) const;
+    glm::vec4 eye_to_clip    (glm::vec4 const& /* point/normal */) const;
+    glm::vec3 clip_to_ndc    (glm::vec4 const& /* point/normal */) const;
 
-    virtual glm::vec3 ndc_to_wc(glm::vec3 const& /* point/normal */) const =0;
+    virtual glm::vec3 ndc_to_window(glm::vec3 const& /* point/normal */) const =0;
     
   };
 
@@ -90,7 +96,7 @@ namespace pipeline {
     
   protected:
 
-    virtual glm::vec3 ndc_to_wc(glm::vec3 const& /* point/normal */) const;
+    virtual glm::vec3 ndc_to_window(glm::vec3 const& /* point/normal */) const;
     
   };
   
@@ -105,7 +111,7 @@ namespace pipeline {
     
   protected:
 
-    virtual glm::vec3 ndc_to_wc(glm::vec3 const& /* point/normal */) const;
+    virtual glm::vec3 ndc_to_window(glm::vec3 const& /* point/normal */) const;
     
   };
   
