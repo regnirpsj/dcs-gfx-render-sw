@@ -105,7 +105,7 @@ namespace pipeline {
   base::object_to_world(glm::vec4 const& a) const
   {
     TRACE("pipeline::base::object_to_world");
-
+    
     return (xform_model_ * a);
   }
 
@@ -113,7 +113,7 @@ namespace pipeline {
   base::world_to_eye(glm::vec4 const& a) const
   {
     TRACE("pipeline::base::world_to_eye");
-
+    
     return (xform_view_ * a);
   }
 
