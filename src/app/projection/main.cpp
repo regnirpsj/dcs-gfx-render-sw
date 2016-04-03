@@ -57,6 +57,7 @@ namespace glm {
       throw bpo::validation_error(bpo::validation_error::invalid_option_value);
     }
 
+    // [http://www.regular-expressions.info/floatingpoint.html]
     static std::string const float1("([-+]?[0-9]*\\.?[0-9]+)");
     static std::string const float3(float1 + ",?" + float1 + ",?" + float1);
     static std::regex const  regex (float3, std::regex::extended);
