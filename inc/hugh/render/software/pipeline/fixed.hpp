@@ -41,7 +41,7 @@ namespace hugh {
           explicit fixed();
           virtual ~fixed();
 
-          virtual void process(primitive const&);          
+          virtual void process(primitive::base const&);          
           
         };
         

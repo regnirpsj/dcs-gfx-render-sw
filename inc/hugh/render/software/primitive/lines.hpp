@@ -6,44 +6,55 @@
 /*                                                                                                */
 /**************************************************************************************************/
 /*                                                                                                */
-/*  module     :  hugh/render/software/test/primitive.cpp                                         */
+/*  module     :  hugh/render/software/primitive/lines.hpp                                        */
 /*  project    :                                                                                  */
 /*  description:                                                                                  */
 /*                                                                                                */
 /**************************************************************************************************/
 
+#if !defined(HUGH_RENDER_SOFTWARE_PRIMITIVE_LINES_HPP)
+
+#define HUGH_RENDER_SOFTWARE_PRIMITIVE_LINES_HPP
+
 // includes, system
 
-//#include <>
+// #include <>
 
 // includes, project
 
-#include <hugh/render/software/primitive.hpp>
+#include <hugh/render/software/primitive/base.hpp>
 
-#define HUGH_USE_TRACE
-#undef HUGH_USE_TRACE
-#include <hugh/support/trace.hpp>
+namespace hugh {
 
-// internal unnamed namespace
+  namespace render {
 
-namespace {
+    namespace software {
+
+      namespace primitive {
+        
+        // types, exported (class, enum, struct, union, typedef)
+
+        class HUGH_RENDER_SOFTWARE_EXPORT lines : public base {
+
+        public:
+
+          explicit lines();
+          virtual ~lines();
+
+        };
+        
+        // variables, exported (extern)
+
+        // functions, inlined (inline)
   
-  // types, internal (class, enum, struct, union, typedef)
+        // functions, exported (extern)
 
-  // variables, internal
+      } // namespace primitive {
+      
+    } // namespace software {
+
+  } // namespace render {
   
-  // functions, internal
+} // namespace hugh {
 
-} // namespace {
-
-#define BOOST_TEST_MAIN
-#include <boost/test/unit_test.hpp>
-
-BOOST_AUTO_TEST_CASE(test_hugh_render_software_primitive_ctor)
-{
-  using hugh::render::software::primitive;
-
-  primitive const p;
-  
-  BOOST_CHECK(true);
-}
+#endif // #if !defined(HUGH_RENDER_SOFTWARE_PRIMITIVE_LINES_HPP)

@@ -23,7 +23,7 @@
 
 // includes, project
 
-//#include <>
+#include <hugh/support/io_utils.hpp>
 
 #define HUGH_USE_TRACE
 #undef HUGH_USE_TRACE
@@ -52,8 +52,8 @@ namespace hugh {
       // functions, exported
 
       /* explicit */
-      fragment::fragment(glm::uvec2 const& a, float b)
-        : support::printable(), position(a), depth(b)
+      fragment::fragment(glm::uvec2 const& a, float b, attribute::list const& c)
+        : support::printable(), position(a), depth(b), attributes(c)
       {
         TRACE("hugh::render::software::fragment::fragment");
       }
@@ -69,9 +69,12 @@ namespace hugh {
       {
         TRACE_NEVER("hugh::render::software::fragment::print_on");
 
+        using support::ostream::operator<<;
+        
         os << '['
-           << "p:" << position << ','
-           << "d:" << depth
+           << "p:" << position   << ','
+           << "d:" << depth      << ','
+           << "a:" << attributes
            << ']';
       }
       

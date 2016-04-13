@@ -6,58 +6,65 @@
 /*                                                                                                */
 /**************************************************************************************************/
 /*                                                                                                */
-/*  module     :  hugh/render/software/triangle.hpp                                               */
+/*  module     :  hugh/render/software/primitive/base.hpp                                         */
 /*  project    :                                                                                  */
 /*  description:                                                                                  */
 /*                                                                                                */
 /**************************************************************************************************/
 
-#if !defined(HUGH_RENDER_SOFTWARE_TRIANGLE_HPP)
+#if !defined(HUGH_RENDER_SOFTWARE_PRIMITIVE_BASE_HPP)
 
-#define HUGH_RENDER_SOFTWARE_TRIANGLE_HPP
+#define HUGH_RENDER_SOFTWARE_PRIMITIVE_BASE_HPP
 
 // includes, system
 
-//#include <>
+// #include <>
 
 // includes, project
 
-#include <hugh/render/software/vertex.hpp>
+#include <hugh/render/software/export.h>
+#include <hugh/support/printable.hpp>
 
 namespace hugh {
 
   namespace render {
 
     namespace software {
-      
-      // types, exported (class, enum, struct, union, typedef)
 
-      class HUGH_RENDER_SOFTWARE_EXPORT triangle : public support::printable {
-
-      public:
-
-        vertex const    p0;
-        vertex const    p1;
-        vertex const    p2;
-        glm::vec3 const n;
+      namespace primitive {
         
-        explicit triangle(vertex const&, vertex const&, vertex const&);
-        virtual ~triangle();
+        // types, exported (class, enum, struct, union, typedef)
 
-        virtual void print_on(std::ostream&) const;
+        enum class type { points, lines, triangles, };
         
-      };
-        
-      // variables, exported (extern)
+        class HUGH_RENDER_SOFTWARE_EXPORT base : public support::printable {
 
-      // functions, inlined (inline)
+        public:
+
+          primitive::type const type;
+          
+          virtual ~base();
+
+          virtual void print_on(std::ostream&) const;
+
+        protected:
+
+          explicit base(primitive::type);
+          
+        };
+        
+        // variables, exported (extern)
+
+        // functions, inlined (inline)
   
-      // functions, exported (extern)
+        // functions, exported (extern)
 
+      } // namespace primitive_base {
+      
     } // namespace software {
 
   } // namespace render {
   
 } // namespace hugh {
 
-#endif // #if !defined(HUGH_RENDER_SOFTWARE_TRIANGLE_HPP)
+#endif // #if !defined(HUGH_RENDER_SOFTWARE_PRIMITIVE_BASE_HPP)

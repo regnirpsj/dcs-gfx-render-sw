@@ -60,7 +60,7 @@ namespace hugh {
         }
 
         /* virtual */ void
-        base::process(primitive const&)
+        base::process(primitive::base const&)
         {
           TRACE_NEVER("hugh::render::software::pipeline::base::process");
 

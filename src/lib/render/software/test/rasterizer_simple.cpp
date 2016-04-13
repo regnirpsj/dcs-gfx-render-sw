@@ -79,17 +79,17 @@ BOOST_AUTO_TEST_CASE(test_hugh_render_software_rasterizer_simple_process_line)
   
   std::array<std::pair<line const, unsigned const>, 22> const lines = {
     {
-      { line(o,   x), v. width+1 }, { line(  x, o), v. width+1 },
-      { line(o,  -x),          1 }, { line( -x, o),          1 },
-      { line(x,  -x), v. width+1 }, { line( -x, x), v. width+1 },
-      { line(o,   y), v.height+1 }, { line(  y, o), v.height+1 },
-      { line(o,  -y),          1 }, { line( -y, o),          1 },
-      { line(y,  -y), v.height+1 }, { line( -y, y), v.height+1 },
-      { line(o,   z),          1 }, { line(  z, o),          1 },
-      { line(o,  -z),          1 }, { line( -z, o),          1 },
-      { line(z,  -z),          1 }, { line( -z, z),          1 },
-      { line(o, x+y),          d }, { line(x+y, o),          d },
-      { line(y,   x),          d }, { line(  x, y),          d },
+      { line(vertex(o), vertex(  x)), v. width+1 }, { line(vertex(  x), vertex(o)), v. width+1 },
+      { line(vertex(o), vertex( -x)),          1 }, { line(vertex( -x), vertex(o)),          1 },
+      { line(vertex(x), vertex( -x)), v. width+1 }, { line(vertex( -x), vertex(x)), v. width+1 },
+      { line(vertex(o), vertex(  y)), v.height+1 }, { line(vertex(  y), vertex(o)), v.height+1 },
+      { line(vertex(o), vertex( -y)),          1 }, { line(vertex( -y), vertex(o)),          1 },
+      { line(vertex(y), vertex( -y)), v.height+1 }, { line(vertex( -y), vertex(y)), v.height+1 },
+      { line(vertex(o), vertex(  z)),          1 }, { line(vertex(  z), vertex(o)),          1 },
+      { line(vertex(o), vertex( -z)),          1 }, { line(vertex( -z), vertex(o)),          1 },
+      { line(vertex(z), vertex( -z)),          1 }, { line(vertex( -z), vertex(z)),          1 },
+      { line(vertex(o), vertex(x+y)),          d }, { line(vertex(x+y), vertex(o)),          d },
+      { line(vertex(y), vertex(  x)),          d }, { line(vertex(  x), vertex(y)),          d },
     }
   };
   
@@ -142,17 +142,32 @@ BOOST_AUTO_TEST_CASE(test_hugh_render_software_rasterizer_simple_process_triangl
   
   std::array<std::pair<triangle const, unsigned const>, 18> const triangles = {
     {
-      { triangle(o, x, y), a }, { triangle(o, y, x), 0 },
-      { triangle(x, y, o), a }, { triangle(y, x, o), 0 },
-      { triangle(y, o, x), a }, { triangle(x, o, y), 0 },
+      { triangle(vertex(o), vertex(x), vertex(y)), a },
+      { triangle(vertex(o), vertex(y), vertex(x)), 0 },
       
-      { triangle(x, x+y, y), a }, { triangle(x, y, x+y), 0 },
-      { triangle(x+y, y, x), a }, { triangle(y, x+y, x), 0 },
-      { triangle(y, x, x+y), a }, { triangle(x+y, x, y), 0 },
+      { triangle(vertex(x), vertex(y), vertex(o)), a },
+      { triangle(vertex(y), vertex(x), vertex(o)), 0 },
+      
+      { triangle(vertex(y), vertex(o), vertex(x)), a },
+      { triangle(vertex(x), vertex(o), vertex(y)), 0 },
+      
+      { triangle(vertex(  x), vertex(x+y), vertex(  y)), a },
+      { triangle(vertex(  x), vertex(  y), vertex(x+y)), 0 },
+      
+      { triangle(vertex(x+y), vertex(  y), vertex(x)), a },
+      { triangle(vertex(  y), vertex(x+y), vertex(x)), 0 },
+      
+      { triangle(vertex(  y), vertex(x), vertex(x+y)), a },
+      { triangle(vertex(x+y), vertex(x), vertex(  y)), 0 },
 
-      { triangle(o, two(x), two(y)), (2.f*a)-3 }, { triangle(o, 2.f*y, 2.f*x), 0 },
-      { triangle(two(x), two(y), o), (2.f*a)-3 }, { triangle(2.f*y, 2.f*x, o), 0 },
-      { triangle(two(y), o, two(x)), (2.f*a)-3 }, { triangle(2.f*x, o, 2.f*y), 0 },
+      { triangle(vertex(     o), vertex(two(x)), vertex(two(y))), (2.f*a)-3 },
+      { triangle(vertex(     o), vertex( 2.f*y), vertex( 2.f*x)),         0 },
+      
+      { triangle(vertex(two(x)), vertex(two(y)), vertex(o)), (2.f*a)-3 },
+      { triangle(vertex( 2.f*y), vertex( 2.f*x), vertex(o)),         0 },
+      
+      { triangle(vertex(two(y)), vertex(o), vertex(two(x))), (2.f*a)-3 },
+      { triangle(vertex( 2.f*x), vertex(o), vertex( 2.f*y)),         0 },
     }
   };
   

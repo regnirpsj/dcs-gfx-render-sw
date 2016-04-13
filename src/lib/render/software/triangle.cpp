@@ -52,8 +52,13 @@ namespace hugh {
       // functions, exported
 
       /* explicit */
-      triangle::triangle(glm::vec3 const& a, glm::vec3 const& b, glm::vec3 const& c)
-        : support::printable(), p0(a), p1(b), p2(c), n(glm::normalize(glm::cross(p1-p0,p2-p0)))
+      triangle::triangle(vertex const& a, vertex const& b, vertex const& c)
+        : support::printable(),
+          p0                (a),
+          p1                (b),
+          p2                (c),
+          n                 (glm::normalize(glm::cross(p1.position-p0.position,
+                                                       p2.position-p0.position)))
       {
         TRACE("hugh::render::software::triangle::triangle");
       }

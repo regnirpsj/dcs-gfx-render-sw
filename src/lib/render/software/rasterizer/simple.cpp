@@ -73,10 +73,10 @@ namespace hugh {
 
           // std::cout << "l.p0:" << l.p0 << ", l.p1:" << l.p1 << std::endl;
     
-          glm::ivec2 p0   (glm::min(glm::max(glm::ivec2(l.p0.x, l.p0.y),
+          glm::ivec2 p0   (glm::min(glm::max(glm::ivec2(l.p0.position.x, l.p0.position.y),
                                              glm::ivec2(viewport->x, viewport->y)),
                                     glm::ivec2(viewport->width, viewport->height)));
-          glm::ivec2 p1   (glm::min(glm::max(glm::ivec2(l.p1.x, l.p1.y),
+          glm::ivec2 p1   (glm::min(glm::max(glm::ivec2(l.p1.position.x, l.p1.position.y),
                                              glm::ivec2(viewport->x, viewport->y)),
                                     glm::ivec2(viewport->width, viewport->height)));
           bool       steep(false);
@@ -101,7 +101,7 @@ namespace hugh {
     
           fragment_list_type result;
 
-          glm::vec3 const ldir (l.p1 - l.p0);
+          glm::vec3 const ldir (l.p1.position - l.p0.position);
           glm::vec2 const delta(p1.x - p0.x, p1.y - p0.y);
           signed          derr2(2.0 * std::abs(delta.y));
           signed          err2 (0.0);
@@ -109,12 +109,12 @@ namespace hugh {
 
           for (signed x(p0.x); x <= p1.x; ++x) {      
             if (steep) {      
-              float const depth(glm::length(glm::cross(l.p0 - glm::vec3(y, x, 0), ldir)) /
+              float const depth(glm::length(glm::cross(l.p0.position - glm::vec3(y, x, 0), ldir)) /
                                 glm::length(ldir));
 
               result.push_back(fragment(glm::uvec2(y, x), depth));
             } else {
-              float const depth(glm::length(glm::cross(l.p0 - glm::vec3(x, y, 0), ldir)) /
+              float const depth(glm::length(glm::cross(l.p0.position - glm::vec3(x, y, 0), ldir)) /
                                 glm::length(ldir));
 
               result.push_back(fragment(glm::uvec2(x, y), depth));
@@ -137,22 +137,24 @@ namespace hugh {
           TRACE("hugh::render::software::rasterizer::simple::process(triangle)");
 
           fragment_list_type result;
-          float const        area2(((t.p1.x - t.p0.x) * (t.p2.y - t.p0.y)) -
-                                   ((t.p2.x - t.p0.x) * (t.p1.y - t.p0.y)));
+          float const        area2(((t.p1.position.x - t.p0.position.x) *
+                                    (t.p2.position.y - t.p0.position.y)) -
+                                   ((t.p2.position.x - t.p0.position.x) *
+                                    (t.p1.position.y - t.p0.position.y)));
 
           if (0.0 < area2) {
             std::array<glm::ivec2 const, 2> const bbox = {
               {
                 glm::max(glm::ivec2(viewport->x, viewport->y),
                          glm::min(glm::ivec2(viewport->width, viewport->height),
-                                  glm::min(glm::ivec2(t.p0.x, t.p0.y),
-                                           glm::min(glm::ivec2(t.p1.x, t.p1.y),
-                                                    glm::ivec2(t.p2.x, t.p2.y))))),
+                                  glm::min(glm::ivec2(t.p0.position.x, t.p0.position.y),
+                                           glm::min(glm::ivec2(t.p1.position.x, t.p1.position.y),
+                                                    glm::ivec2(t.p2.position.x, t.p2.position.y))))),
                 glm::max(glm::ivec2(viewport->x, viewport->y),
                          glm::min(glm::ivec2(viewport->width, viewport->height),
-                                  glm::max(glm::ivec2(t.p0.x, t.p0.y),
-                                           glm::max(glm::ivec2(t.p1.x, t.p1.y),
-                                                    glm::ivec2(t.p2.x, t.p2.y))))),
+                                  glm::max(glm::ivec2(t.p0.position.x, t.p0.position.y),
+                                           glm::max(glm::ivec2(t.p1.position.x, t.p1.position.y),
+                                                    glm::ivec2(t.p2.position.x, t.p2.position.y))))),
               }
             };
 
@@ -165,15 +167,17 @@ namespace hugh {
                 glm::vec3  bary;
                 bool const hit(glm::intersectRayTriangle(glm::vec3(p, 0),  // ray origin
                                                          glm::vec3(0,0,1), // ray direction
-                                                         t.p0, t.p1, t.p2, // triangle
+                                                         t.p0.position,    // [
+                                                         t.p1.position,    // triangle
+                                                         t.p2.position,    // ]
                                                          bary));           // barycentric hit
 
                 if (hit) {
                   bary /= area2;
           
-                  float const depth(                    t.p0.z   +
-                                    (bary.y * (t.p1.z - t.p0.z)) +
-                                    (bary.z * (t.p2.z - t.p0.z)));
+                  float const depth(                             t.p0.position.z   +
+                                    (bary.y * (t.p1.position.z - t.p0.position.z)) +
+                                    (bary.z * (t.p2.position.z - t.p0.position.z)));
 
                   // std::cout << area2 << ':' << p << ':' << bary << ':' << depth << std::endl;
           

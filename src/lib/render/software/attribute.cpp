@@ -6,7 +6,7 @@
 /*                                                                                                */
 /**************************************************************************************************/
 /*                                                                                                */
-/*  module     :  hugh/render/software/pipeline/fixed.cpp                                         */
+/*  module     :  hugh/render/software/attribute.cpp                                              */
 /*  project    :                                                                                  */
 /*  description:                                                                                  */
 /*                                                                                                */
@@ -14,15 +14,16 @@
 
 // include i/f header
 
-#include "hugh/render/software/pipeline/fixed.hpp"
+#include "hugh/render/software/attribute.hpp"
 
 // includes, system
 
-//#include <>
+#include <glm/gtx/io.hpp> // glm::operator<<
+#include <ostream>        // std::ostream
 
 // includes, project
 
-//#include <>
+#include <hugh/support/io_utils.hpp>
 
 #define HUGH_USE_TRACE
 #undef HUGH_USE_TRACE
@@ -46,54 +47,39 @@ namespace hugh {
 
     namespace software {
 
-      namespace pipeline {
+      namespace attribute {
         
         // variables, exported
   
         // functions, exported
 
-        /* explicit */
-        fixed::fixed()
-          : base()
+        std::ostream&
+        operator<<(std::ostream& os, type const& a)
         {
-          TRACE("hugh::render::software::pipeline::fixed::fixed");
+          TRACE_NEVER("hugh::render::software::attribute::operator<<(type)");
+
+          std::ostream::sentry const cerberus(os);
+
+          if (cerberus) {
+            os << '[';
+
+            switch (a) {
+            case type::position:  os << "POSITION";                        break;
+            case type::normal:    os << "NORMAL";                          break;
+            case type::color:     os << "COLOR";                           break;
+            case type::texcoord:  os << "TEXCOORD";                        break;
+            case type::bitangent: os << "BITANGENT";                       break;
+            default:              os << "UNKNOWN (" << unsigned(a) << ')'; break;
+            }
+            
+            os << ']';
+          }
+
+          return os;
         }
         
-        /* virtual */
-        fixed::~fixed()
-        {
-          TRACE("hugh::render::software::pipeline::fixed::~fixed");
-        }
-
-        /* virtual */ void
-        fixed::process(primitive::base const& p)
-        {
-          TRACE("hugh::render::software::pipeline::fixed::process");
-
-          switch (p.type) {
-          case primitive::type::points:
-            {
-            }
-            break;
-
-          case primitive::type::lines:
-            {
-            }
-            break;
-
-          case primitive::type::triangles:
-            {
-            }
-            break;
-
-          default:
-            break;
-          }
-          
-        }
-
-      } // namespace pipeline {
-
+      } // namespace attribute {
+      
     } // namespace software {
 
   } // namespace render {

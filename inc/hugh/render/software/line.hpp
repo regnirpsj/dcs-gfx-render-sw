@@ -18,12 +18,11 @@
 
 // includes, system
 
-#include <glm/glm.hpp> // glm::vec3
+//#include <>
 
 // includes, project
 
-#include <hugh/render/software/export.h>
-#include <hugh/support/printable.hpp>
+#include <hugh/render/software/vertex.hpp>
 
 namespace hugh {
 
@@ -37,10 +36,10 @@ namespace hugh {
 
       public:
 
-        glm::vec3 const p0;
-        glm::vec3 const p1;
+        vertex const p0;
+        vertex const p1;
 
-        explicit line(glm::vec3 const&, glm::vec3 const&);
+        explicit line(vertex const&, vertex const&);
         virtual ~line();
 
         virtual void print_on(std::ostream&) const;

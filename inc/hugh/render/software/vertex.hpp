@@ -6,15 +6,15 @@
 /*                                                                                                */
 /**************************************************************************************************/
 /*                                                                                                */
-/*  module     :  hugh/render/software/triangle.hpp                                               */
+/*  module     :  hugh/render/software/vertex.hpp                                                 */
 /*  project    :                                                                                  */
 /*  description:                                                                                  */
 /*                                                                                                */
 /**************************************************************************************************/
 
-#if !defined(HUGH_RENDER_SOFTWARE_TRIANGLE_HPP)
+#if !defined(HUGH_RENDER_SOFTWARE_VERTEX_HPP)
 
-#define HUGH_RENDER_SOFTWARE_TRIANGLE_HPP
+#define HUGH_RENDER_SOFTWARE_VERTEX_HPP
 
 // includes, system
 
@@ -22,7 +22,9 @@
 
 // includes, project
 
-#include <hugh/render/software/vertex.hpp>
+#include <hugh/render/software/attribute.hpp>
+#include <hugh/render/software/export.h>
+#include <hugh/support/printable.hpp>
 
 namespace hugh {
 
@@ -32,17 +34,15 @@ namespace hugh {
       
       // types, exported (class, enum, struct, union, typedef)
 
-      class HUGH_RENDER_SOFTWARE_EXPORT triangle : public support::printable {
+      class HUGH_RENDER_SOFTWARE_EXPORT vertex : public support::printable {
 
       public:
 
-        vertex const    p0;
-        vertex const    p1;
-        vertex const    p2;
-        glm::vec3 const n;
+        glm::vec3 const       position;
+        attribute::list const attributes;
         
-        explicit triangle(vertex const&, vertex const&, vertex const&);
-        virtual ~triangle();
+        explicit vertex(glm::vec3 const&, attribute::list const& = attribute::list());
+        virtual ~vertex();
 
         virtual void print_on(std::ostream&) const;
         
@@ -60,4 +60,4 @@ namespace hugh {
   
 } // namespace hugh {
 
-#endif // #if !defined(HUGH_RENDER_SOFTWARE_TRIANGLE_HPP)
+#endif // #if !defined(HUGH_RENDER_SOFTWARE_VERTEX_HPP)

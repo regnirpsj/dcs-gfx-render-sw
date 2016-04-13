@@ -6,51 +6,69 @@
 /*                                                                                                */
 /**************************************************************************************************/
 /*                                                                                                */
-/*  module     :  hugh/render/software/primitive.hpp                                              */
+/*  module     :  hugh/render/software/primitive/points.cpp                                       */
 /*  project    :                                                                                  */
 /*  description:                                                                                  */
 /*                                                                                                */
 /**************************************************************************************************/
 
-#if !defined(HUGH_RENDER_SOFTWARE_PRIMITIVE_HPP)
+// include i/f header
 
-#define HUGH_RENDER_SOFTWARE_PRIMITIVE_HPP
+#include "hugh/render/software/primitive/points.hpp"
 
 // includes, system
 
-// #include <>
+//#include <>
 
 // includes, project
 
-#include <hugh/render/software/export.h>
+//#include <>
+
+#define HUGH_USE_TRACE
+#undef HUGH_USE_TRACE
+#include <hugh/support/trace.hpp>
+
+// internal unnamed namespace
+
+namespace {
+  
+  // types, internal (class, enum, struct, union, typedef)
+
+  // variables, internal
+  
+  // functions, internal
+
+} // namespace {
 
 namespace hugh {
 
   namespace render {
 
     namespace software {
-      
-      // types, exported (class, enum, struct, union, typedef)
 
-      class HUGH_RENDER_SOFTWARE_EXPORT primitive {
-
-      public:
-
-        explicit primitive();
-        virtual ~primitive();
-    
-      };
+      namespace primitive {
         
-      // variables, exported (extern)
-
-      // functions, inlined (inline)
+        // variables, exported
   
-      // functions, exported (extern)
+        // functions, exported
 
+        /* explicit */
+        points::points()
+          : base(primitive::type::points)
+        {
+          TRACE("hugh::render::software::primitive::points::points");
+        }
+        
+        /* virtual */
+        points::~points()
+        {
+          TRACE("hugh::render::software::primitive::points::~points");
+        }
+        
+      } // namespace primitive {
+      
     } // namespace software {
 
   } // namespace render {
   
 } // namespace hugh {
-
-#endif // #if !defined(HUGH_RENDER_SOFTWARE_PRIMITIVE_HPP)

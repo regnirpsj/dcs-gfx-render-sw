@@ -6,7 +6,7 @@
 /*                                                                                                */
 /**************************************************************************************************/
 /*                                                                                                */
-/*  module     :  hugh/render/software/pipeline/fixed.cpp                                         */
+/*  module     :  hugh/render/software/primitive/base.cpp                                         */
 /*  project    :                                                                                  */
 /*  description:                                                                                  */
 /*                                                                                                */
@@ -14,11 +14,11 @@
 
 // include i/f header
 
-#include "hugh/render/software/pipeline/fixed.hpp"
+#include "hugh/render/software/primitive/base.hpp"
 
 // includes, system
 
-//#include <>
+#include <ostream> // std::ostream
 
 // includes, project
 
@@ -46,54 +46,37 @@ namespace hugh {
 
     namespace software {
 
-      namespace pipeline {
+      namespace primitive {
         
         // variables, exported
   
         // functions, exported
-
-        /* explicit */
-        fixed::fixed()
-          : base()
-        {
-          TRACE("hugh::render::software::pipeline::fixed::fixed");
-        }
-        
+      
         /* virtual */
-        fixed::~fixed()
+        base::~base()
         {
-          TRACE("hugh::render::software::pipeline::fixed::~fixed");
+          TRACE("hugh::render::software::primitive::base::~base");
         }
 
         /* virtual */ void
-        fixed::process(primitive::base const& p)
+        base::print_on(std::ostream& os) const
         {
-          TRACE("hugh::render::software::pipeline::fixed::process");
+          TRACE_NEVER("hugh::render::software::primitive::base::print_on");
 
-          switch (p.type) {
-          case primitive::type::points:
-            {
-            }
-            break;
-
-          case primitive::type::lines:
-            {
-            }
-            break;
-
-          case primitive::type::triangles:
-            {
-            }
-            break;
-
-          default:
-            break;
-          }
-          
+          os << '['
+             << "t:" << unsigned(type) << ','
+             << ']';
         }
-
-      } // namespace pipeline {
-
+        
+        /* explicit */
+        base::base(primitive::type a)
+          : support::printable(), type(a)
+        {
+          TRACE("hugh::render::software::primitive::base::base");
+        }
+        
+      } // namespace primitive {
+      
     } // namespace software {
 
   } // namespace render {

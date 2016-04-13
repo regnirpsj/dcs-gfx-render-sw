@@ -42,20 +42,26 @@ namespace {
 BOOST_AUTO_TEST_CASE(test_hugh_render_software_triangle_ctor)
 {
   using hugh::render::software::triangle;
-
-  triangle const t(glm::vec3(0, 0, 0),glm::vec3(1, 0, 0), glm::vec3(0, 1, 0));
+  using hugh::render::software::vertex;
   
-  BOOST_CHECK(glm::vec3(0, 0, 0) == t.p0);
-  BOOST_CHECK(glm::vec3(1, 0, 0) == t.p1);
-  BOOST_CHECK(glm::vec3(0, 1, 0) == t.p2);
+  triangle const t(vertex(glm::vec3(0, 0, 0)),
+                   vertex(glm::vec3(1, 0, 0)),
+                   vertex(glm::vec3(0, 1, 0)));
+  
+  BOOST_CHECK(glm::vec3(0, 0, 0) == t.p0.position);
+  BOOST_CHECK(glm::vec3(1, 0, 0) == t.p1.position);
+  BOOST_CHECK(glm::vec3(0, 1, 0) == t.p2.position);
   BOOST_CHECK(glm::vec3(0, 0, 1) == t.n);
 }
 
 BOOST_AUTO_TEST_CASE(test_hugh_render_software_triangle_print_on)
 {
   using hugh::render::software::triangle;
-
-  triangle const     t(glm::vec3(0, 0, 0), glm::vec3(1, 0, 0), glm::vec3(0, 1, 0));
+  using hugh::render::software::vertex;
+  
+  triangle const     t(vertex(glm::vec3(0, 0, 0)),
+                       vertex(glm::vec3(1, 0, 0)),
+                       vertex(glm::vec3(0, 1, 0)));
   std::ostringstream ostr;
 
   ostr << t;

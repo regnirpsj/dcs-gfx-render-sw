@@ -6,59 +6,76 @@
 /*                                                                                                */
 /**************************************************************************************************/
 /*                                                                                                */
-/*  module     :  hugh/render/software/fragment.hpp                                               */
+/*  module     :  hugh/render/software/attribute.hpp                                              */
 /*  project    :                                                                                  */
 /*  description:                                                                                  */
 /*                                                                                                */
 /**************************************************************************************************/
 
-#if !defined(HUGH_RENDER_SOFTWARE_FRAGMENT_HPP)
+#if !defined(HUGH_RENDER_SOFTWARE_ATTRIBUTE_HPP)
 
-#define HUGH_RENDER_SOFTWARE_FRAGMENT_HPP
+#define HUGH_RENDER_SOFTWARE_ATTRIBUTE_HPP
 
 // includes, system
 
-//#include <>
+#include <glm/glm.hpp>   // glm::*
+#include <iosfwd>        // std::ostream (fwd decl)
+#include <unordered_map> // std::unordered_map<>
 
 // includes, project
 
-#include <hugh/render/software/attribute.hpp>
 #include <hugh/render/software/export.h>
-#include <hugh/support/printable.hpp>
 
 namespace hugh {
 
   namespace render {
 
     namespace software {
-      
-      // types, exported (class, enum, struct, union, typedef)
 
-      class HUGH_RENDER_SOFTWARE_EXPORT fragment : public support::printable {
-
-      public:
-
-        glm::uvec2 const      position;
-        float const           depth;
-        attribute::list const attributes;
+      namespace attribute {
         
-        explicit fragment(glm::uvec2 const&, float, attribute::list const& = attribute::list());
-        virtual ~fragment();
+        // types, exported (class, enum, struct, union, typedef)
 
-        virtual void print_on(std::ostream&) const;
+        enum class type {
+          position,
+          normal,
+          color,
+          texcoord,
+          bitangent,
+        };
         
-      };
+        using list = std::unordered_map<type, glm::vec4>;
         
-      // variables, exported (extern)
+        // variables, exported (extern)
 
-      // functions, inlined (inline)
+        // functions, inlined (inline)
   
-      // functions, exported (extern)
+        // functions, exported (extern)
 
+        HUGH_RENDER_SOFTWARE_EXPORT std::ostream& operator<<(std::ostream&, type const&);
+        
+      } // namespace attribute {
+      
     } // namespace software {
 
   } // namespace render {
   
 } // namespace hugh {
 
-#endif // #if !defined(HUGH_RENDER_SOFTWARE_FRAGMENT_HPP)
+namespace std {
+  
+  template <>
+  struct hash<hugh::render::software::attribute::type> {
+
+    using attribute_type = hugh::render::software::attribute::type;
+    
+    size_t operator()(attribute_type const& a) const
+    {
+      return hash<underlying_type<attribute_type>::type>()(unsigned(a));
+    }
+    
+  };
+
+} // namespace std {
+
+#endif // #if !defined(HUGH_RENDER_SOFTWARE_ATTRIBUTE_HPP)

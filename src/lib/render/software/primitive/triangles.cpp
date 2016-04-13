@@ -6,7 +6,7 @@
 /*                                                                                                */
 /**************************************************************************************************/
 /*                                                                                                */
-/*  module     :  hugh/render/software/pipeline/fixed.cpp                                         */
+/*  module     :  hugh/render/software/primitive/triangles.cpp                                    */
 /*  project    :                                                                                  */
 /*  description:                                                                                  */
 /*                                                                                                */
@@ -14,7 +14,7 @@
 
 // include i/f header
 
-#include "hugh/render/software/pipeline/fixed.hpp"
+#include "hugh/render/software/primitive/triangles.hpp"
 
 // includes, system
 
@@ -46,54 +46,27 @@ namespace hugh {
 
     namespace software {
 
-      namespace pipeline {
+      namespace primitive {
         
         // variables, exported
   
         // functions, exported
 
         /* explicit */
-        fixed::fixed()
-          : base()
+        triangles::triangles()
+          : base(primitive::type::triangles)
         {
-          TRACE("hugh::render::software::pipeline::fixed::fixed");
+          TRACE("hugh::render::software::primitive::triangles::triangles");
         }
         
         /* virtual */
-        fixed::~fixed()
+        triangles::~triangles()
         {
-          TRACE("hugh::render::software::pipeline::fixed::~fixed");
+          TRACE("hugh::render::software::primitive::triangles::~triangles");
         }
 
-        /* virtual */ void
-        fixed::process(primitive::base const& p)
-        {
-          TRACE("hugh::render::software::pipeline::fixed::process");
-
-          switch (p.type) {
-          case primitive::type::points:
-            {
-            }
-            break;
-
-          case primitive::type::lines:
-            {
-            }
-            break;
-
-          case primitive::type::triangles:
-            {
-            }
-            break;
-
-          default:
-            break;
-          }
-          
-        }
-
-      } // namespace pipeline {
-
+      } // namespace primitive {
+      
     } // namespace software {
 
   } // namespace render {

@@ -29,7 +29,7 @@
 #include <hugh/render/software/export.h>
 #include <hugh/render/software/buffer/depth/base.hpp>
 #include <hugh/render/software/buffer/frame/base.hpp>
-#include <hugh/render/software/primitive.hpp>
+#include <hugh/render/software/primitive/base.hpp>
 #include <hugh/render/software/rasterizer/base.hpp>
 #include <hugh/scene/object/light/base.hpp>
 #include <hugh/scene/object/material.hpp>
@@ -67,7 +67,7 @@ namespace hugh {
           
           virtual ~base();
 
-          virtual void process(primitive const&) =0;
+          virtual void process(primitive::base const&) =0;
           
         protected:
 

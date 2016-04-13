@@ -42,18 +42,20 @@ namespace {
 BOOST_AUTO_TEST_CASE(test_hugh_render_software_line_ctor)
 {
   using hugh::render::software::line;
-
-  line const l(glm::vec3(0, 0, 0), glm::vec3(1, 1, 1));
+  using hugh::render::software::vertex;
   
-  BOOST_CHECK(glm::vec3(0, 0, 0) == l.p0);
-  BOOST_CHECK(glm::vec3(1, 1, 1) == l.p1);
+  line const l(vertex(glm::vec3(0, 0, 0)), vertex(glm::vec3(1, 1, 1)));
+  
+  BOOST_CHECK(glm::vec3(0, 0, 0) == l.p0.position);
+  BOOST_CHECK(glm::vec3(1, 1, 1) == l.p1.position);
 }
 
 BOOST_AUTO_TEST_CASE(test_hugh_render_software_line_print_on)
 {
   using hugh::render::software::line;
-
-  line const         l(glm::vec3(0, 0, 0), glm::vec3(1, 1, 1));
+  using hugh::render::software::vertex;
+  
+  line const         l(vertex(glm::vec3(0, 0, 0)), vertex(glm::vec3(1, 1, 1)));
   std::ostringstream ostr;
 
   ostr << l;

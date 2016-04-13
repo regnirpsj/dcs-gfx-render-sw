@@ -6,7 +6,7 @@
 /*                                                                                                */
 /**************************************************************************************************/
 /*                                                                                                */
-/*  module     :  hugh/render/software/pipeline/fixed.cpp                                         */
+/*  module     :  hugh/render/software/vertex.cpp                                                 */
 /*  project    :                                                                                  */
 /*  description:                                                                                  */
 /*                                                                                                */
@@ -14,15 +14,16 @@
 
 // include i/f header
 
-#include "hugh/render/software/pipeline/fixed.hpp"
+#include "hugh/render/software/vertex.hpp"
 
 // includes, system
 
-//#include <>
+#include <glm/gtx/io.hpp> // glm::operator<<
+#include <ostream>        // std::ostream
 
 // includes, project
 
-//#include <>
+#include <hugh/support/io_utils.hpp>
 
 #define HUGH_USE_TRACE
 #undef HUGH_USE_TRACE
@@ -45,55 +46,37 @@ namespace hugh {
   namespace render {
 
     namespace software {
-
-      namespace pipeline {
-        
-        // variables, exported
+      
+      // variables, exported
   
-        // functions, exported
+      // functions, exported
 
-        /* explicit */
-        fixed::fixed()
-          : base()
-        {
-          TRACE("hugh::render::software::pipeline::fixed::fixed");
-        }
+      /* explicit */
+      vertex::vertex(glm::vec3 const& a, attribute::list const& b)
+        : support::printable(), position(a), attributes(b)
+      {
+        TRACE("hugh::render::software::vertex::vertex");
+      }
+      
+      /* virtual */
+      vertex::~vertex()
+      {
+        TRACE("hugh::render::software::vertex::~vertex");
+      }
+
+      /* virtual */ void
+      vertex::print_on(std::ostream& os) const
+      {
+        TRACE_NEVER("hugh::render::software::vertex::print_on");
+
+        using support::ostream::operator<<;
         
-        /* virtual */
-        fixed::~fixed()
-        {
-          TRACE("hugh::render::software::pipeline::fixed::~fixed");
-        }
-
-        /* virtual */ void
-        fixed::process(primitive::base const& p)
-        {
-          TRACE("hugh::render::software::pipeline::fixed::process");
-
-          switch (p.type) {
-          case primitive::type::points:
-            {
-            }
-            break;
-
-          case primitive::type::lines:
-            {
-            }
-            break;
-
-          case primitive::type::triangles:
-            {
-            }
-            break;
-
-          default:
-            break;
-          }
-          
-        }
-
-      } // namespace pipeline {
-
+        os << '['
+           << "p:" << position   << ','
+           << "a:" << attributes
+           << ']';
+      }
+      
     } // namespace software {
 
   } // namespace render {

@@ -52,8 +52,10 @@ namespace hugh {
       // functions, exported
 
       /* explicit */
-      line::line(glm::vec3 const& a, glm::vec3 const& b)
-        : support::printable(), p0(a), p1(b)
+      line::line(vertex const& a, vertex const& b)
+        : support::printable(),
+          p0                (a),
+          p1                 (b)
       {
         TRACE("hugh::render::software::line::line");
       }

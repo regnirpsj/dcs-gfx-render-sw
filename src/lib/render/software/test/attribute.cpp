@@ -6,23 +6,22 @@
 /*                                                                                                */
 /**************************************************************************************************/
 /*                                                                                                */
-/*  module     :  hugh/render/software/pipeline/fixed.cpp                                         */
+/*  module     :  hugh/render/software/test/attribute.cpp                                         */
 /*  project    :                                                                                  */
 /*  description:                                                                                  */
 /*                                                                                                */
 /**************************************************************************************************/
 
-// include i/f header
-
-#include "hugh/render/software/pipeline/fixed.hpp"
-
 // includes, system
 
-//#include <>
+#include <array>          // std::array<>
+#include <glm/gtx/io.hpp> // glm::operator<<
+#include <sstream>        // std::ostringstream
 
 // includes, project
 
-//#include <>
+#include <hugh/render/software/attribute.hpp>
+#include <hugh/support/io_utils.hpp>
 
 #define HUGH_USE_TRACE
 #undef HUGH_USE_TRACE
@@ -40,62 +39,44 @@ namespace {
 
 } // namespace {
 
-namespace hugh {
+#define BOOST_TEST_MAIN
+#include <boost/test/unit_test.hpp>
 
-  namespace render {
+BOOST_AUTO_TEST_CASE(test_hugh_render_software_attribute_type)
+{
+  using namespace hugh::render::software;
 
-    namespace software {
+  std::array<attribute::type const, 5> const types = {
+    {
+      attribute::type::position,
+      attribute::type::normal,
+      attribute::type::color,
+      attribute::type::texcoord,
+      attribute::type::bitangent,
+    }
+  };
 
-      namespace pipeline {
-        
-        // variables, exported
+  for (auto t : types) {
+    std::ostringstream ostr;
+
+    ostr << t;
+    
+    BOOST_CHECK       (!ostr.str().empty());
+    BOOST_TEST_MESSAGE( ostr.str());
+  }
+}
+
+BOOST_AUTO_TEST_CASE(test_hugh_render_software_attribute_list)
+{
+  using namespace hugh::render::software;
+
+  attribute::list const l;
+  std::ostringstream    ostr;
+
+  using hugh::support::ostream::operator<<;
   
-        // functions, exported
-
-        /* explicit */
-        fixed::fixed()
-          : base()
-        {
-          TRACE("hugh::render::software::pipeline::fixed::fixed");
-        }
-        
-        /* virtual */
-        fixed::~fixed()
-        {
-          TRACE("hugh::render::software::pipeline::fixed::~fixed");
-        }
-
-        /* virtual */ void
-        fixed::process(primitive::base const& p)
-        {
-          TRACE("hugh::render::software::pipeline::fixed::process");
-
-          switch (p.type) {
-          case primitive::type::points:
-            {
-            }
-            break;
-
-          case primitive::type::lines:
-            {
-            }
-            break;
-
-          case primitive::type::triangles:
-            {
-            }
-            break;
-
-          default:
-            break;
-          }
-          
-        }
-
-      } // namespace pipeline {
-
-    } // namespace software {
-
-  } // namespace render {
+  ostr << l;
   
-} // namespace hugh {
+  BOOST_CHECK       (!ostr.str().empty());
+  BOOST_TEST_MESSAGE( ostr.str());
+}
