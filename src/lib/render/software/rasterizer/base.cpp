@@ -57,14 +57,25 @@ namespace hugh {
         {
           TRACE("hugh::render::software::rasterizer::base::~base");
         }
-      
+
+        /* virtual */ base::fragment_list_type
+        base::process(vertex const&) const
+        {
+          TRACE_NEVER("hugh::render::software::rasterizer::base::process(vertex)");
+
+          throw std::logic_error("pure virtual function "
+                                 "'hugh::render::software::rasterizer::base::process(vertex)' "
+                                 "called");
+        }
+        
         /* virtual */ base::fragment_list_type
         base::process(line const&) const
         {
           TRACE_NEVER("hugh::render::software::rasterizer::base::process(line)");
 
           throw std::logic_error("pure virtual function "
-                                 "'hugh::render::software::rasterizer::base::process(line)' called");
+                                 "'hugh::render::software::rasterizer::base::process(line)' "
+                                 "called");
         }
       
         /* virtual */ base::fragment_list_type
@@ -81,7 +92,7 @@ namespace hugh {
         base::base(viewport_type const& a)
           : field::container         (),
             support::refcounted<base>(),
-          viewport                 (*this, "viewport", a)
+            viewport                 (*this, "viewport", a)
         {
           TRACE("hugh::render::software::rasterizer::base::base");
         }

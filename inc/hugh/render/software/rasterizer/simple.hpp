@@ -41,6 +41,7 @@ namespace hugh {
           explicit simple(viewport_type const& = viewport_type());
           virtual ~simple();
 
+          virtual fragment_list_type process(vertex const&) const;
           virtual fragment_list_type process(line const&) const;
           virtual fragment_list_type process(triangle const&) const;
           

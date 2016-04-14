@@ -54,6 +54,7 @@ namespace hugh {
           
           virtual ~base();
 
+          virtual fragment_list_type process(vertex const&) const   =0;
           virtual fragment_list_type process(line const&) const     =0;
           virtual fragment_list_type process(triangle const&) const =0;
           
