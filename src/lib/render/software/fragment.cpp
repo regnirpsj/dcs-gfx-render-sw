@@ -63,7 +63,7 @@ namespace hugh {
       {
         TRACE("hugh::render::software::fragment::~fragment");
       }
-
+      
       /* virtual */ void
       fragment::print_on(std::ostream& os) const
       {

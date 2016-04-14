@@ -38,13 +38,13 @@ namespace hugh {
 
       public:
 
-        glm::uvec2 const      position;
-        float const           depth;
-        attribute::list const attributes;
+        glm::uvec2      position;
+        float           depth;
+        attribute::list attributes;
         
         explicit fragment(glm::uvec2 const&, float, attribute::list const& = attribute::list());
         virtual ~fragment();
-
+        
         virtual void print_on(std::ostream&) const;
         
       };
