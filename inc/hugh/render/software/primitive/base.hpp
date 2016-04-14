@@ -56,7 +56,9 @@ namespace hugh {
 
         protected:
 
-          explicit base(primitive::topology);
+          explicit base(primitive::topology     /* topology */,
+                        vertex_list_type const& /* vertices */,
+                        index_list_type const&  /* indices  */ = index_list_type());
           
         };
         

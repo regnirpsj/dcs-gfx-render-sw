@@ -6,15 +6,15 @@
 /*                                                                                                */
 /**************************************************************************************************/
 /*                                                                                                */
-/*  module     :  hugh/render/software/primitives.hpp                                             */
+/*  module     :  hugh/render/software/primitive/triangle_list.hpp                                */
 /*  project    :                                                                                  */
 /*  description:                                                                                  */
 /*                                                                                                */
 /**************************************************************************************************/
 
-#if !defined(HUGH_RENDER_SOFTWARE_PRIMITIVES_HPP)
+#if !defined(HUGH_RENDER_SOFTWARE_PRIMITIVE_TRIANGLE_LIST_HPP)
 
-#define HUGH_RENDER_SOFTWARE_PRIMITIVES_HPP
+#define HUGH_RENDER_SOFTWARE_PRIMITIVE_TRIANGLE_LIST_HPP
 
 // includes, system
 
@@ -22,11 +22,7 @@
 
 // includes, project
 
-#include <hugh/render/software/primitive/line_list.hpp>
-#include <hugh/render/software/primitive/line_strip.hpp>
-#include <hugh/render/software/primitive/point_list.hpp>
-#include <hugh/render/software/primitive/triangle_list.hpp>
-#include <hugh/render/software/primitive/triangle_strip.hpp>
+#include <hugh/render/software/primitive/base.hpp>
 
 namespace hugh {
 
@@ -38,6 +34,16 @@ namespace hugh {
         
         // types, exported (class, enum, struct, union, typedef)
 
+        class HUGH_RENDER_SOFTWARE_EXPORT triangle_list : public base {
+
+        public:
+
+          explicit triangle_list(vertex_list_type const& /* vertices */,
+                                 index_list_type const&  /* indices  */ = index_list_type());
+          virtual ~triangle_list();
+    
+        };
+        
         // variables, exported (extern)
 
         // functions, inlined (inline)
@@ -52,4 +58,4 @@ namespace hugh {
   
 } // namespace hugh {
 
-#endif // #if !defined(HUGH_RENDER_SOFTWARE_PRIMITIVES_HPP)
+#endif // #if !defined(HUGH_RENDER_SOFTWARE_PRIMITIVE_TRIANGLE_LIST_HPP)

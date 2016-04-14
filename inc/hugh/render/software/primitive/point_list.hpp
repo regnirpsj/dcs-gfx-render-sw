@@ -6,15 +6,15 @@
 /*                                                                                                */
 /**************************************************************************************************/
 /*                                                                                                */
-/*  module     :  hugh/render/software/primitive/triangles.hpp                                    */
+/*  module     :  hugh/render/software/primitive/point_list.hpp                                   */
 /*  project    :                                                                                  */
 /*  description:                                                                                  */
 /*                                                                                                */
 /**************************************************************************************************/
 
-#if !defined(HUGH_RENDER_SOFTWARE_PRIMITIVE_TRIANGLES_HPP)
+#if !defined(HUGH_RENDER_SOFTWARE_PRIMITIVE_POINT_LIST_HPP)
 
-#define HUGH_RENDER_SOFTWARE_PRIMITIVE_TRIANGLES_HPP
+#define HUGH_RENDER_SOFTWARE_PRIMITIVE_POINT_LIST_HPP
 
 // includes, system
 
@@ -34,12 +34,13 @@ namespace hugh {
         
         // types, exported (class, enum, struct, union, typedef)
 
-        class HUGH_RENDER_SOFTWARE_EXPORT triangles : public base {
+        class HUGH_RENDER_SOFTWARE_EXPORT point_list : public base {
 
         public:
 
-          explicit triangles();
-          virtual ~triangles();
+          explicit point_list(vertex_list_type const& /* vertices */,
+                              index_list_type const&  /* indices  */ = index_list_type());
+          virtual ~point_list();
     
         };
         
@@ -57,4 +58,4 @@ namespace hugh {
   
 } // namespace hugh {
 
-#endif // #if !defined(HUGH_RENDER_SOFTWARE_PRIMITIVE_TRIANGLES_HPP)
+#endif // #if !defined(HUGH_RENDER_SOFTWARE_PRIMITIVE_POINT_LIST_HPP)

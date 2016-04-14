@@ -6,7 +6,7 @@
 /*                                                                                                */
 /**************************************************************************************************/
 /*                                                                                                */
-/*  module     :  hugh/render/software/test/primitive_triangles.cpp                               */
+/*  module     :  hugh/render/software/test/primitive_point_list.cpp                              */
 /*  project    :                                                                                  */
 /*  description:                                                                                  */
 /*                                                                                                */
@@ -14,11 +14,11 @@
 
 // includes, system
 
-//#include <>
+#include <sstream> // std::ostringstream
 
 // includes, project
 
-#include <hugh/render/software/primitive/triangles.hpp>
+#include <hugh/render/software/primitive/point_list.hpp>
 
 #define HUGH_USE_TRACE
 #undef HUGH_USE_TRACE
@@ -39,11 +39,29 @@ namespace {
 #define BOOST_TEST_MAIN
 #include <boost/test/unit_test.hpp>
 
-BOOST_AUTO_TEST_CASE(test_hugh_render_software_primitive_triangles_ctor)
+BOOST_AUTO_TEST_CASE(test_hugh_render_software_primitive_point_list_ctor)
 {
   using namespace hugh::render::software;
+  using vertex_list_type = primitive::point_list::vertex_list_type;
 
-  primitive::triangles const p;
+  vertex_list_type const      v;
+  primitive::point_list const p(v);
   
-  BOOST_CHECK(true);
+  BOOST_CHECK(p.vertices.empty());
+  BOOST_CHECK(p.indices.empty());
+}
+
+BOOST_AUTO_TEST_CASE(test_hugh_render_software_primitive_point_list_print_on)
+{
+  using namespace hugh::render::software;
+  using vertex_list_type = primitive::point_list::vertex_list_type;
+
+  vertex_list_type const      v;
+  primitive::point_list const p(v);
+  std::ostringstream          ostr;
+
+  ostr << p;
+
+  BOOST_CHECK       (!ostr.str().empty());
+  BOOST_TEST_MESSAGE( ostr.str());
 }

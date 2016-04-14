@@ -6,23 +6,19 @@
 /*                                                                                                */
 /**************************************************************************************************/
 /*                                                                                                */
-/*  module     :  hugh/render/software/primitive/lines.cpp                                        */
+/*  module     :  hugh/render/software/test/primitive_line_list.cpp                               */
 /*  project    :                                                                                  */
 /*  description:                                                                                  */
 /*                                                                                                */
 /**************************************************************************************************/
 
-// include i/f header
-
-#include "hugh/render/software/primitive/lines.hpp"
-
 // includes, system
 
-//#include <>
+#include <sstream> // std::ostringstream
 
 // includes, project
 
-//#include <>
+#include <hugh/render/software/primitive/line_list.hpp>
 
 #define HUGH_USE_TRACE
 #undef HUGH_USE_TRACE
@@ -40,35 +36,32 @@ namespace {
 
 } // namespace {
 
-namespace hugh {
+#define BOOST_TEST_MAIN
+#include <boost/test/unit_test.hpp>
 
-  namespace render {
+BOOST_AUTO_TEST_CASE(test_hugh_render_software_primitive_line_list_ctor)
+{
+  using namespace hugh::render::software;
+  using vertex_list_type = primitive::line_list::vertex_list_type;
 
-    namespace software {
-
-      namespace primitive {
-        
-        // variables, exported
+  vertex_list_type const     v;
+  primitive::line_list const p(v);
   
-        // functions, exported
+  BOOST_CHECK(p.vertices.empty());
+  BOOST_CHECK(p.indices.empty());
+}
 
-        /* explicit */
-        lines::lines()
-          : base(primitive::topology::line_list)
-        {
-          TRACE("hugh::render::software::primitive::lines::lines");
-        }
-        
-        /* virtual */
-        lines::~lines()
-        {
-          TRACE("hugh::render::software::primitive::lines::~lines");
-        }
-        
-      } // namespace primitive {
-      
-    } // namespace software {
+BOOST_AUTO_TEST_CASE(test_hugh_render_software_primitive_line_list_print_on)
+{
+  using namespace hugh::render::software;
+  using vertex_list_type = primitive::line_list::vertex_list_type;
 
-  } // namespace render {
-  
-} // namespace hugh {
+  vertex_list_type const     v;
+  primitive::line_list const p(v);
+  std::ostringstream         ostr;
+
+  ostr << p;
+
+  BOOST_CHECK       (!ostr.str().empty());
+  BOOST_TEST_MESSAGE( ostr.str());
+}

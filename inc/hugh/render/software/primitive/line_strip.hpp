@@ -6,15 +6,15 @@
 /*                                                                                                */
 /**************************************************************************************************/
 /*                                                                                                */
-/*  module     :  hugh/render/software/primitive/points.hpp                                       */
+/*  module     :  hugh/render/software/primitive/line_strip.hpp                                   */
 /*  project    :                                                                                  */
 /*  description:                                                                                  */
 /*                                                                                                */
 /**************************************************************************************************/
 
-#if !defined(HUGH_RENDER_SOFTWARE_PRIMITIVE_POINTS_HPP)
+#if !defined(HUGH_RENDER_SOFTWARE_PRIMITIVE_LINE_STRIP_HPP)
 
-#define HUGH_RENDER_SOFTWARE_PRIMITIVE_POINTS_HPP
+#define HUGH_RENDER_SOFTWARE_PRIMITIVE_LINE_STRIP_HPP
 
 // includes, system
 
@@ -34,13 +34,14 @@ namespace hugh {
         
         // types, exported (class, enum, struct, union, typedef)
 
-        class HUGH_RENDER_SOFTWARE_EXPORT points : public base {
+        class HUGH_RENDER_SOFTWARE_EXPORT line_strip : public base {
 
         public:
 
-          explicit points();
-          virtual ~points();
-    
+          explicit line_strip(vertex_list_type const& /* vertices */,
+                              index_list_type const&  /* indices  */ = index_list_type());
+          virtual ~line_strip();
+
         };
         
         // variables, exported (extern)
@@ -57,4 +58,4 @@ namespace hugh {
   
 } // namespace hugh {
 
-#endif // #if !defined(HUGH_RENDER_SOFTWARE_PRIMITIVE_POINTS_HPP)
+#endif // #if !defined(HUGH_RENDER_SOFTWARE_PRIMITIVE_LINE_STRIP_HPP)

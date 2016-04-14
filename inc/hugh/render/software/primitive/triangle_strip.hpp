@@ -6,15 +6,15 @@
 /*                                                                                                */
 /**************************************************************************************************/
 /*                                                                                                */
-/*  module     :  hugh/render/software/primitive/lines.hpp                                        */
+/*  module     :  hugh/render/software/primitive/triangle_strip.hpp                               */
 /*  project    :                                                                                  */
 /*  description:                                                                                  */
 /*                                                                                                */
 /**************************************************************************************************/
 
-#if !defined(HUGH_RENDER_SOFTWARE_PRIMITIVE_LINES_HPP)
+#if !defined(HUGH_RENDER_SOFTWARE_PRIMITIVE_TRIANGLE_STRIP_HPP)
 
-#define HUGH_RENDER_SOFTWARE_PRIMITIVE_LINES_HPP
+#define HUGH_RENDER_SOFTWARE_PRIMITIVE_TRIANGLE_STRIP_HPP
 
 // includes, system
 
@@ -34,13 +34,14 @@ namespace hugh {
         
         // types, exported (class, enum, struct, union, typedef)
 
-        class HUGH_RENDER_SOFTWARE_EXPORT lines : public base {
+        class HUGH_RENDER_SOFTWARE_EXPORT triangle_strip : public base {
 
         public:
 
-          explicit lines();
-          virtual ~lines();
-
+          explicit triangle_strip(vertex_list_type const& /* vertices */,
+                                  index_list_type const&  /* indices  */ = index_list_type());
+          virtual ~triangle_strip();
+    
         };
         
         // variables, exported (extern)
@@ -57,4 +58,4 @@ namespace hugh {
   
 } // namespace hugh {
 
-#endif // #if !defined(HUGH_RENDER_SOFTWARE_PRIMITIVE_LINES_HPP)
+#endif // #if !defined(HUGH_RENDER_SOFTWARE_PRIMITIVE_TRIANGLE_STRIP_HPP)

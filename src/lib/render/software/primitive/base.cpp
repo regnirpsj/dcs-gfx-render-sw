@@ -22,7 +22,7 @@
 
 // includes, project
 
-//#include <>
+#include <hugh/support/io_utils.hpp>
 
 #define HUGH_USE_TRACE
 #undef HUGH_USE_TRACE
@@ -63,14 +63,21 @@ namespace hugh {
         {
           TRACE_NEVER("hugh::render::software::primitive::base::print_on");
 
+          using support::ostream::operator<<;
+          
           os << '['
              << "t:" << topology << ','
+             << "v:" << vertices.size() << ':' << vertices << ','
+             << "i:" << indices .size() << ':' << indices
              << ']';
         }
         
         /* explicit */
-        base::base(primitive::topology a)
-          : support::printable(), topology(a)
+        base::base(primitive::topology a, vertex_list_type const& b, index_list_type const& c)
+          : support::printable(),
+            topology          (a),
+            vertices          (b),
+            indices           (c)
         {
           TRACE("hugh::render::software::primitive::base::base");
         }

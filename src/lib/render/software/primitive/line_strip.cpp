@@ -6,11 +6,15 @@
 /*                                                                                                */
 /**************************************************************************************************/
 /*                                                                                                */
-/*  module     :  hugh/render/software/test/primitive_points.cpp                                  */
+/*  module     :  hugh/render/software/primitive/line_strip.cpp                                   */
 /*  project    :                                                                                  */
 /*  description:                                                                                  */
 /*                                                                                                */
 /**************************************************************************************************/
+
+// include i/f header
+
+#include "hugh/render/software/primitive/line_strip.hpp"
 
 // includes, system
 
@@ -18,7 +22,7 @@
 
 // includes, project
 
-#include <hugh/render/software/primitive/points.hpp>
+//#include <>
 
 #define HUGH_USE_TRACE
 #undef HUGH_USE_TRACE
@@ -36,14 +40,35 @@ namespace {
 
 } // namespace {
 
-#define BOOST_TEST_MAIN
-#include <boost/test/unit_test.hpp>
+namespace hugh {
 
-BOOST_AUTO_TEST_CASE(test_hugh_render_software_primitive_points_ctor)
-{
-  using namespace hugh::render::software;
+  namespace render {
 
-  primitive::points const p;
+    namespace software {
+
+      namespace primitive {
+        
+        // variables, exported
   
-  BOOST_CHECK(true);
-}
+        // functions, exported
+
+        /* explicit */
+        line_strip::line_strip(vertex_list_type const& a, index_list_type const& b)
+          : base(primitive::topology::line_strip, a, b)
+        {
+          TRACE("hugh::render::software::primitive::line_strip::line_strip");
+        }
+        
+        /* virtual */
+        line_strip::~line_strip()
+        {
+          TRACE("hugh::render::software::primitive::line_strip::~line_strip");
+        }
+        
+      } // namespace primitive {
+      
+    } // namespace software {
+
+  } // namespace render {
+  
+} // namespace hugh {

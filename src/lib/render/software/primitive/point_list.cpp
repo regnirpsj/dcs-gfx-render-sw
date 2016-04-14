@@ -6,27 +6,39 @@
 /*                                                                                                */
 /**************************************************************************************************/
 /*                                                                                                */
-/*  module     :  hugh/render/software/primitives.hpp                                             */
+/*  module     :  hugh/render/software/primitive/point_list.cpp                                   */
 /*  project    :                                                                                  */
 /*  description:                                                                                  */
 /*                                                                                                */
 /**************************************************************************************************/
 
-#if !defined(HUGH_RENDER_SOFTWARE_PRIMITIVES_HPP)
+// include i/f header
 
-#define HUGH_RENDER_SOFTWARE_PRIMITIVES_HPP
+#include "hugh/render/software/primitive/point_list.hpp"
 
 // includes, system
 
-// #include <>
+//#include <>
 
 // includes, project
 
-#include <hugh/render/software/primitive/line_list.hpp>
-#include <hugh/render/software/primitive/line_strip.hpp>
-#include <hugh/render/software/primitive/point_list.hpp>
-#include <hugh/render/software/primitive/triangle_list.hpp>
-#include <hugh/render/software/primitive/triangle_strip.hpp>
+//#include <>
+
+#define HUGH_USE_TRACE
+#undef HUGH_USE_TRACE
+#include <hugh/support/trace.hpp>
+
+// internal unnamed namespace
+
+namespace {
+  
+  // types, internal (class, enum, struct, union, typedef)
+
+  // variables, internal
+  
+  // functions, internal
+
+} // namespace {
 
 namespace hugh {
 
@@ -36,14 +48,23 @@ namespace hugh {
 
       namespace primitive {
         
-        // types, exported (class, enum, struct, union, typedef)
-
-        // variables, exported (extern)
-
-        // functions, inlined (inline)
+        // variables, exported
   
-        // functions, exported (extern)
+        // functions, exported
 
+        /* explicit */
+        point_list::point_list(vertex_list_type const& a, index_list_type const& b)
+          : base(primitive::topology::point_list, a, b)
+        {
+          TRACE("hugh::render::software::primitive::point_list::point_list");
+        }
+        
+        /* virtual */
+        point_list::~point_list()
+        {
+          TRACE("hugh::render::software::primitive::point_list::~point_list");
+        }
+        
       } // namespace primitive {
       
     } // namespace software {
@@ -51,5 +72,3 @@ namespace hugh {
   } // namespace render {
   
 } // namespace hugh {
-
-#endif // #if !defined(HUGH_RENDER_SOFTWARE_PRIMITIVES_HPP)

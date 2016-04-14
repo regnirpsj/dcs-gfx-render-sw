@@ -6,39 +6,23 @@
 /*                                                                                                */
 /**************************************************************************************************/
 /*                                                                                                */
-/*  module     :  hugh/render/software/primitive/triangles.cpp                                    */
+/*  module     :  hugh/render/software/primitive/line_list.hpp                                    */
 /*  project    :                                                                                  */
 /*  description:                                                                                  */
 /*                                                                                                */
 /**************************************************************************************************/
 
-// include i/f header
+#if !defined(HUGH_RENDER_SOFTWARE_PRIMITIVE_LINE_LIST_HPP)
 
-#include "hugh/render/software/primitive/triangles.hpp"
+#define HUGH_RENDER_SOFTWARE_PRIMITIVE_LINE_LIST_HPP
 
 // includes, system
 
-//#include <>
+// #include <>
 
 // includes, project
 
-//#include <>
-
-#define HUGH_USE_TRACE
-#undef HUGH_USE_TRACE
-#include <hugh/support/trace.hpp>
-
-// internal unnamed namespace
-
-namespace {
-  
-  // types, internal (class, enum, struct, union, typedef)
-
-  // variables, internal
-  
-  // functions, internal
-
-} // namespace {
+#include <hugh/render/software/primitive/base.hpp>
 
 namespace hugh {
 
@@ -48,22 +32,23 @@ namespace hugh {
 
       namespace primitive {
         
-        // variables, exported
-  
-        // functions, exported
+        // types, exported (class, enum, struct, union, typedef)
 
-        /* explicit */
-        triangles::triangles()
-          : base(primitive::topology::triangle_list)
-        {
-          TRACE("hugh::render::software::primitive::triangles::triangles");
-        }
+        class HUGH_RENDER_SOFTWARE_EXPORT line_list : public base {
+
+        public:
+
+          explicit line_list(vertex_list_type const& /* vertices */,
+                             index_list_type const&  /* indices  */ = index_list_type());
+          virtual ~line_list();
+
+        };
         
-        /* virtual */
-        triangles::~triangles()
-        {
-          TRACE("hugh::render::software::primitive::triangles::~triangles");
-        }
+        // variables, exported (extern)
+
+        // functions, inlined (inline)
+  
+        // functions, exported (extern)
 
       } // namespace primitive {
       
@@ -72,3 +57,5 @@ namespace hugh {
   } // namespace render {
   
 } // namespace hugh {
+
+#endif // #if !defined(HUGH_RENDER_SOFTWARE_PRIMITIVE_LINE_LIST_HPP)
