@@ -65,6 +65,9 @@ BOOST_AUTO_TEST_CASE(test_hugh_render_software_rasterizer_simple_process_line)
   using namespace hugh::render::software;
   using viewport = hugh::scene::object::camera::viewport;
 
+  static attribute::list const al0({ {attribute::type::color, glm::vec4(1,0,0,1) }, });
+  static attribute::list const al1({ {attribute::type::color, glm::vec4(0,1,0,1) }, });
+
   viewport const  v(0, 0,  4,  3); // adj:  0
   //viewport const  v(0, 0,  8,  6); // adj: -1
   //viewport const  v(0, 0, 16, 12); // adj: -3
@@ -88,8 +91,8 @@ BOOST_AUTO_TEST_CASE(test_hugh_render_software_rasterizer_simple_process_line)
       { line(vertex(o), vertex(  z)),          1 }, { line(vertex(  z), vertex(o)),          1 },
       { line(vertex(o), vertex( -z)),          1 }, { line(vertex( -z), vertex(o)),          1 },
       { line(vertex(z), vertex( -z)),          1 }, { line(vertex( -z), vertex(z)),          1 },
-      { line(vertex(o), vertex(x+y)),          d }, { line(vertex(x+y), vertex(o)),          d },
-      { line(vertex(y), vertex(  x)),          d }, { line(vertex(  x), vertex(y)),          d },
+      { line(vertex(o, al0), vertex(x+y, al1)),d }, { line(vertex(x+y, al0), vertex(o, al1)),d },
+      { line(vertex(y, al0), vertex(  x, al1)),d }, { line(vertex(  x, al0), vertex(y, al1)),d },
     }
   };
   
@@ -104,11 +107,14 @@ BOOST_AUTO_TEST_CASE(test_hugh_render_software_rasterizer_simple_process_line)
 
     {
       std::ostringstream ostr;
-      
+
+      using hugh::support::ostream::delimeter;
       using hugh::support::ostream::operator<<;
 
-      ostr << lp.second << "=?=" << fl.size() << ':'
-           << glm::io::width(2) << glm::io::precision(0) << fl;
+      ostr << lp.second << "=?=" << fl.size() << ":\n"
+           << glm::io::width(4) << glm::io::precision(2)
+           << delimeter<char>('(', ')', '\n')
+           << fl;
       
       BOOST_TEST_MESSAGE(ostr.str());
     }
@@ -129,12 +135,16 @@ BOOST_AUTO_TEST_CASE(test_hugh_render_software_rasterizer_simple_process_triangl
   using namespace hugh::render::software;
   using viewport = hugh::scene::object::camera::viewport;
 
-  //viewport const  v(0, 0,  4,  3); // adj: +1, -2
-  viewport const  v(0, 0,  8,  6); // adj: +2, -3
+  static attribute::list const al0({ {attribute::type::color, glm::vec4(1,0,0,1) }, });
+  static attribute::list const al1({ {attribute::type::color, glm::vec4(0,1,0,1) }, });
+  static attribute::list const al2({ {attribute::type::color, glm::vec4(0,0,1,1) }, });
+  
+  viewport const  v(0, 0,  4,  3); // adj: +1, -2
+  //viewport const  v(0, 0,  8,  6); // adj: +2, -3
   //viewport const  v(0, 0, 16, 12); // adj: +3
   //viewport const  v(0, 0, 24, 18); // adj: +4
   //viewport const  v(0, 0, 40, 30); // adj: +6
-  unsigned const  a((((v.width+1) * (v.height+1)) / 2) + 2);
+  unsigned const  a((((v.width+1) * (v.height+1)) / 2) + 1);
   glm::vec3 const o(      0,        0, 0);
   glm::vec3 const x(v.width,        0, 0);
   glm::vec3 const y(      0, v.height, 0);
@@ -160,14 +170,14 @@ BOOST_AUTO_TEST_CASE(test_hugh_render_software_rasterizer_simple_process_triangl
       { triangle(vertex(  y), vertex(x), vertex(x+y)), a },
       { triangle(vertex(x+y), vertex(x), vertex(  y)), 0 },
 
-      { triangle(vertex(     o), vertex(two(x)), vertex(two(y))), (2.f*a)-3 },
+      { triangle(vertex(     o), vertex(two(x)), vertex(two(y))), (2.f*a)-2 },
       { triangle(vertex(     o), vertex( 2.f*y), vertex( 2.f*x)),         0 },
       
-      { triangle(vertex(two(x)), vertex(two(y)), vertex(o)), (2.f*a)-3 },
+      { triangle(vertex(two(x)), vertex(two(y)), vertex(o)), (2.f*a)-2 },
       { triangle(vertex( 2.f*y), vertex( 2.f*x), vertex(o)),         0 },
       
-      { triangle(vertex(two(y)), vertex(o), vertex(two(x))), (2.f*a)-3 },
-      { triangle(vertex( 2.f*x), vertex(o), vertex( 2.f*y)),         0 },
+      { triangle(vertex(two(y), al0), vertex(o, al1), vertex(two(x), al2)), (2.f*a)-2 },
+      { triangle(vertex( 2.f*x, al0), vertex(o, al1), vertex( 2.f*y, al2)),         0 },
     }
   };
   
@@ -182,11 +192,14 @@ BOOST_AUTO_TEST_CASE(test_hugh_render_software_rasterizer_simple_process_triangl
 
     {
       std::ostringstream ostr;
-      
+
+      using hugh::support::ostream::delimeter;
       using hugh::support::ostream::operator<<;
 
       ostr << tp.second << "=?=" << fl.size() << ':'
-           << glm::io::width(2) << glm::io::precision(0) << fl;
+           << glm::io::width(4) << glm::io::precision(2)
+           << delimeter<char>('(', ')', '\n')
+           << fl;
       
       BOOST_TEST_MESSAGE(ostr.str());
     }
