@@ -78,6 +78,10 @@ before_script:
   - ${FETCHREPO} http://github.com/regnirpsj/hugh-fields.git ${HUGH_FIELDS_ROOT_DIR}
   - cd ${HUGH_FIELDS_ROOT_DIR} && mkdir build && cd build
   - cmake .. && cmake --build . --target install
+  - export HUGH_PLATFORM_ROOT_DIR=${TRAVIS_BUILD_DIR}/extra/hugh-platform
+  - ${FETCHREPO} http://github.com/regnirpsj/hugh-platform.git ${HUGH_PLATFORM_ROOT_DIR}
+  - cd ${HUGH_PLATFORM_ROOT_DIR} && mkdir build && cd build
+  - cmake .. && cmake --build . --target install
   - export HUGH_SCENE_ROOT_DIR=${TRAVIS_BUILD_DIR}/extra/hugh-scene
   - ${FETCHREPO} http://github.com/regnirpsj/hugh-scene.git ${HUGH_SCENE_ROOT_DIR}
   - cd ${HUGH_SCENE_ROOT_DIR} && mkdir build && cd build
