@@ -18,6 +18,7 @@
 
 // includes, system
 
+#include <iosfwd> // std::ostream (fwd decl)
 #include <vector> // std::vector<>
 
 // includes, project
@@ -36,7 +37,7 @@ namespace hugh {
         
         // types, exported (class, enum, struct, union, typedef)
 
-        enum class type { points, lines, triangles, };
+        enum class topology { point_list, line_list, line_strip, triangle_list, triangle_strip, };
         
         class HUGH_RENDER_SOFTWARE_EXPORT base : public support::printable {
 
@@ -45,9 +46,9 @@ namespace hugh {
           using vertex_list_type = std::vector<vertex>;
           using index_list_type  = std::vector<unsigned>;
           
-          primitive::type const  type;
-          vertex_list_type const vertices;
-          index_list_type const  indices;
+          primitive::topology const  topology;
+          vertex_list_type const     vertices;
+          index_list_type const      indices;
           
           virtual ~base();
 
@@ -55,7 +56,7 @@ namespace hugh {
 
         protected:
 
-          explicit base(primitive::type);
+          explicit base(primitive::topology);
           
         };
         
@@ -65,6 +66,8 @@ namespace hugh {
   
         // functions, exported (extern)
 
+        HUGH_RENDER_SOFTWARE_EXPORT std::ostream& operator<<(std::ostream&, topology const&);
+        
       } // namespace primitive_base {
       
     } // namespace software {

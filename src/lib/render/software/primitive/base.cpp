@@ -64,15 +64,40 @@ namespace hugh {
           TRACE_NEVER("hugh::render::software::primitive::base::print_on");
 
           os << '['
-             << "t:" << unsigned(type) << ','
+             << "t:" << topology << ','
              << ']';
         }
         
         /* explicit */
-        base::base(primitive::type a)
-          : support::printable(), type(a)
+        base::base(primitive::topology a)
+          : support::printable(), topology(a)
         {
           TRACE("hugh::render::software::primitive::base::base");
+        }
+
+        std::ostream&
+        operator<<(std::ostream& os, topology const& a)
+        {
+          TRACE_NEVER("hugh::render::software::primitive::operator<<(topology)");
+
+          std::ostream::sentry const cerberus(os);
+
+          if (cerberus) {
+            os << '[';
+            
+            switch (a) {
+            case primitive::topology::point_list:     os << "POINT_LIST";     break;
+            case primitive::topology::line_list:      os << "LINE_LIST";      break;
+            case primitive::topology::line_strip:     os << "LINE_STRIP";     break;
+            case primitive::topology::triangle_list:  os << "TRIANGLE_LIST";  break;
+            case primitive::topology::triangle_strip: os << "TRIANGLE_STRIP"; break;
+            default: os << "UNKNOWN (" << unsigned(a) << ')'; break;
+            }
+
+            os << ']';
+          }
+
+          return os;
         }
         
       } // namespace primitive {

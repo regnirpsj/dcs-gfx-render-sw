@@ -54,7 +54,7 @@ namespace hugh {
 
         /* explicit */
         points::points()
-          : base(primitive::type::points)
+          : base(primitive::topology::point_list)
         {
           TRACE("hugh::render::software::primitive::points::points");
         }

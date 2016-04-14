@@ -54,7 +54,7 @@ namespace hugh {
 
         /* explicit */
         lines::lines()
-          : base(primitive::type::lines)
+          : base(primitive::topology::line_list)
         {
           TRACE("hugh::render::software::primitive::lines::lines");
         }

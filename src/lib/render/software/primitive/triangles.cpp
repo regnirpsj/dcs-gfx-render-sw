@@ -54,7 +54,7 @@ namespace hugh {
 
         /* explicit */
         triangles::triangles()
-          : base(primitive::type::triangles)
+          : base(primitive::topology::triangle_list)
         {
           TRACE("hugh::render::software::primitive::triangles::triangles");
         }

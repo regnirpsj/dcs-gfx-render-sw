@@ -88,50 +88,99 @@ namespace hugh {
 
           fragment_list_type fragments;
           
-          switch (p.type) {
-          case primitive::type::points:
+          switch (p.topology) {
+          case primitive::topology::point_list:
             {
-              for (unsigned i(0); i < p.indices.size(); i += 1) {
-                fragment_list_type const
-                  fl((*rasterizer)->process(vertices[p.indices[i]]));
+              if (p.indices.empty()) {
+                for (auto const& v : p.vertices) {
+                  fragment_list_type const fl((*rasterizer)->process(v));
 
-                fragments.insert(fragments.end(), fl.begin(), fl.end());
+                  fragments.insert(fragments.end(), fl.begin(), fl.end());
 
-                count_.fragments[0] += fl.size();
+                  count_.fragments[0] += fl.size();
+                }
+              } else {
+                for (auto const& i : p.indices) {
+                  fragment_list_type const fl((*rasterizer)->process(vertices[i]));
+
+                  fragments.insert(fragments.end(), fl.begin(), fl.end());
+
+                  count_.fragments[0] += fl.size();
+                }
               }
             }
             break;
 
-          case primitive::type::lines:
+          case primitive::topology::line_list:
             {
-              for (unsigned i(0); i < p.indices.size(); i += 2) {
-                fragment_list_type const
-                  fl((*rasterizer)->process(line(vertices[p.indices[i+0]],
-                                                 vertices[p.indices[i+1]])));
-
-                fragments.insert(fragments.end(), fl.begin(), fl.end());
-
-                count_.fragments[0] += fl.size();
+              if (p.indices.empty()) {
+                for (unsigned i(0); i < p.vertices.size(); i += 2) {
+                  fragment_list_type const
+                    fl((*rasterizer)->process(line(vertices[i+0],
+                                                   vertices[i+1])));
+                  
+                  fragments.insert(fragments.end(), fl.begin(), fl.end());
+                  
+                  count_.fragments[0] += fl.size();
+                }
+              } else {
+                for (unsigned i(0); i < p.indices.size(); i += 2) {
+                  fragment_list_type const
+                    fl((*rasterizer)->process(line(vertices[p.indices[i+0]],
+                                                   vertices[p.indices[i+1]])));
+                  
+                  fragments.insert(fragments.end(), fl.begin(), fl.end());
+                  
+                  count_.fragments[0] += fl.size();
+                }
               }
             }
             break;
 
-          case primitive::type::triangles:
+          case primitive::topology::line_strip:
             {
-              for (unsigned i(0); i < p.indices.size(); i += 3) {
-                fragment_list_type const
-                  fl((*rasterizer)->process(triangle(vertices[p.indices[i+0]],
-                                                     vertices[p.indices[i+1]],
-                                                     vertices[p.indices[i+2]])));
+              throw "not implemented yet";
+            }
+            break;
+            
+          case primitive::topology::triangle_list:
+            {
+              if (p.indices.empty()) {
+                for (unsigned i(0); i < p.vertices.size(); i += 3) {
+                  fragment_list_type const
+                    fl((*rasterizer)->process(triangle(vertices[i+0],
+                                                       vertices[i+1],
+                                                       vertices[i+2])));
 
-                fragments.insert(fragments.end(), fl.begin(), fl.end());
+                  fragments.insert(fragments.end(), fl.begin(), fl.end());
 
-                count_.fragments[0] += fl.size();
+                  count_.fragments[0] += fl.size();
+                }
+              } else {
+                for (unsigned i(0); i < p.indices.size(); i += 3) {
+                  fragment_list_type const
+                    fl((*rasterizer)->process(triangle(vertices[p.indices[i+0]],
+                                                       vertices[p.indices[i+1]],
+                                                       vertices[p.indices[i+2]])));
+
+                  fragments.insert(fragments.end(), fl.begin(), fl.end());
+
+                  count_.fragments[0] += fl.size();
+                }
               }
             }
             break;
 
+          case primitive::topology::triangle_strip:
+            {
+              throw "not implemented yet";
+            }
+            break;
+            
           default:
+            {
+              throw "unrecognized primitive topology";
+            }
             break;
           }
 
