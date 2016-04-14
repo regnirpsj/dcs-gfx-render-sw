@@ -18,11 +18,12 @@
 
 // includes, system
 
-// #include <>
+#include <vector> // std::vector<>
 
 // includes, project
 
 #include <hugh/render/software/export.h>
+#include <hugh/render/software/vertex.hpp>
 #include <hugh/support/printable.hpp>
 
 namespace hugh {
@@ -41,7 +42,12 @@ namespace hugh {
 
         public:
 
-          primitive::type const type;
+          using vertex_list_type = std::vector<vertex>;
+          using index_list_type  = std::vector<unsigned>;
+          
+          primitive::type const  type;
+          vertex_list_type const vertices;
+          index_list_type const  indices;
           
           virtual ~base();
 
