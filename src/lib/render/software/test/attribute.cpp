@@ -70,7 +70,11 @@ BOOST_AUTO_TEST_CASE(test_hugh_render_software_attribute_list)
 {
   using namespace hugh::render::software;
 
-  attribute::list const l;
+  attribute::list const l({ { attribute::type::position,  glm::vec4() },
+                            { attribute::type::normal,    glm::vec4() },
+                            { attribute::type::color,     glm::vec4() },
+                            { attribute::type::texcoord,  glm::vec4() },
+                            { attribute::type::bitangent, glm::vec4() }, });
   std::ostringstream    ostr;
 
   using hugh::support::ostream::operator<<;
