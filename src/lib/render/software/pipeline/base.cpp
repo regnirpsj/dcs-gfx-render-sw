@@ -79,7 +79,8 @@ namespace hugh {
             material                 (*this, "material"),
             rasterizer               (*this, "rasterizer",  nullptr),
             depthbuffer              (*this, "depthbuffer", nullptr),
-            framebuffer              (*this, "framebuffer", nullptr)
+            framebuffer              (*this, "framebuffer", nullptr),
+            count_                   ()
         {
           TRACE("hugh::render::software::pipeline::base::base");
         }

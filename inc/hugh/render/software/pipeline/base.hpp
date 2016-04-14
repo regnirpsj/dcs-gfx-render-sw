@@ -71,13 +71,24 @@ namespace hugh {
           
         protected:
 
+          struct counter {
+
+          public:
+
+            unsigned fragments[2];
+            unsigned vertices;
+            
+          };
+
+          counter count_;
+          
           explicit base();
 
           glm::vec4 object_to_world(glm::vec4 const&) const;
           glm::vec4 world_to_eye   (glm::vec4 const&) const;
           glm::vec4 eye_to_clip    (glm::vec4 const&) const;
           glm::vec3 clip_to_ndc    (glm::vec4 const&) const;
-    
+          
         };
         
         // variables, exported (extern)
