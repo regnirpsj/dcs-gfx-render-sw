@@ -18,7 +18,7 @@
 
 // includes, system
 
-//#include <>
+#include <stdexcept> // std::logic_error, std::out_of_range
 
 // includes, project
 
@@ -57,7 +57,17 @@ namespace hugh {
           : base(primitive::topology::triangle_list, a, b)
         {
           TRACE("hugh::render::software::primitive::triangle_list::triangle_list");
-        }
+          
+          if (3 > vertices.size()) {
+            throw std::out_of_range("<render::software::primitive::triangle_list>: "
+                                    "requires at least 3 vertices");
+          }
+          
+          if (vertices.size() % 3) {
+            throw std::logic_error("<render::software::primitive::triangle_list>: "
+                                   "requires number of vertices divisible by 3");
+          }
+       }
         
         /* virtual */
         triangle_list::~triangle_list()

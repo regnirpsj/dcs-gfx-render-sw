@@ -42,23 +42,33 @@ namespace {
 BOOST_AUTO_TEST_CASE(test_hugh_render_software_primitive_point_list_ctor)
 {
   using namespace hugh::render::software;
-  using vertex_list_type = primitive::point_list::vertex_list_type;
+  using point_list  = primitive::point_list;
+  using vertex_list = point_list::vertex_list_type;
 
-  vertex_list_type const      v;
-  primitive::point_list const p(v);
-  
-  BOOST_CHECK(p.vertices.empty());
-  BOOST_CHECK(p.indices.empty());
+  {
+    vertex_list const v;
+    
+    BOOST_REQUIRE_THROW(point_list const p(v), std::exception);
+  }
+
+  {
+    vertex_list const v(1, vertex(glm::vec3()));
+    point_list const  p(v);
+    
+    BOOST_CHECK(1 == p.vertices.size());
+    BOOST_CHECK(     p.indices.empty());
+  }
 }
 
 BOOST_AUTO_TEST_CASE(test_hugh_render_software_primitive_point_list_print_on)
 {
   using namespace hugh::render::software;
-  using vertex_list_type = primitive::point_list::vertex_list_type;
+  using point_list  = primitive::point_list;
+  using vertex_list = point_list::vertex_list_type;
 
-  vertex_list_type const      v;
-  primitive::point_list const p(v);
-  std::ostringstream          ostr;
+  vertex_list const  v(1, vertex(glm::vec3()));
+  point_list const   p(v);
+  std::ostringstream ostr;
 
   ostr << p;
 

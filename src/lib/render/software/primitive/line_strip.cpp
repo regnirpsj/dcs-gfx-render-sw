@@ -18,7 +18,7 @@
 
 // includes, system
 
-//#include <>
+#include <stdexcept> // std::out_of_range
 
 // includes, project
 
@@ -57,6 +57,11 @@ namespace hugh {
           : base(primitive::topology::line_strip, a, b)
         {
           TRACE("hugh::render::software::primitive::line_strip::line_strip");
+          
+          if (2 > vertices.size()) {
+            throw std::out_of_range("<render::software::primitive::line_strip>: "
+                                    "requires at least 2 vertices");
+          }
         }
         
         /* virtual */

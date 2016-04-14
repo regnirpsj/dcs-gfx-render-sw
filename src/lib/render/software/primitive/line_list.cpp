@@ -18,7 +18,7 @@
 
 // includes, system
 
-//#include <>
+#include <stdexcept> // std::logic_error, std::out_of_range
 
 // includes, project
 
@@ -57,6 +57,16 @@ namespace hugh {
           : base(primitive::topology::line_list, a, b)
         {
           TRACE("hugh::render::software::primitive::line_list::line_list");
+          
+          if (2 > vertices.size()) {
+            throw std::out_of_range("<render::software::primitive::line_list>: "
+                                    "requires at least 2 vertices");
+          }
+
+          if (vertices.size() % 2) {
+            throw std::logic_error("<render::software::primitive::line_list>: "
+                                   "requires number of vertices divisible by 2");
+          }
         }
         
         /* virtual */

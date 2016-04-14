@@ -42,23 +42,33 @@ namespace {
 BOOST_AUTO_TEST_CASE(test_hugh_render_software_primitive_line_strip_ctor)
 {
   using namespace hugh::render::software;
-  using vertex_list_type = primitive::line_strip::vertex_list_type;
+  using line_strip  = primitive::line_strip;
+  using vertex_list = line_strip::vertex_list_type;
 
-  vertex_list_type const      v;
-  primitive::line_strip const p(v);
-  
-  BOOST_CHECK(p.vertices.empty());
-  BOOST_CHECK(p.indices.empty());
+  {
+    vertex_list const v;
+    
+    BOOST_REQUIRE_THROW(line_strip const p(v), std::exception);
+  }
+
+  {
+    vertex_list const v(2, vertex(glm::vec3()));
+    line_strip const  p(v);
+    
+    BOOST_CHECK(2 == p.vertices.size());
+    BOOST_CHECK(     p.indices.empty());
+  }
 }
 
 BOOST_AUTO_TEST_CASE(test_hugh_render_software_primitive_line_strip_print_on)
 {
   using namespace hugh::render::software;
-  using vertex_list_type = primitive::line_strip::vertex_list_type;
+  using line_strip  = primitive::line_strip;
+  using vertex_list = line_strip::vertex_list_type;
 
-  vertex_list_type const      v;
-  primitive::line_strip const p(v);
-  std::ostringstream          ostr;
+  vertex_list const  v(2, vertex(glm::vec3()));
+  line_strip const   p(v);
+  std::ostringstream ostr;
 
   ostr << p;
 

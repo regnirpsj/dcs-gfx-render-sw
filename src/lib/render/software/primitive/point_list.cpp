@@ -18,7 +18,7 @@
 
 // includes, system
 
-//#include <>
+#include <stdexcept> // std::out_of_range
 
 // includes, project
 
@@ -57,6 +57,11 @@ namespace hugh {
           : base(primitive::topology::point_list, a, b)
         {
           TRACE("hugh::render::software::primitive::point_list::point_list");
+
+          if (1 > vertices.size()) {
+            throw std::out_of_range("<render::software::primitive::point_list>: "
+                                    "requires at least 1 vertex");
+          }
         }
         
         /* virtual */

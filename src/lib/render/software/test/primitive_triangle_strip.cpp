@@ -42,23 +42,33 @@ namespace {
 BOOST_AUTO_TEST_CASE(test_hugh_render_software_primitive_triangle_strip_ctor)
 {
   using namespace hugh::render::software;
-  using vertex_list_type = primitive::triangle_strip::vertex_list_type;
+  using triangle_strip = primitive::triangle_strip;
+  using vertex_list    = triangle_strip::vertex_list_type;
 
-  vertex_list_type const          v;
-  primitive::triangle_strip const p(v);
-  
-  BOOST_CHECK(p.vertices.empty());
-  BOOST_CHECK(p.indices.empty());
+  {
+    vertex_list const v;
+    
+    BOOST_REQUIRE_THROW(triangle_strip const p(v), std::exception);
+  }
+
+  {
+    vertex_list const    v(3, vertex(glm::vec3()));
+    triangle_strip const p(v);
+    
+    BOOST_CHECK(3 == p.vertices.size());
+    BOOST_CHECK(     p.indices.empty());
+  }
 }
 
 BOOST_AUTO_TEST_CASE(test_hugh_render_software_primitive_triangle_strip_print_on)
 {
   using namespace hugh::render::software;
-  using vertex_list_type = primitive::triangle_strip::vertex_list_type;
+  using triangle_strip = primitive::triangle_strip;
+  using vertex_list    = triangle_strip::vertex_list_type;
 
-  vertex_list_type const          v;
-  primitive::triangle_strip const p(v);
-  std::ostringstream              ostr;
+  vertex_list const    v(3, vertex(glm::vec3()));
+  triangle_strip const p(v);
+  std::ostringstream   ostr;
 
   ostr << p;
 

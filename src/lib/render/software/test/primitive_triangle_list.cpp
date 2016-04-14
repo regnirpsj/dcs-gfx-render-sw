@@ -42,23 +42,39 @@ namespace {
 BOOST_AUTO_TEST_CASE(test_hugh_render_software_primitive_triangle_list_ctor)
 {
   using namespace hugh::render::software;
-  using vertex_list_type = primitive::triangle_list::vertex_list_type;
+  using triangle_list = primitive::triangle_list;
+  using vertex_list   = triangle_list::vertex_list_type;
 
-  vertex_list_type const         v;
-  primitive::triangle_list const p(v);
-  
-  BOOST_CHECK(p.vertices.empty());
-  BOOST_CHECK(p.indices.empty());
+  {
+    vertex_list const v;
+    
+    BOOST_REQUIRE_THROW(triangle_list const p(v), std::exception);
+  }
+
+  {
+    vertex_list const v(4, vertex(glm::vec3()));
+    
+    BOOST_REQUIRE_THROW(triangle_list const p(v), std::exception);
+  }
+
+  {
+    vertex_list const   v(3, vertex(glm::vec3()));
+    triangle_list const p(v);
+    
+    BOOST_CHECK(3 == p.vertices.size());
+    BOOST_CHECK(     p.indices.empty());
+  }
 }
 
 BOOST_AUTO_TEST_CASE(test_hugh_render_software_primitive_triangle_list_print_on)
 {
   using namespace hugh::render::software;
-  using vertex_list_type = primitive::triangle_list::vertex_list_type;
+  using triangle_list = primitive::triangle_list;
+  using vertex_list   = triangle_list::vertex_list_type;
 
-  vertex_list_type const         v;
-  primitive::triangle_list const p(v);
-  std::ostringstream             ostr;
+  vertex_list const   v(3, vertex(glm::vec3()));
+  triangle_list const p(v);
+  std::ostringstream  ostr;
 
   ostr << p;
 
