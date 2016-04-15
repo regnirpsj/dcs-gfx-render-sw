@@ -69,10 +69,12 @@ namespace hugh {
         /* virtual */ void
         fixed::process(primitive::base const& p)
         {
-          TRACE_ALWAYS("hugh::render::software::pipeline::fixed::process");
+          TRACE("hugh::render::software::pipeline::fixed::process(" +
+                std::to_string(unsigned(p.topology)) + ")");
 
-          using vertex_list_type = primitive::base::vertex_list_type;
-
+          using topology = primitive::topology;
+          
+          statistics       lstats;
           vertex_list_type vertices;
           
           for (auto const& v : p.vertices) {
@@ -81,149 +83,37 @@ namespace hugh {
                   v.attributes);
             
             vertices.push_back(tmp);
-
-            ++count_.vertices.processed;
           }
 
-          using fragment_list_type = rasterizer::base::fragment_list_type;
+          lstats.vertices.processed += vertices.size();
 
           fragment_list_type fragments;
-          
+
           switch (p.topology) {
-          case primitive::topology::point_list:
-            {
-              if (p.indices.empty()) {
-                for (auto const& v : p.vertices) {
-                  fragment_list_type const fl((*rasterizer)->process(v));
-
-                  fragments.insert(fragments.end(), fl.begin(), fl.end());
-
-                  count_.fragments.created += fl.size();
-                }
-              } else {
-                for (auto const& i : p.indices) {
-                  fragment_list_type const fl((*rasterizer)->process(vertices[i]));
-
-                  fragments.insert(fragments.end(), fl.begin(), fl.end());
-
-                  count_.fragments.created += fl.size();
-                }
-              }
-            }
-            break;
-
-          case primitive::topology::line_list:
-            {
-              if (p.indices.empty()) {
-                for (unsigned i(0); i < p.vertices.size(); i += 2) {
-                  fragment_list_type const
-                    fl((*rasterizer)->process(line(vertices[i+0],
-                                                   vertices[i+1])));
-                  
-                  fragments.insert(fragments.end(), fl.begin(), fl.end());
-                  
-                  count_.fragments.created += fl.size();
-                }
-              } else {
-                for (unsigned i(0); i < p.indices.size(); i += 2) {
-                  fragment_list_type const
-                    fl((*rasterizer)->process(line(vertices[p.indices[i+0]],
-                                                   vertices[p.indices[i+1]])));
-                  
-                  fragments.insert(fragments.end(), fl.begin(), fl.end());
-                  
-                  count_.fragments.created += fl.size();
-                }
-              }
-            }
-            break;
-
-          case primitive::topology::line_strip:
-            {
-              if (p.indices.empty()) {
-                for (unsigned i(0); i < p.vertices.size()-1; ++i) {
-                  fragment_list_type const
-                    fl((*rasterizer)->process(line(vertices[i+0],
-                                                   vertices[i+1])));
-                  
-                  fragments.insert(fragments.end(), fl.begin(), fl.end());
-                  
-                  count_.fragments.created += fl.size();
-                }
-              } else {
-                for (unsigned i(0); i < p.indices.size()-1; ++i) {
-                  fragment_list_type const
-                    fl((*rasterizer)->process(line(vertices[p.indices[i+0]],
-                                                   vertices[p.indices[i+1]])));
-                  
-                  fragments.insert(fragments.end(), fl.begin(), fl.end());
-                  
-                  count_.fragments.created += fl.size();
-                }
-              }
-            }
-            break;
+          case topology::point_list:
+            lstats.fragments.created +=
+              raster<topology::point_list>    (p.indices, vertices, fragments); break;
             
-          case primitive::topology::triangle_list:
-            {
-              if (p.indices.empty()) {
-                for (unsigned i(0); i < p.vertices.size(); i += 3) {
-                  fragment_list_type const
-                    fl((*rasterizer)->process(triangle(vertices[i+0],
-                                                       vertices[i+1],
-                                                       vertices[i+2])));
-
-                  fragments.insert(fragments.end(), fl.begin(), fl.end());
-
-                  count_.fragments.created += fl.size();
-                }
-              } else {
-                for (unsigned i(0); i < p.indices.size(); i += 3) {
-                  fragment_list_type const
-                    fl((*rasterizer)->process(triangle(vertices[p.indices[i+0]],
-                                                       vertices[p.indices[i+1]],
-                                                       vertices[p.indices[i+2]])));
-
-                  fragments.insert(fragments.end(), fl.begin(), fl.end());
-
-                  count_.fragments.created += fl.size();
-                }
-              }
-            }
-            break;
-
-          case primitive::topology::triangle_strip:
-            {
-              if (p.indices.empty()) {
-                for (unsigned i(0); i < p.vertices.size()-2; ++i) {
-                  fragment_list_type const
-                    fl((*rasterizer)->process(triangle(vertices[i+0],
-                                                       vertices[i+1],
-                                                       vertices[i+2])));
-                  
-                  fragments.insert(fragments.end(), fl.begin(), fl.end());
-                  
-                  count_.fragments.created += fl.size();
-                }
-              } else {
-                for (unsigned i(0); i < p.indices.size()-2; ++i) {
-                  fragment_list_type const
-                    fl((*rasterizer)->process(triangle(vertices[p.indices[i+0]],
-                                                       vertices[p.indices[i+1]],
-                                                       vertices[p.indices[i+2]])));
-                  
-                  fragments.insert(fragments.end(), fl.begin(), fl.end());
-                  
-                  count_.fragments.created += fl.size();
-                }
-              }
-            }
-            break;
+          case topology::line_list:
+            lstats.fragments.created +=
+              raster<topology::line_list>     (p.indices, vertices, fragments); break;
+            
+          case topology::line_strip:
+            lstats.fragments.created +=
+              raster<topology::line_strip>    (p.indices, vertices, fragments); break;
+            
+          case topology::triangle_list:
+            lstats.fragments.created +=
+              raster<topology::triangle_list> (p.indices, vertices, fragments); break;
+            
+          case topology::triangle_strip:
+            lstats.fragments.created +=
+              raster<topology::triangle_strip>(p.indices, vertices, fragments); break;
             
           default:
             {
               std::ostringstream ostr;
-
+              
               ostr << "<hugh::render::software::pipeline::fixed::process>: "
                    << "unrecognized primitive topology (" << unsigned(p.topology) << ")";
               
@@ -231,26 +121,24 @@ namespace hugh {
             }
             break;
           }
-
+          
           for (auto const& f : fragments) {
             if ((*depthbuffer)->update(f)) {
               (*colorbuffer)->update(f);
-
-              ++count_.fragments.updated;
+              
+              ++lstats.fragments.updated;
             }
           }
-
-#if 0
+          
+          const_cast<statistics&>(*stats) += lstats;
+          
+#if 1
           {
             std::cout << support::trace::prefix()
               // << "hugh::render::software::pipeline::fixed::process: "
-                      << p.topology << '\t'
-                      << "v:"
-                      << count_.vertices.processed
-                      << " -> f:"
-                      << count_.fragments.created
-                      << " -> p:"
-                      << count_.fragments.updated
+                      << p.topology
+                      << '\t' << lstats
+                      << '\t' << *stats
                       << '\n';
           }
 #endif

@@ -50,6 +50,27 @@ namespace hugh {
 
         public:
 
+          struct statistics {
+
+            struct {
+
+              unsigned created;
+              unsigned updated;
+              
+            } fragments;
+            
+            struct {
+              
+              unsigned processed;
+              
+            } vertices;
+
+            statistics();
+            
+            statistics& operator+=(statistics const&);
+            
+          };
+          
           using light_type        = hugh::scene::object::light::base::rep;
           using material_type     = hugh::scene::object::material::rep;
           using rasterizer_type   = boost::intrusive_ptr<rasterizer::base>;
@@ -64,38 +85,28 @@ namespace hugh {
           field::value::single<rasterizer_type>   rasterizer;
           field::value::single<color_buffer_type> colorbuffer;
           field::value::single<depth_buffer_type> depthbuffer;
+          field::value::single<statistics>        stats;
           
           virtual ~base();
 
           virtual void process(primitive::base const&) =0;
-          
-        protected:
-
-          struct counter {
-
-            struct fragment {
-
-              unsigned created;
-              unsigned updated;
-              
-            } fragments;
-            
-            struct vertex {
-              
-              unsigned processed;
-              
-            } vertices;
-            
-          };
-
-          counter count_;
-          
-          explicit base();
 
           glm::vec4 object_to_world(glm::vec4 const&) const;
           glm::vec4 world_to_eye   (glm::vec4 const&) const;
           glm::vec4 eye_to_clip    (glm::vec4 const&) const;
           glm::vec3 clip_to_ndc    (glm::vec4 const&) const;
+
+        protected:
+          
+          explicit base();
+          
+          using fragment_list_type = rasterizer::base::fragment_list_type;
+          using index_list_type    = primitive::base::index_list_type;
+          using vertex_list_type   = primitive::base::vertex_list_type;
+          
+          template <primitive::topology> unsigned raster(index_list_type const&  /* indices   */,
+                                                         vertex_list_type const& /* vertices  */,
+                                                         fragment_list_type&     /* fragments */);
           
         };
         
@@ -105,6 +116,30 @@ namespace hugh {
   
         // functions, exported (extern)
 
+        template <> HUGH_RENDER_SOFTWARE_EXPORT
+        unsigned base::raster<primitive::topology::point_list>    (index_list_type const&,
+                                                                   vertex_list_type const&,
+                                                                   fragment_list_type&);
+        template <> HUGH_RENDER_SOFTWARE_EXPORT
+        unsigned base::raster<primitive::topology::line_list>     (index_list_type const&,
+                                                                   vertex_list_type const&,
+                                                                   fragment_list_type&);
+        template <> HUGH_RENDER_SOFTWARE_EXPORT
+        unsigned base::raster<primitive::topology::line_strip>    (index_list_type const&,
+                                                                   vertex_list_type const&,
+                                                                   fragment_list_type&);
+        template <> HUGH_RENDER_SOFTWARE_EXPORT
+        unsigned base::raster<primitive::topology::triangle_list> (index_list_type const&,
+                                                                   vertex_list_type const&,
+                                                                   fragment_list_type&);
+        template <> HUGH_RENDER_SOFTWARE_EXPORT
+        unsigned base::raster<primitive::topology::triangle_strip>(index_list_type const&,
+                                                                   vertex_list_type const&,
+                                                                   fragment_list_type&);
+        
+        HUGH_RENDER_SOFTWARE_EXPORT
+        std::ostream& operator<<(std::ostream&, base::statistics const&);
+        
       } // namespace pipeline {
 
     } // namespace software {
