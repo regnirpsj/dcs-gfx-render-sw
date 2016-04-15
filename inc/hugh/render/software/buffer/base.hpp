@@ -18,11 +18,12 @@
 
 // includes, system
 
-// #include <>
+#include <glm/glm.hpp> // glm::*
 
 // includes, project
 
-#include <hugh/render/software/export.h>
+#include <hugh/render/software/fragment.hpp>
+#include <hugh/scene/object/camera/viewport.hpp>
 #include <hugh/support/refcounted.hpp>
 
 namespace hugh {
@@ -38,12 +39,19 @@ namespace hugh {
         class HUGH_RENDER_SOFTWARE_EXPORT base : public support::refcounted<base> {
 
         public:
+
+          using viewport_type = scene::object::camera::viewport;
           
           virtual ~base();
+
+          virtual void clear ()                =0;
+          virtual bool update(fragment const&) =0;
           
         protected:
 
-          explicit base();
+          viewport_type viewport_;
+          
+          explicit base(viewport_type const&);
     
         };
         

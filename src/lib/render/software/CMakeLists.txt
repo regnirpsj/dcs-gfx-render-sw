@@ -25,8 +25,8 @@ list(APPEND SRC triangle.cpp)
 list(APPEND SRC vertex.cpp)
 
 list(APPEND SRC buffer/base.cpp)
-list(APPEND SRC buffer/depth/base.cpp)
-list(APPEND SRC buffer/frame/base.cpp)
+list(APPEND SRC buffer/color.cpp)
+list(APPEND SRC buffer/depth.cpp)
 
 list(APPEND SRC pipeline/base.cpp)
 list(APPEND SRC pipeline/fixed.cpp)

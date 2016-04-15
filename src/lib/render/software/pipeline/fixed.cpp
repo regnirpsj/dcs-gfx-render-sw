@@ -68,7 +68,7 @@ namespace hugh {
         /* virtual */ void
         fixed::process(primitive::base const& p)
         {
-          TRACE("hugh::render::software::pipeline::fixed::process");
+          TRACE_ALWAYS("hugh::render::software::pipeline::fixed::process");
 
           using vertex_list_type = primitive::base::vertex_list_type;
 
@@ -81,7 +81,7 @@ namespace hugh {
             
             vertices.push_back(tmp);
 
-            ++count_.vertices;
+            ++count_.vertices.processed;
           }
 
           using fragment_list_type = rasterizer::base::fragment_list_type;
@@ -97,7 +97,7 @@ namespace hugh {
 
                   fragments.insert(fragments.end(), fl.begin(), fl.end());
 
-                  count_.fragments[0] += fl.size();
+                  count_.fragments.created += fl.size();
                 }
               } else {
                 for (auto const& i : p.indices) {
@@ -105,7 +105,7 @@ namespace hugh {
 
                   fragments.insert(fragments.end(), fl.begin(), fl.end());
 
-                  count_.fragments[0] += fl.size();
+                  count_.fragments.created += fl.size();
                 }
               }
             }
@@ -121,7 +121,7 @@ namespace hugh {
                   
                   fragments.insert(fragments.end(), fl.begin(), fl.end());
                   
-                  count_.fragments[0] += fl.size();
+                  count_.fragments.created += fl.size();
                 }
               } else {
                 for (unsigned i(0); i < p.indices.size(); i += 2) {
@@ -131,7 +131,7 @@ namespace hugh {
                   
                   fragments.insert(fragments.end(), fl.begin(), fl.end());
                   
-                  count_.fragments[0] += fl.size();
+                  count_.fragments.created += fl.size();
                 }
               }
             }
@@ -154,7 +154,7 @@ namespace hugh {
 
                   fragments.insert(fragments.end(), fl.begin(), fl.end());
 
-                  count_.fragments[0] += fl.size();
+                  count_.fragments.created += fl.size();
                 }
               } else {
                 for (unsigned i(0); i < p.indices.size(); i += 3) {
@@ -165,7 +165,7 @@ namespace hugh {
 
                   fragments.insert(fragments.end(), fl.begin(), fl.end());
 
-                  count_.fragments[0] += fl.size();
+                  count_.fragments.created += fl.size();
                 }
               }
             }
@@ -185,26 +185,29 @@ namespace hugh {
           }
 
           for (auto const& f : fragments) {
-#if 0
-            if (depthbuffer->test(f)) {
-              framebuffer->update(f);
+            if ((*depthbuffer)->update(f)) {
+              (*colorbuffer)->update(f);
 
-              ++count_.fragments[1];
+              ++count_.fragments.updated;
             }
-#endif
           }
 
-          std::cout << support::trace::prefix()
-                    << "hugh::render::software::pipeline::fixed::process: "
-                    << "v: "
-                    << count_.vertices
-                    << " -> f:"
-                    << count_.fragments[0]
-                    << " -> p:"
-                    << count_.fragments[1]
-                    << '\n';
+#if 1
+          {
+            std::cout << support::trace::prefix()
+                      << "hugh::render::software::pipeline::fixed::process: "
+                      << p.topology << '\t'
+                      << "v:"
+                      << count_.vertices.processed
+                      << " -> f:"
+                      << count_.fragments.created
+                      << " -> p:"
+                      << count_.fragments.updated
+                      << '\n';
+          }
+#endif
         }
-
+        
       } // namespace pipeline {
 
     } // namespace software {

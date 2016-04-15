@@ -6,39 +6,24 @@
 /*                                                                                                */
 /**************************************************************************************************/
 /*                                                                                                */
-/*  module     :  hugh/render/software/buffer/depth/base.cpp                                      */
+/*  module     :  hugh/render/software/buffer/color.hpp                                           */
 /*  project    :                                                                                  */
 /*  description:                                                                                  */
 /*                                                                                                */
 /**************************************************************************************************/
 
-// include i/f header
+#if !defined(HUGH_RENDER_SOFTWARE_BUFFER_COLOR_HPP)
 
-//#include "hugh/render/software/buffer/depth/base.hpp"
+#define HUGH_RENDER_SOFTWARE_BUFFER_COLOR_HPP
 
 // includes, system
 
-//#include <>
+#include <glm/glm.hpp> // glm::*
+#include <vector>      // std::vector<>
 
 // includes, project
 
-//#include <>
-
-#define HUGH_USE_TRACE
-#undef HUGH_USE_TRACE
-#include <hugh/support/trace.hpp>
-
-// internal unnamed namespace
-
-namespace {
-  
-  // types, internal (class, enum, struct, union, typedef)
-
-  // variables, internal
-  
-  // functions, internal
-
-} // namespace {
+#include <hugh/render/software/buffer/base.hpp>
 
 namespace hugh {
 
@@ -46,12 +31,41 @@ namespace hugh {
 
     namespace software {
       
-      // variables, exported
+      namespace buffer {
+        
+        // types, exported (class, enum, struct, union, typedef)
+
+        class HUGH_RENDER_SOFTWARE_EXPORT color : public base {
+
+        public:
+          
+          explicit color(viewport_type const& = viewport_type());
+          virtual ~color();
+
+          virtual void clear ();
+          virtual bool update(fragment const&);
+
+        private:
+
+          using buffer_type = std::vector<glm::vec4>;
+          
+          buffer_type::value_type const clear_value_;
+          buffer_type                   buffer_;
+          
+        };
+        
+        // variables, exported (extern)
+
+        // functions, inlined (inline)
   
-      // functions, exported
+        // functions, exported (extern)
+
+      } // namespace buffer {
 
     } // namespace software {
 
   } // namespace render {
   
 } // namespace hugh {
+
+#endif // #if !defined(HUGH_RENDER_SOFTWARE_BUFFER_COLOR_HPP)

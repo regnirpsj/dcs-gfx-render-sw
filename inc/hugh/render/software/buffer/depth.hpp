@@ -6,19 +6,20 @@
 /*                                                                                                */
 /**************************************************************************************************/
 /*                                                                                                */
-/*  module     :  hugh/render/software/buffer/frame/base.hpp                                      */
+/*  module     :  hugh/render/software/buffer/depth.hpp                                           */
 /*  project    :                                                                                  */
 /*  description:                                                                                  */
 /*                                                                                                */
 /**************************************************************************************************/
 
-#if !defined(HUGH_RENDER_SOFTWARE_BUFFER_FRAME_BASE_HPP)
+#if !defined(HUGH_RENDER_SOFTWARE_BUFFER_DEPTH_HPP)
 
-#define HUGH_RENDER_SOFTWARE_BUFFER_FRAME_BASE_HPP
+#define HUGH_RENDER_SOFTWARE_BUFFER_DEPTH_HPP
 
 // includes, system
 
-// #include <>
+#include <glm/gtc/vec1.hpp> // glm::vec1
+#include <vector>           // std::vector<>
 
 // includes, project
 
@@ -31,31 +32,34 @@ namespace hugh {
     namespace software {
       
       namespace buffer {
-
-        namespace frame {
-          
-          // types, exported (class, enum, struct, union, typedef)
-
-          class HUGH_RENDER_SOFTWARE_EXPORT base : public buffer::base {
-
-          public:
-          
-            virtual ~base();
-          
-          protected:
-
-            explicit base();
-    
-          };
         
-          // variables, exported (extern)
+        // types, exported (class, enum, struct, union, typedef)
 
-          // functions, inlined (inline)
+        class HUGH_RENDER_SOFTWARE_EXPORT depth : public base {
+
+        public:
+          
+          explicit depth(viewport_type const& = viewport_type());
+          virtual ~depth();
+
+          virtual void clear ();
+          virtual bool update(fragment const&);
+
+        private:
+
+          using buffer_type = std::vector<glm::vec1>;
+          
+          buffer_type::value_type const clear_value_;
+          buffer_type                   buffer_;
+          
+        };
+        
+        // variables, exported (extern)
+
+        // functions, inlined (inline)
   
-          // functions, exported (extern)
+        // functions, exported (extern)
 
-        } // namespace frame {
-        
       } // namespace buffer {
 
     } // namespace software {
@@ -64,4 +68,4 @@ namespace hugh {
   
 } // namespace hugh {
 
-#endif // #if !defined(HUGH_RENDER_SOFTWARE_BUFFER_BASE_HPP)
+#endif // #if !defined(HUGH_RENDER_SOFTWARE_BUFFER_DEPTH_HPP)

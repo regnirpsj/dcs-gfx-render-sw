@@ -6,7 +6,7 @@
 /*                                                                                                */
 /**************************************************************************************************/
 /*                                                                                                */
-/*  module     :  hugh/render/software/buffer/base.cpp                                            */
+/*  module     :  hugh/render/software/buffer/depth.cpp                                           */
 /*  project    :                                                                                  */
 /*  description:                                                                                  */
 /*                                                                                                */
@@ -14,7 +14,7 @@
 
 // include i/f header
 
-#include "hugh/render/software/buffer/base.hpp"
+#include "hugh/render/software/buffer/depth.hpp"
 
 // includes, system
 
@@ -52,38 +52,48 @@ namespace hugh {
   
         // functions, exported
 
-        /* virtual */
-        base::~base()
+        /* explicit */
+        depth::depth(viewport_type const& a)
+          : base        (a),
+            clear_value_(glm::vec1(viewport_.far)),
+            buffer_     ((viewport_.width-viewport_.x) * (viewport_.height-viewport_.y),
+                         clear_value_)
+            
         {
-          TRACE("hugh:render::software::base::~base");
+          TRACE("hugh:render::software::depth::depth");
+        }
+      
+        /* virtual */
+        depth::~depth()
+        {
+          TRACE("hugh:render::software::depth::~depth");
         }
       
         /* virtual */ void
-        base::clear()
+        depth::clear()
         {
-          TRACE("hugh:render::software::base::clear");
+          TRACE("hugh:render::software::depth::clear");
 
-          throw std::logic_error("pure virtual function 'hugh:render::software::base::clear' "
-                                 "called");
+          buffer_ = buffer_type(buffer_.size(), clear_value_);
         }
 
         /* virtual */ bool
-        base::update(fragment const&)
+        depth::update(fragment const& f)
         {
-          TRACE("hugh:render::software::base::update");
+          TRACE("hugh:render::software::depth::update");
 
-          throw std::logic_error("pure virtual function 'hugh:render::software::base::update' "
-                                 "called");
+          bool result(false);
 
-          return false;
-        }
+          if (!(viewport_.near > f.depth)) {
+            auto const idx(f.position.y * (viewport_.width-viewport_.x) + f.position.x);
 
-        /* explicit */
-        base::base(viewport_type const& a)
-          : support::refcounted<base>(),
-            viewport_                (a)
-        {
-          TRACE("hugh:render::software::base::base");
+            if ((buffer_.size() > idx) && (f.depth < buffer_[idx].x)) {
+              buffer_[idx].x = f.depth;
+              result         = true;
+            }
+          }
+          
+          return result;
         }
 
       } // namespace buffer {

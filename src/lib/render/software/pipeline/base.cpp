@@ -78,8 +78,8 @@ namespace hugh {
             lights                   (*this, "lights"),
             material                 (*this, "material"),
             rasterizer               (*this, "rasterizer",  nullptr),
+            colorbuffer              (*this, "colorbuffer", nullptr),
             depthbuffer              (*this, "depthbuffer", nullptr),
-            framebuffer              (*this, "framebuffer", nullptr),
             count_                   ()
         {
           TRACE("hugh::render::software::pipeline::base::base");

@@ -27,8 +27,8 @@
 #include <hugh/field/value/multi.hpp>
 #include <hugh/field/value/single.hpp>
 #include <hugh/render/software/export.h>
-#include <hugh/render/software/buffer/depth/base.hpp>
-#include <hugh/render/software/buffer/frame/base.hpp>
+#include <hugh/render/software/buffer/color.hpp>
+#include <hugh/render/software/buffer/depth.hpp>
 #include <hugh/render/software/primitive/base.hpp>
 #include <hugh/render/software/rasterizer/base.hpp>
 #include <hugh/scene/object/light/base.hpp>
@@ -50,20 +50,20 @@ namespace hugh {
 
         public:
 
-          using light_type       = hugh::scene::object::light::base::rep;
-          using material_type    = hugh::scene::object::material::rep;
-          using rasterizer_type  = boost::intrusive_ptr<rasterizer::base>;
-          using depthbuffer_type = boost::intrusive_ptr<buffer::depth::base>;
-          using framebuffer_type = boost::intrusive_ptr<buffer::frame::base>;
+          using light_type        = hugh::scene::object::light::base::rep;
+          using material_type     = hugh::scene::object::material::rep;
+          using rasterizer_type   = boost::intrusive_ptr<rasterizer::base>;
+          using color_buffer_type = boost::intrusive_ptr<buffer::color>;
+          using depth_buffer_type = boost::intrusive_ptr<buffer::depth>;
 
-          field::value::single<glm::mat4>        xform_model;
-          field::value::single<glm::mat4>        xform_view;
-          field::value::single<glm::mat4>        xform_projection;
-          field::value::multi<light_type>        lights;
-          field::value::single<material_type>    material;
-          field::value::single<rasterizer_type>  rasterizer;
-          field::value::single<depthbuffer_type> depthbuffer;
-          field::value::single<framebuffer_type> framebuffer;
+          field::value::single<glm::mat4>         xform_model;
+          field::value::single<glm::mat4>         xform_view;
+          field::value::single<glm::mat4>         xform_projection;
+          field::value::multi<light_type>         lights;
+          field::value::single<material_type>     material;
+          field::value::single<rasterizer_type>   rasterizer;
+          field::value::single<color_buffer_type> colorbuffer;
+          field::value::single<depth_buffer_type> depthbuffer;
           
           virtual ~base();
 
@@ -73,10 +73,18 @@ namespace hugh {
 
           struct counter {
 
-          public:
+            struct fragment {
 
-            unsigned fragments[2];
-            unsigned vertices;
+              unsigned created;
+              unsigned updated;
+              
+            } fragments;
+            
+            struct vertex {
+              
+              unsigned processed;
+              
+            } vertices;
             
           };
 
