@@ -18,7 +18,8 @@
 
 // includes, system
 
-//#include <>
+#include <sstream>   // std::ostringstream
+#include <stdexcept> // std::logic_error
 
 // includes, project
 
@@ -37,7 +38,7 @@ namespace {
   // variables, internal
   
   // functions, internal
-
+  
 } // namespace {
 
 namespace hugh {
@@ -139,7 +140,27 @@ namespace hugh {
 
           case primitive::topology::line_strip:
             {
-              throw "not implemented yet";
+              if (p.indices.empty()) {
+                for (unsigned i(0); i < p.vertices.size()-1; ++i) {
+                  fragment_list_type const
+                    fl((*rasterizer)->process(line(vertices[i+0],
+                                                   vertices[i+1])));
+                  
+                  fragments.insert(fragments.end(), fl.begin(), fl.end());
+                  
+                  count_.fragments.created += fl.size();
+                }
+              } else {
+                for (unsigned i(0); i < p.indices.size()-1; ++i) {
+                  fragment_list_type const
+                    fl((*rasterizer)->process(line(vertices[p.indices[i+0]],
+                                                   vertices[p.indices[i+1]])));
+                  
+                  fragments.insert(fragments.end(), fl.begin(), fl.end());
+                  
+                  count_.fragments.created += fl.size();
+                }
+              }
             }
             break;
             
@@ -173,13 +194,40 @@ namespace hugh {
 
           case primitive::topology::triangle_strip:
             {
-              throw "not implemented yet";
+              if (p.indices.empty()) {
+                for (unsigned i(0); i < p.vertices.size()-2; ++i) {
+                  fragment_list_type const
+                    fl((*rasterizer)->process(triangle(vertices[i+0],
+                                                       vertices[i+1],
+                                                       vertices[i+2])));
+                  
+                  fragments.insert(fragments.end(), fl.begin(), fl.end());
+                  
+                  count_.fragments.created += fl.size();
+                }
+              } else {
+                for (unsigned i(0); i < p.indices.size()-2; ++i) {
+                  fragment_list_type const
+                    fl((*rasterizer)->process(triangle(vertices[p.indices[i+0]],
+                                                       vertices[p.indices[i+1]],
+                                                       vertices[p.indices[i+2]])));
+                  
+                  fragments.insert(fragments.end(), fl.begin(), fl.end());
+                  
+                  count_.fragments.created += fl.size();
+                }
+              }
             }
             break;
             
           default:
             {
-              throw "unrecognized primitive topology";
+              std::ostringstream ostr;
+
+              ostr << "<hugh::render::software::pipeline::fixed::process>: "
+                   << "unrecognized primitive topology (" << unsigned(p.topology) << ")";
+              
+              throw std::logic_error(ostr.str());
             }
             break;
           }
@@ -192,10 +240,10 @@ namespace hugh {
             }
           }
 
-#if 1
+#if 0
           {
             std::cout << support::trace::prefix()
-                      << "hugh::render::software::pipeline::fixed::process: "
+              // << "hugh::render::software::pipeline::fixed::process: "
                       << p.topology << '\t'
                       << "v:"
                       << count_.vertices.processed
