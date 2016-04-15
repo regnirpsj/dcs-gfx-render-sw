@@ -50,7 +50,7 @@ namespace hugh {
           using fragment_list_type = std::vector<fragment>;
           using viewport_type      = scene::object::camera::viewport;
 
-          field::value::single<viewport_type> viewport;
+          field::value::single<viewport_type> const viewport;
           
           virtual ~base();
 
