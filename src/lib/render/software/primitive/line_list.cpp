@@ -67,6 +67,11 @@ namespace hugh {
             throw std::logic_error("<render::software::primitive::line_list>: "
                                    "requires number of vertices divisible by 2");
           }
+          
+          if (indices.size() % 2) {
+            throw std::out_of_range("<render::software::primitive::line_list>: "
+                                    "requires number of indices divisible by 2");
+          }     
         }
         
         /* virtual */

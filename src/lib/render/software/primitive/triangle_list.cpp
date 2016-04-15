@@ -67,6 +67,11 @@ namespace hugh {
             throw std::logic_error("<render::software::primitive::triangle_list>: "
                                    "requires number of vertices divisible by 3");
           }
+          
+          if (indices.size() % 3) {
+            throw std::out_of_range("<render::software::primitive::triangle_list>: "
+                                    "requires number of indices divisible by 3");
+          }     
        }
         
         /* virtual */
