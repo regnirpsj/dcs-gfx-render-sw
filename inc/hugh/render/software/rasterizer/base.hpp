@@ -57,7 +57,22 @@ namespace hugh {
           virtual fragment_list_type process(vertex const&) const   =0;
           virtual fragment_list_type process(line const&) const     =0;
           virtual fragment_list_type process(triangle const&) const =0;
+
+          inline fragment_list_type process_vertex(vertex const& a) const
+          {
+            return process(a);
+          }
           
+          inline fragment_list_type process_line(line const& a) const
+          {
+            return process(a);
+          }
+
+          inline fragment_list_type process_triangle(triangle const& a) const
+          {
+            return process(a);
+          }
+
         protected:
 
           explicit base(viewport_type const& = viewport_type());
