@@ -106,6 +106,29 @@ namespace hugh {
           
           if (viewport->contains(glm::vec3(l.p0.position.xy(), 0)) ||
               viewport->contains(glm::vec3(l.p1.position.xy(), 0))) {
+            std::vector<std::pair<attribute::type, std::array<glm::vec4, 2>>> base_attributes;
+
+            for (auto a : attribute_types) {
+              auto const               p0found(l.p0.attributes.find(a));
+              auto const               p1found(l.p1.attributes.find(a));
+              std::array<glm::vec4, 2> tmp = { glm::vec4(0), glm::vec4(0), };
+              bool                     insert(false);
+              
+              if (l.p0.attributes.end() != p0found) {
+                tmp[0] = p0found->second;
+                insert = true;
+              }
+              
+              if (l.p1.attributes.end() != p1found) {
+                tmp[1] = p1found->second;
+                insert = true;
+              }
+
+              if (insert) {
+                base_attributes.push_back({ a, tmp });
+              }
+            }
+
             glm::ivec2 p0   (glm::min(glm::max(glm::ivec2(l.p0.position.x, l.p0.position.y),
                                                glm::ivec2(viewport->x, viewport->y)),
                                       glm::ivec2(viewport->width, viewport->height)));
@@ -141,26 +164,14 @@ namespace hugh {
             for (signed x(p0.x); x <= p1.x; ++x) {
               attribute::list attributes;
 
-              for (auto a : attribute_types) {
-                auto const p0found(l.p0.attributes.find(a));
-                auto const p1found(l.p1.attributes.find(a));
-                glm::vec4  values[2] = { glm::vec4(0), glm::vec4(0), };
-                bool       insert(false);
-                    
-                if (l.p0.attributes.end() != p0found) {
-                  values[0] = p0found->second; insert = true;
-                }
-                if (l.p1.attributes.end() != p1found) {
-                  values[1] = p1found->second; insert = true;
-                }
-
-                if (insert) {
-                  float const weight(glm::length(glm::vec2(x-p0.x, y-p0.y)) / glm::length(delta));
-                
-                  attributes[a] = (weight * values[0]) + ((1-weight) * values[1]);
+              if (!base_attributes.empty()) {
+                float const weight(glm::length(glm::vec2(x-p0.x, y-p0.y)) / glm::length(delta));
+              
+                for (auto a : base_attributes) {
+                  attributes[a.first] = (weight * a.second[0]) + ((1-weight) * a.second[1]);
                 }
               }
-
+              
               if (steep) {      
                 float const depth(glm::length(glm::cross(l.p0.position - glm::vec3(y, x, 0),
                                                          ldir)) / glm::length(ldir));
@@ -200,6 +211,35 @@ namespace hugh {
               (viewport->contains(glm::vec3(t.p0.position.xy(), 0)) ||
                viewport->contains(glm::vec3(t.p1.position.xy(), 0)) ||
                viewport->contains(glm::vec3(t.p2.position.xy(), 0)))) {
+            std::vector<std::pair<attribute::type, std::array<glm::vec4, 3>>> base_attributes;
+
+            for (auto a : attribute_types) {
+              auto const               p0found(t.p0.attributes.find(a));
+              auto const               p1found(t.p1.attributes.find(a));
+              auto const               p2found(t.p2.attributes.find(a));
+              std::array<glm::vec4, 3> tmp = { glm::vec4(0), glm::vec4(0), glm::vec4(0), };
+              bool                     insert(false);
+              
+              if (t.p0.attributes.end() != p0found) {
+                tmp[0] = p0found->second;
+                insert = true;
+              }
+              
+              if (t.p1.attributes.end() != p1found) {
+                tmp[1] = p1found->second;
+                insert = true;
+              }
+              
+              if (t.p2.attributes.end() != p1found) {
+                tmp[2] = p2found->second;
+                insert = true;
+              }
+
+              if (insert) {
+                base_attributes.push_back({ a, tmp });
+              }
+            }
+            
             std::array<glm::ivec2 const, 2> const bbox = {
               {
                 glm::max(glm::ivec2(viewport->x, viewport->y),
@@ -216,7 +256,7 @@ namespace hugh {
             };
 
             // std::cout << t << " -> [" << bbox[0] << ':' << bbox[1] << ']' << std::endl;
-
+            
             glm::ivec2 p;
 
             for (p.y = bbox[0].y; p.y <= bbox[1].y; ++p.y) {
@@ -232,30 +272,12 @@ namespace hugh {
                 if (hit) {                  
                   attribute::list attributes;
 
-                  for (auto a : attribute_types) {
-                    auto const p0found(t.p0.attributes.find(a));
-                    auto const p1found(t.p1.attributes.find(a));
-                    auto const p2found(t.p2.attributes.find(a));
-                    glm::vec4  values[3] = { glm::vec4(0), glm::vec4(0), glm::vec4(0), };
-                    bool       insert(false);
-                    
-                    if (t.p0.attributes.end() != p0found) {
-                      values[0] = p0found->second; insert = true;
-                    }
-                    if (t.p1.attributes.end() != p1found) {
-                      values[1] = p1found->second; insert = true;
-                    }
-                    if (t.p2.attributes.end() != p1found) {
-                      values[2] = p2found->second; insert = true;
-                    }
-
-                    if (insert) {
-                      attributes[a] = ((bary.x * values[0]) +
-                                       (bary.y * values[1]) +
-                                       (bary.z * values[2]));
-                    }
+                  for (auto a : base_attributes) {
+                    attributes[a.first] = ((bary.x * a.second[0]) +
+                                           (bary.y * a.second[1]) +
+                                           (bary.z * a.second[2]));
                   }
-
+                  
                   bary /= area2;
           
                   float const depth(/*                        */ t.p0.position.z   +
