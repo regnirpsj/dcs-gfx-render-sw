@@ -38,7 +38,7 @@ namespace hugh {
 
         public:
 
-          explicit fixed();
+          explicit fixed(unsigned /* thread-pool size */ = boost::thread::hardware_concurrency()+1);
           virtual ~fixed();
 
           virtual void process(primitive::base const&);          

@@ -54,8 +54,8 @@ namespace hugh {
         // functions, exported
 
         /* explicit */
-        fixed::fixed()
-          : base()
+        fixed::fixed(unsigned a)
+          : base(a)
         {
           TRACE("hugh::render::software::pipeline::fixed::fixed");
         }
@@ -76,6 +76,8 @@ namespace hugh {
           
           statistics       lstats;
           vertex_list_type vertices;
+
+          vertices.reserve(p.vertices.size());
           
           for (auto const& v : p.vertices) {
             vertex
@@ -88,27 +90,23 @@ namespace hugh {
           lstats.vertices.processed += vertices.size();
 
           fragment_list_type fragments;
-
+          bool const         async(true);
+          
           switch (p.topology) {
           case topology::point_list:
-            lstats.fragments.created +=
-              raster<topology::point_list>    (p.indices, vertices, fragments); break;
+            fragments = raster<topology::point_list>    (p.indices, vertices, !async); break;
             
           case topology::line_list:
-            lstats.fragments.created +=
-              raster<topology::line_list>     (p.indices, vertices, fragments); break;
+            fragments = raster<topology::line_list>     (p.indices, vertices, !async); break;
             
           case topology::line_strip:
-            lstats.fragments.created +=
-              raster<topology::line_strip>    (p.indices, vertices, fragments); break;
+            fragments = raster<topology::line_strip>    (p.indices, vertices, !async); break;
             
           case topology::triangle_list:
-            lstats.fragments.created +=
-              raster<topology::triangle_list> (p.indices, vertices, fragments); break;
+            fragments = raster<topology::triangle_list> (p.indices, vertices, !async); break;
             
           case topology::triangle_strip:
-            lstats.fragments.created +=
-              raster<topology::triangle_strip>(p.indices, vertices, fragments); break;
+            fragments = raster<topology::triangle_strip>(p.indices, vertices, !async); break;
             
           default:
             {
@@ -121,6 +119,8 @@ namespace hugh {
             }
             break;
           }
+
+          lstats.fragments.created += fragments.size();
           
           for (auto const& f : fragments) {
             if ((*depthbuffer)->update(f)) {
@@ -136,9 +136,12 @@ namespace hugh {
           {
             std::cout << support::trace::prefix()
               // << "hugh::render::software::pipeline::fixed::process: "
+                      << (p.indices.empty() ? "!" : " ") << "idx "
                       << p.topology
-                      << '\t' << lstats
-                      << '\t' << *stats
+                      << "     \t"
+                      << lstats
+                      << "     \t"
+                      << *stats
                       << '\n';
           }
 #endif
