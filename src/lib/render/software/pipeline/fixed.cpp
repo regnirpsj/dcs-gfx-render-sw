@@ -94,7 +94,7 @@ namespace hugh {
           
           switch (p.topology) {
           case topology::point_list:
-            fragments = raster<topology::point_list>    (p.indices, vertices, !async); break;
+            fragments = raster<topology::point_list>    (p.indices, vertices,  false); break;
             
           case topology::line_list:
             fragments = raster<topology::line_list>     (p.indices, vertices, !async); break;
@@ -132,7 +132,7 @@ namespace hugh {
           
           const_cast<statistics&>(*stats) += lstats;
           
-#if 1
+#if 0
           {
             std::cout << support::trace::prefix()
               // << "hugh::render::software::pipeline::fixed::process: "
