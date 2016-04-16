@@ -55,12 +55,15 @@ BOOST_AUTO_TEST_CASE(test_hugh_render_software_pipeline_fixed_ctor)
 
 BOOST_AUTO_TEST_CASE(test_hugh_render_software_pipeline_fixed_process)
 {
-  TRACE_ALWAYS("test_hugh_render_software_pipeline_fixed_process");
+  TRACE("test_hugh_render_software_pipeline_fixed_process");
   
   using namespace hugh::render::software;
   using viewport = hugh::scene::object::camera::viewport;
 
+  //viewport const  vp(0, 0, 80, 60, 0, 1);
+  //viewport const  vp(0, 0, 160, 120, 0, 1);
   viewport const  vp(0, 0, 320, 240, 0, 1);
+  //viewport const  vp(0, 0, 1600, 1200, 0, 1);
   pipeline::fixed ppl;
 
   ppl.rasterizer  = new rasterizer::simple(vp);
@@ -73,7 +76,7 @@ BOOST_AUTO_TEST_CASE(test_hugh_render_software_pipeline_fixed_process)
     using vertex_list = point_list::vertex_list_type;
   
     vertex_list    vl;
-    unsigned const stride((vp.width-vp.x)/200);
+    unsigned const stride((vp.width-vp.x)/std::min(vp.width-vp.x, float(200)));
     
     for (unsigned x(vp.x); x < (vp.x + vp.width); x += stride) {
       for (unsigned y(vp.y); y < (vp.y + vp.height); y += stride) {
@@ -116,7 +119,7 @@ BOOST_AUTO_TEST_CASE(test_hugh_render_software_pipeline_fixed_process)
     using vertex_list = line_list::vertex_list_type;
     
     vertex_list    vl;
-    unsigned const stride((vp.width-vp.x)/100);
+    unsigned const stride((vp.width-vp.x)/std::min(vp.width-vp.x, float(100)));
     
     for (unsigned x(vp.x); x < (vp.x + vp.width); x += stride) {
       for (unsigned y(vp.y); y < (vp.y + vp.height); y += stride) {
@@ -158,7 +161,7 @@ BOOST_AUTO_TEST_CASE(test_hugh_render_software_pipeline_fixed_process)
     using vertex_list = line_strip::vertex_list_type;
     
     vertex_list    vl;
-    unsigned const stride((vp.width-vp.x)/100);
+    unsigned const stride((vp.width-vp.x)/std::min(vp.width-vp.x, float(100)));
     
     for (unsigned x(vp.x); x < (vp.x + vp.width); x += stride) {
       for (unsigned y(vp.y); y < (vp.y + vp.height); y += stride) {
@@ -199,7 +202,7 @@ BOOST_AUTO_TEST_CASE(test_hugh_render_software_pipeline_fixed_process)
     using vertex_list   = triangle_list::vertex_list_type;
   
     vertex_list    vl;
-    unsigned const stride((vp.width-vp.x)/50);
+    unsigned const stride((vp.width-vp.x)/std::min(vp.width-vp.x, float(50)));
     
     for (unsigned x(vp.x); x < (vp.x + vp.width); x += stride) {
       for (unsigned y(vp.y); y < (vp.y + vp.height); y += stride) {
@@ -245,7 +248,7 @@ BOOST_AUTO_TEST_CASE(test_hugh_render_software_pipeline_fixed_process)
     using vertex_list    = triangle_strip::vertex_list_type;
   
     vertex_list    vl;
-    unsigned const stride((vp.width-vp.x)/50);
+    unsigned const stride((vp.width-vp.x)/std::min(vp.width-vp.x, float(50)));
     
     for (unsigned x(vp.x); x < (vp.x + vp.width); x += stride) {
       for (unsigned y(vp.y); y < (vp.y + vp.height); y += stride) {
