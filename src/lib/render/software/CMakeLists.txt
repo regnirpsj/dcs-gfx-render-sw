@@ -18,9 +18,9 @@ include_directories(SYSTEM ${HUGH_INCLUDE_DIRS})
 
 set(SRC)
 list(APPEND SRC attribute.cpp)
+list(APPEND SRC context.cpp)
 list(APPEND SRC fragment.cpp)
 list(APPEND SRC line.cpp)
-#list(APPEND SRC point.cpp) ???
 list(APPEND SRC triangle.cpp)
 list(APPEND SRC vertex.cpp)
 

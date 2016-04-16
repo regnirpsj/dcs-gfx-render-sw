@@ -14,6 +14,7 @@ include_directories(SYSTEM ${Boost_INLCUDE_DIR})
 
 set(SRC)
 list(APPEND SRC attribute.cpp)
+list(APPEND SRC context.cpp)
 list(APPEND SRC fragment.cpp)
 list(APPEND SRC line.cpp)
 list(APPEND SRC triangle.cpp)
