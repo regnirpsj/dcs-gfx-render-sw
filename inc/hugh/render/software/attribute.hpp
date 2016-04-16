@@ -69,7 +69,7 @@ namespace std {
 
     using attribute_type = hugh::render::software::attribute::type;
     
-    size_t operator()(attribute_type const& a) const
+    inline size_t operator()(attribute_type const& a) const
     {
       return hash<underlying_type<attribute_type>::type>()(unsigned(a));
     }
