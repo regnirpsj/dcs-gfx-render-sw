@@ -90,9 +90,8 @@ namespace hugh {
       
         /* explicit */
         base::base(viewport_type const& a)
-          : field::container         (),
-            support::refcounted<base>(),
-            viewport                 (*this, "viewport", a)
+          : support::refcounted<base>(),
+            viewport_                (a)
         {
           TRACE("hugh::render::software::rasterizer::base::base");
         }
