@@ -14,13 +14,11 @@
 
 // includes, system
 
-//#include <glm/gtx/io.hpp> // glm::operator<<
-#include <sstream>        // std::ostringstream
+#include <sstream> // std::ostringstream
 
 // includes, project
 
 #include <hugh/render/software/context.hpp>
-//#include <hugh/support/io_utils.hpp>
 
 #define HUGH_USE_TRACE
 #undef HUGH_USE_TRACE
@@ -87,9 +85,19 @@ BOOST_AUTO_TEST_CASE(test_hugh_render_software_context_print_on)
 {
   using namespace hugh::render::software;
 
-  context const      c;
-  std::ostringstream ostr;
+  context c;
 
+  {
+    context::eval_manager().evaluate();
+    
+    c.viewport.touch();
+    
+    context::eval_manager().evaluate();
+    context::eval_manager().evaluate();
+  }
+  
+  std::ostringstream ostr;
+  
   ostr << c;
   
   BOOST_CHECK       (!ostr.str().empty());

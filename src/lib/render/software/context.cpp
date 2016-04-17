@@ -26,7 +26,7 @@
 #include <hugh/render/software/rasterizer/simple.hpp>
 
 #define HUGH_USE_TRACE
-//#undef HUGH_USE_TRACE
+#undef HUGH_USE_TRACE
 #include <hugh/support/trace.hpp>
 
 // internal unnamed namespace
@@ -92,6 +92,24 @@ namespace hugh {
         TRACE("hugh::render::software::context::flush");
       }
 
+      /* virtual */ void
+      context::do_evaluate()
+      {
+        TRACE("hugh::render::software::context::do_evaluate");
+
+#if 0
+        // would need to set other field-container fields and plays against container eval (somehow)
+        if ((viewport.last_change() > last_evaluate_) &&
+            (viewport.last_change() < last_change_)) {
+          std::cout << support::trace::prefix() << "hugh::render::software::context::do_evaluate: "
+                    << "vp needs eval"
+                    << '\n';
+        }
+#endif
+        
+        field::container::do_evaluate();
+      }
+      
       /* virtual */ void
       context::do_changed(field::base& f)
       {

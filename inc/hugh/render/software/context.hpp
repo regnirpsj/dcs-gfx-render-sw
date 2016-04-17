@@ -44,17 +44,9 @@ namespace hugh {
 
       public:
 
-        using color_buffer_type = boost::intrusive_ptr<buffer::color>;
-        using depth_buffer_type = boost::intrusive_ptr<buffer::depth>;
-        using pipeline_type     = boost::intrusive_ptr<pipeline::base>;
-        using rasterizer_type   = boost::intrusive_ptr<rasterizer::base>;
-        using viewport_type     = scene::object::camera::viewport;
+        using viewport_type = scene::object::camera::viewport;
         
-        field::value::single<viewport_type>     viewport;    //< [ x, y, w, h, n, f ]
-        field::value::single<color_buffer_type> colorbuffer; //<
-        field::value::single<depth_buffer_type> depthbuffer; //<
-        field::value::single<rasterizer_type>   rasterizer;  //<
-        field::value::single<pipeline_type>     pipeline;    //<
+        field::value::single<viewport_type> viewport; //< [ x, y, w, h, n, f ]
         
         explicit context(viewport_type const& = viewport_type());
         virtual ~context();
@@ -62,10 +54,21 @@ namespace hugh {
         virtual void clear ();
         virtual void submit();
         virtual void flush ();
-        
-      private:
 
-        virtual void do_changed(field::base&);
+      protected:
+
+        using color_buffer_type = boost::intrusive_ptr<buffer::color>;
+        using depth_buffer_type = boost::intrusive_ptr<buffer::depth>;
+        using pipeline_type     = boost::intrusive_ptr<pipeline::base>;
+        using rasterizer_type   = boost::intrusive_ptr<rasterizer::base>;
+        
+        field::value::single<color_buffer_type> colorbuffer; //<
+        field::value::single<depth_buffer_type> depthbuffer; //<
+        field::value::single<rasterizer_type>   rasterizer;  //<
+        field::value::single<pipeline_type>     pipeline;    //<
+
+        virtual void do_evaluate();
+        virtual void do_changed (field::base&);
         
       };
       
