@@ -15,6 +15,7 @@
 // includes, system
 
 #include <array>          // std::array<>
+#include <memory>         // std::unique_ptr<>
 #include <glm/gtx/io.hpp> // glm::operator<<
 
 // includes, project
@@ -44,20 +45,10 @@ namespace {
 BOOST_AUTO_TEST_CASE(test_hugh_render_software_rasterizer_simple_ctor)
 {
   using namespace hugh::render::software;
-  using viewport = hugh::scene::object::camera::viewport;
   
-  {
-    rasterizer::simple const rs;
+  std::unique_ptr<rasterizer::base> const rs(new rasterizer::simple);
 
-    BOOST_CHECK(viewport() == *rs.viewport);
-  }
-
-  {
-    viewport const           vp(0, 0, 10, 10);
-    rasterizer::simple const rs(vp);
-  
-    BOOST_CHECK(vp == *rs.viewport);
-  }
+  BOOST_CHECK(nullptr != rs);
 }
 
 BOOST_AUTO_TEST_CASE(test_hugh_render_software_rasterizer_simple_process_line)
@@ -216,7 +207,7 @@ BOOST_AUTO_TEST_CASE(test_hugh_render_software_rasterizer_simple_print_on)
   rasterizer::simple const rs(viewport(0, 0, 10, 10));
   std::ostringstream       ostr;
 
-  ostr << rs;
+  ostr << &rs;
 
   BOOST_CHECK       (!ostr.str().empty());
   BOOST_TEST_MESSAGE( ostr.str());
