@@ -163,11 +163,55 @@ namespace hugh {
         {
           TRACE("hugh::render::software::pipeline::fixed::shade");
 
-          attribute::list attr (f.attributes);
-          auto            found(attr.find(attribute::type::color));
+          attribute::list attr(f.attributes);
+
+          if (nullptr != *material) {
+            glm::vec3 const P;
+            glm::vec3 const N;
+            glm::mat4 const C;
+            
+            glm::vec3 laccum_ambient (0,0,0);
+            glm::vec3 laccum_diffuse (0,0,0);
+            glm::vec3 laccum_specular(0,0,0);
+            
+            for (auto const& l : *lights) {
+              if (l.active) {
+                glm::vec3 L;
+                float     att(1.0);
+
+                L = glm::normalize(L);
+                
+                float const NdotL(std::max(glm::dot(N, L), 0.0f));
+                
+                if (0.0 < NdotL) {
+                  float const     exp  (glm::clamp((*material)->shininess, 0.0f, 128.0f));
+                  glm::vec3 const V    (C[3].xyz() - P);
+                  glm::vec3 const H    (L + V);
+                  float const     NdotV(std::max(glm::dot(N, V), 0.0f));
+                  float const     NdotH(std::max(glm::dot(N, H), 0.0f));
+                  // glm::vec4 const lresult(lit(NdotL, NdotH, exp));
+                  
+                  // laccum_diffuse  += (att * l.diffuse  * lresult.y);
+                  // laccum_specular += (att * l.specular * lresult.z);
+                }
+                
+                laccum_ambient += att * l.ambient;
+              }
+            }
+            
+            glm::vec4 result((*material)->emission, (*material)->alpha);
+            
+            result.rgb() += laccum_ambient  * (*material)->ambient;
+            result.rgb() += laccum_diffuse  * (*material)->diffuse;
+            result.rgb() += laccum_specular * (*material)->specular;
+            
+            attr[attribute::type::color] = result;
+          } else {
+            auto found(attr.find(attribute::type::color));
           
-          if (attr.end() == found) {
-            attr[attribute::type::color] = glm::vec4(1, 1, 1, 0);
+            if (attr.end() == found) {
+              attr[attribute::type::color] = glm::vec4(1, 1, 1, 0);
+            }
           }
           
           return fragment(f.position, f.depth, attr);
