@@ -18,9 +18,8 @@
 
 // includes, system
 
-#include <boost/intrusive_ptr.hpp>                      // boost::intrusive_ptr<>
-#include <boost/thread/executors/basic_thread_pool.hpp> // boost::basic_thread_pool
-#include <glm/glm.hpp>                                  // glm::mat4
+#include <boost/intrusive_ptr.hpp> // boost::intrusive_ptr<>
+#include <glm/glm.hpp>             // glm::mat4
 
 // includes, project
 
@@ -56,6 +55,7 @@ namespace hugh {
             struct {
 
               unsigned created;
+              unsigned shaded;
               unsigned updated;
               
             } fragments;
@@ -98,10 +98,8 @@ namespace hugh {
           glm::vec3 clip_to_ndc    (glm::vec4 const&) const;
 
         protected:
-
-          boost::basic_thread_pool thread_pool_;
           
-          explicit base(unsigned /* thread-pool size */);
+          explicit base();
           
           using fragment_list_type = rasterizer::base::fragment_list_type;
           using index_list_type    = primitive::base::index_list_type;
@@ -109,8 +107,7 @@ namespace hugh {
           
           template <primitive::topology>
             fragment_list_type raster(index_list_type const&  /* indices   */,
-                                      vertex_list_type const& /* vertices  */,
-                                      bool                    /* async     */ = false);
+                                      vertex_list_type const& /* vertices  */);
           
         };
         
@@ -122,24 +119,19 @@ namespace hugh {
 
         template <> HUGH_RENDER_SOFTWARE_EXPORT base::fragment_list_type
         base::raster<primitive::topology::point_list>    (index_list_type const&,
-                                                          vertex_list_type const&,
-                                                          bool);
+                                                          vertex_list_type const&);
         template <> HUGH_RENDER_SOFTWARE_EXPORT base::fragment_list_type
         base::raster<primitive::topology::line_list>     (index_list_type const&,
-                                                          vertex_list_type const&,
-                                                          bool);
+                                                          vertex_list_type const&);
         template <> HUGH_RENDER_SOFTWARE_EXPORT base::fragment_list_type
         base::raster<primitive::topology::line_strip>    (index_list_type const&,
-                                                          vertex_list_type const&,
-                                                          bool);
+                                                          vertex_list_type const&);
         template <> HUGH_RENDER_SOFTWARE_EXPORT base::fragment_list_type
         base::raster<primitive::topology::triangle_list> (index_list_type const&,
-                                                          vertex_list_type const&,
-                                                          bool);
+                                                          vertex_list_type const&);
         template <> HUGH_RENDER_SOFTWARE_EXPORT base::fragment_list_type
         base::raster<primitive::topology::triangle_strip>(index_list_type const&,
-                                                          vertex_list_type const&,
-                                                          bool);
+                                                          vertex_list_type const&);
         
         HUGH_RENDER_SOFTWARE_EXPORT std::ostream&
         operator<<(std::ostream&, base::statistics const&);

@@ -54,8 +54,8 @@ namespace hugh {
         // functions, exported
 
         /* explicit */
-        fixed::fixed(unsigned a)
-          : base(a)
+        fixed::fixed()
+          : base()
         {
           TRACE("hugh::render::software::pipeline::fixed::fixed");
         }
@@ -69,7 +69,7 @@ namespace hugh {
         /* virtual */ void
         fixed::process(primitive::base const& p)
         {
-          TRACE_ALWAYS("hugh::render::software::pipeline::fixed::process(" +
+          TRACE("hugh::render::software::pipeline::fixed::process(" +
                 std::to_string(unsigned(p.topology)) + ")");
 
           using topology = primitive::topology;
@@ -80,33 +80,28 @@ namespace hugh {
           vertices.reserve(p.vertices.size());
           
           for (auto const& v : p.vertices) {
-            vertex
-              tmp(clip_to_ndc(eye_to_clip(world_to_eye(object_to_world(glm::vec4(v.position, 1))))),
-                  v.attributes);
-            
-            vertices.push_back(tmp);
+            vertices.push_back(transform(v));
           }
 
           lstats.vertices.processed += vertices.size();
 
           fragment_list_type fragments;
-          bool const         async(true);
           
           switch (p.topology) {
           case topology::point_list:
-            fragments = raster<topology::point_list>    (p.indices, vertices, false); break;
+            fragments = raster<topology::point_list>    (p.indices, vertices); break;
             
           case topology::line_list:
-            fragments = raster<topology::line_list>     (p.indices, vertices, async); break;
+            fragments = raster<topology::line_list>     (p.indices, vertices); break;
             
           case topology::line_strip:
-            fragments = raster<topology::line_strip>    (p.indices, vertices, async); break;
+            fragments = raster<topology::line_strip>    (p.indices, vertices); break;
             
           case topology::triangle_list:
-            fragments = raster<topology::triangle_list> (p.indices, vertices, async); break;
+            fragments = raster<topology::triangle_list> (p.indices, vertices); break;
             
           case topology::triangle_strip:
-            fragments = raster<topology::triangle_strip>(p.indices, vertices, async); break;
+            fragments = raster<topology::triangle_strip>(p.indices, vertices); break;
             
           default:
             {
@@ -123,10 +118,16 @@ namespace hugh {
           lstats.fragments.created += fragments.size();
           
           for (auto const& f : fragments) {
-            if ((*depthbuffer)->update(f)) {
-              (*colorbuffer)->update(f);
+            if (!(*depthbuffer)->zcull(f)) {
+              fragment const fs(shade(f));
+
+              ++lstats.fragments.shaded;
+
+              if ((*depthbuffer)->ztest(fs)) {
+                (*colorbuffer)->update(fs);
               
-              ++lstats.fragments.updated;
+                ++lstats.fragments.updated;
+              }
             }
           }
           
@@ -138,13 +139,38 @@ namespace hugh {
               // << "hugh::render::software::pipeline::fixed::process: "
                       << (p.indices.empty() ? "!" : " ") << "idx "
                       << p.topology
-                      << "   \t"
+                      << "  \t"
                       << lstats
                       << '\t'
                       << *stats
                       << '\n';
           }
 #endif
+        }
+
+        vertex
+        fixed::transform(vertex const& v) const
+        {
+          TRACE("hugh::render::software::pipeline::fixed::transform");
+
+          glm::vec4 const vh(v.position, 1);
+          
+          return vertex(clip_to_ndc(eye_to_clip(world_to_eye(object_to_world(vh)))), v.attributes);
+        }
+        
+        fragment
+        fixed::shade(fragment const& f) const
+        {
+          TRACE("hugh::render::software::pipeline::fixed::shade");
+
+          attribute::list attr (f.attributes);
+          auto            found(attr.find(attribute::type::color));
+          
+          if (attr.end() == found) {
+            attr[attribute::type::color] = glm::vec4(1, 1, 1, 0);
+          }
+          
+          return fragment(f.position, f.depth, attr);
         }
         
       } // namespace pipeline {

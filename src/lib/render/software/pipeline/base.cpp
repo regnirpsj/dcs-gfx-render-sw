@@ -18,12 +18,9 @@
 
 // includes, system
 
-#include <boost/io/ios_state.hpp>  // boost::io::ios_all_saver
-#define BOOST_THREAD_PROVIDES_EXECUTORS
-#define BOOST_THREAD_PROVIDES_FUTURE
-#include <boost/thread/future.hpp> // boost::future<>
-#include <glm/gtx/io.hpp>          // glm::operator<<
-#include <stdexcept>               // std::logic_error
+#include <boost/io/ios_state.hpp> // boost::io::ios_all_saver
+#include <glm/gtx/io.hpp>         // glm::operator<<
+#include <stdexcept>              // std::logic_error
 
 // includes, project
 
@@ -58,7 +55,7 @@ namespace hugh {
         // functions, exported
 
         base::statistics::statistics()
-          : fragments({ 0, 0, }),
+          : fragments({ 0, 0, 0, }),
             vertices ({ 0, })
         {
           TRACE("hugh::render::software::pipeline::base::statistics::statistics");
@@ -70,6 +67,7 @@ namespace hugh {
           TRACE_NEVER("hugh::render::software::pipeline::base::statistics::operator+=");
 
           fragments.created  += a.fragments.created;
+          fragments.shaded   += a.fragments.shaded;
           fragments.updated  += a.fragments.updated;
           vertices.processed += a.vertices.processed;
           
@@ -124,7 +122,7 @@ namespace hugh {
         }
         
         /* explicit */
-        base::base(unsigned a)
+        base::base()
           : field::container         (),
             support::refcounted<base>(),
             xform_model              (*this, "xform_model"),
@@ -135,8 +133,7 @@ namespace hugh {
             rasterizer               (*this, "rasterizer",  nullptr),
             colorbuffer              (*this, "colorbuffer", nullptr),
             depthbuffer              (*this, "depthbuffer", nullptr),
-            stats                    (*this, "stats"),
-            thread_pool_             (a)
+            stats                    (*this, "stats")
         {
           TRACE("hugh::render::software::pipeline::base::base");
         }
@@ -144,53 +141,27 @@ namespace hugh {
         template <>
         base::fragment_list_type
         base::raster<primitive::topology::point_list>(index_list_type const&  ilist,
-                                                      vertex_list_type const& vlist,
-                                                      bool async)
+                                                      vertex_list_type const& vlist)
         {
           TRACE("hugh::render::software::pipeline::base::raster"
                 "<primitive::topology::point_list>");
 
+          bool const         indexed(!ilist.empty());
           fragment_list_type result;
-          
-          if (async) { // task parallel
-            std::vector<boost::future<fragment_list_type>> futures;
 
-            futures.reserve(ilist.empty() ? vlist.size() : ilist.size());
-
-            if (ilist.empty()) {
-              for (auto const& v : vlist) {
-                futures.push_back(boost::async(thread_pool_,
-                                               &rasterizer::base::process_vertex,
-                                               rasterizer.get(),
-                                               v));
-              }
-            } else {
-              for (auto const& i : ilist) {
-                futures.push_back(boost::async(thread_pool_,
-                                               &rasterizer::base::process_vertex,
-                                               rasterizer.get(),
-                                               vlist[i]));
-              }
-            }
+          result.reserve(indexed ? ilist.size() : vlist.size());
           
-            for (auto& f : futures) {            
-              fragment_list_type const fl(f.get());
+          if (indexed) {
+            for (auto const& i : ilist) {
+              fragment_list_type const fl((*rasterizer)->process(vlist[i]));
 
               result.insert(result.end(), fl.begin(), fl.end());
             }
-          } else { // task sequential
-            if (ilist.empty()) {
-              for (auto const& v : vlist) {
-                fragment_list_type const fl((*rasterizer)->process(v));
+          } else {
+            for (auto const& v : vlist) {
+              fragment_list_type const fl((*rasterizer)->process(v));
 
-                result.insert(result.end(), fl.begin(), fl.end());
-              }
-            } else {
-              for (auto const& i : ilist) {
-                fragment_list_type const fl((*rasterizer)->process(vlist[i]));
-
-                result.insert(result.end(), fl.begin(), fl.end());
-              }
+              result.insert(result.end(), fl.begin(), fl.end());
             }
           }
           
@@ -200,57 +171,29 @@ namespace hugh {
         template <>
         base::fragment_list_type
         base::raster<primitive::topology::line_list>(index_list_type const&  ilist,
-                                                     vertex_list_type const& vlist,
-                                                     bool async)
+                                                     vertex_list_type const& vlist)
         {
           TRACE("hugh::render::software::pipeline::base::raster"
                 "<primitive::topology::line_list>");
 
+          bool const         indexed(!ilist.empty());
           fragment_list_type result;
-          
-          if (async) { // task parallel
-            std::vector<boost::future<fragment_list_type>> futures;
 
-            futures.reserve((ilist.empty() ? vlist.size() : ilist.size()) / 2);
+          result.reserve((indexed ? ilist.size() : vlist.size()) / 2);
           
-            if (ilist.empty()) {
-              for (unsigned i(0); i < vlist.size(); i += 2) {
-                futures.push_back(boost::async(thread_pool_,
-                                               &rasterizer::base::process_line,
-                                               rasterizer.get(),
-                                               vlist[i+0],
-                                               vlist[i+1]));
-              }
-            } else {
-              for (unsigned i(0); i < ilist.size(); i += 2) {
-                futures.push_back(boost::async(thread_pool_,
-                                               &rasterizer::base::process_line,
-                                               rasterizer.get(),
-                                               vlist[ilist[i+0]],
-                                               vlist[ilist[i+1]]));
-              }
-            }
-          
-            for (auto& f : futures) {            
-              fragment_list_type const& fl(f.get());
+          if (indexed) {
+            for (unsigned i(0); i < ilist.size(); i += 2) {
+              fragment_list_type const fl((*rasterizer)->process(vlist[ilist[i+0]],
+                                                                 vlist[ilist[i+1]]));
 
               result.insert(result.end(), fl.begin(), fl.end());
             }
-          } else { // task sequential
-            if (ilist.empty()) {
-              for (unsigned i(0); i < vlist.size(); i += 2) {
-                fragment_list_type const fl((*rasterizer)->process(vlist[i+0],
-                                                                   vlist[i+1]));
+          } else {
+            for (unsigned i(0); i < vlist.size(); i += 2) {
+              fragment_list_type const fl((*rasterizer)->process(vlist[i+0],
+                                                                 vlist[i+1]));
 
-                result.insert(result.end(), fl.begin(), fl.end());
-              }
-            } else {
-              for (unsigned i(0); i < ilist.size(); i += 2) {
-                fragment_list_type const fl((*rasterizer)->process(vlist[ilist[i+0]],
-                                                                   vlist[ilist[i+1]]));
-
-                result.insert(result.end(), fl.begin(), fl.end());
-              }
+              result.insert(result.end(), fl.begin(), fl.end());
             }
           }
           
@@ -260,57 +203,29 @@ namespace hugh {
         template <>
         base::fragment_list_type
         base::raster<primitive::topology::line_strip>(index_list_type const&  ilist,
-                                                      vertex_list_type const& vlist,
-                                                      bool async)
+                                                      vertex_list_type const& vlist)
         {
           TRACE("hugh::render::software::pipeline::base::raster"
                 "<primitive::topology::line_strip>");
 
+          bool const         indexed(!ilist.empty());
           fragment_list_type result;
 
-          if (async) { // task parallel
-            std::vector<boost::future<fragment_list_type>> futures;
+          result.reserve((indexed ? ilist.size() : vlist.size()) - 1);
 
-            futures.reserve((ilist.empty() ? vlist.size() : ilist.size()) - 1);
-          
-            if (ilist.empty()) {
-              for (unsigned i(0); i < vlist.size()-1; ++i) {
-                futures.push_back(boost::async(thread_pool_,
-                                               &rasterizer::base::process_line,
-                                               rasterizer.get(),
-                                               vlist[i+0],
-                                               vlist[i+1]));
-              }
-            } else {
-              for (unsigned i(0); i < ilist.size()-1; ++i) {
-                futures.push_back(boost::async(thread_pool_,
-                                               &rasterizer::base::process_line,
-                                               rasterizer.get(),
-                                               vlist[ilist[i+0]],
-                                               vlist[ilist[i+1]]));
-              }
-            }
-          
-            for (auto& f : futures) {            
-              fragment_list_type const& fl(f.get());
+          if (indexed) {
+            for (unsigned i(0); i < ilist.size() - 1; ++i) {
+              fragment_list_type const fl((*rasterizer)->process(vlist[ilist[i+0]],
+                                                                 vlist[ilist[i+1]]));
 
               result.insert(result.end(), fl.begin(), fl.end());
             }
-          } else { // task sequential
-            if (ilist.empty()) {
-              for (unsigned i(0); i < vlist.size()-1; ++i) {
-                fragment_list_type const fl((*rasterizer)->process(vlist[i+0],
-                                                                   vlist[i+1]));
+          } else {
+            for (unsigned i(0); i < vlist.size() - 1; ++i) {
+              fragment_list_type const fl((*rasterizer)->process(vlist[i+0],
+                                                                 vlist[i+1]));
 
-                result.insert(result.end(), fl.begin(), fl.end());
-              }
-            } else {
-              for (unsigned i(0); i < ilist.size()-1; ++i) {
-                fragment_list_type const fl((*rasterizer)->process(vlist[ilist[i+0]],
-                                                                   vlist[ilist[i+1]]));
-
-                result.insert(result.end(), fl.begin(), fl.end());
-              }
+              result.insert(result.end(), fl.begin(), fl.end());
             }
           }
           
@@ -320,193 +235,65 @@ namespace hugh {
         template <>
         base::fragment_list_type
         base::raster<primitive::topology::triangle_list>(index_list_type const&  ilist,
-                                                         vertex_list_type const& vlist,
-                                                         bool async)
+                                                         vertex_list_type const& vlist)
         {
           TRACE("hugh::render::software::pipeline::base::raster"
                 "<primitive::topology::triangle_list>");
 
+          bool const         indexed(!ilist.empty());
           fragment_list_type result;
 
-          if (async) { // task parallel
-            std::vector<boost::future<fragment_list_type>> futures;
+          result.reserve((indexed ? ilist.size() : vlist.size()) / 3);
 
-            futures.reserve((ilist.empty() ? vlist.size() : ilist.size()) / 3);
-          
-            if (ilist.empty()) {
-              for (unsigned i(0); i < vlist.size(); i += 3) {
-                futures.push_back(boost::async(thread_pool_,
-                                               &rasterizer::base::process_triangle,
-                                               rasterizer.get(),
-                                               vlist[i+0],
-                                               vlist[i+1],
-                                               vlist[i+2]));
-              }
-            } else {
-              for (unsigned i(0); i < ilist.size(); i += 3) {
-                futures.push_back(boost::async(thread_pool_,
-                                               &rasterizer::base::process_triangle,
-                                               rasterizer.get(),
-                                               vlist[ilist[i+0]],
-                                               vlist[ilist[i+1]],
-                                               vlist[ilist[i+2]]));
-              }
-            }
-          
-            for (auto& f : futures) {            
-              fragment_list_type const& fl(f.get());
+          if (indexed) {
+            for (unsigned i(0); i < ilist.size(); i += 3) {
+              fragment_list_type const fl((*rasterizer)->process(vlist[ilist[i+0]],
+                                                                 vlist[ilist[i+1]],
+                                                                 vlist[ilist[i+2]]));
 
               result.insert(result.end(), fl.begin(), fl.end());
             }
-          } else { // task sequential
-            if (ilist.empty()) {
-              for (unsigned i(0); i < vlist.size(); i += 3) {
-                fragment_list_type const fl((*rasterizer)->process(vlist[i+0],
-                                                                   vlist[i+1],
-                                                                   vlist[i+2]));
+          } else {
+            for (unsigned i(0); i < vlist.size(); i += 3) {
+              fragment_list_type const fl((*rasterizer)->process(vlist[i+0],
+                                                                 vlist[i+1],
+                                                                 vlist[i+2]));
 
-                result.insert(result.end(), fl.begin(), fl.end());
-              }
-            } else {
-              for (unsigned i(0); i < ilist.size(); i += 3) {
-                fragment_list_type const fl((*rasterizer)->process(vlist[ilist[i+0]],
-                                                                   vlist[ilist[i+1]],
-                                                                   vlist[ilist[i+2]]));
-
-                result.insert(result.end(), fl.begin(), fl.end());
-              }
+              result.insert(result.end(), fl.begin(), fl.end());
             }
           }
           
           return result;
         }
-
+        
         template <>
         base::fragment_list_type
         base::raster<primitive::topology::triangle_strip>(index_list_type const&  ilist,
-                                                          vertex_list_type const& vlist,
-                                                          bool async)
+                                                          vertex_list_type const& vlist)
         {
           TRACE("hugh::render::software::pipeline::base::raster"
                 "<primitive::topology::triangle_strip>");
 
+          bool const         indexed(!ilist.empty());
           fragment_list_type result;
 
-          if (async) { // task parallel
-            std::vector<boost::future<fragment_list_type>> futures;
+          result.reserve((indexed ? ilist.size() : vlist.size()) - 2);
 
-            futures.reserve((ilist.empty() ? vlist.size() : ilist.size()) - 2);
-
-            unsigned const tris_per_task(2500);
-            
-            if (ilist.empty()) {
-#if 1
-              unsigned const task_count(std::ceil((vlist.size()-2) / tris_per_task));
-
-              for (unsigned t(0); t <= task_count; ++t) {
-                unsigned const begin(t * tris_per_task);
-                unsigned       end  (begin + tris_per_task + 2);
-
-                if (end > vlist.size()) {
-                  end = vlist.size();
-                }
-                
-                futures.push_back(boost::async(thread_pool_,
-                                               [&, begin, end]()
-                                               {
-                                                 fragment_list_type result;
-
-                                                 result.reserve(end-begin);
-                                                 
-                                                 for (unsigned i(begin); i < end-2; ++i) {
-                                                   fragment_list_type const
-                                                     fl((*rasterizer)->process(vlist[i+0],
-                                                                               vlist[i+1],
-                                                                               vlist[i+2]));
-                                                   
-                                                   result.insert(result.end(),
-                                                                 fl.begin(), fl.end());
-                                                 }
-
-                                                 return result;
-                                               }));
-              }
-#else
-              for (unsigned i(0); i < vlist.size()-2; ++i) {
-                futures.push_back(boost::async(thread_pool_,
-                                               &rasterizer::base::process_triangle,
-                                               rasterizer.get(),
-                                               vlist[i+0],
-                                               vlist[i+1],
-                                               vlist[i+2]));
-              }
-#endif
-            } else {
-#if 1
-              unsigned const task_count(std::ceil((ilist.size()-2) / tris_per_task));
-
-              for (unsigned t(0); t <= task_count; ++t) {
-                unsigned const begin(t * tris_per_task);
-                unsigned       end  (begin + tris_per_task + 2);
-
-                if (end > ilist.size()) {
-                  end = ilist.size();
-                }
-                
-                futures.push_back(boost::async(thread_pool_,
-                                               [&, begin, end]()
-                                               {
-                                                 fragment_list_type result;
-
-                                                 result.reserve(end-begin);
-                                                 
-                                                 for (unsigned i(begin); i < end-2; ++i) {
-                                                   fragment_list_type const
-                                                     fl((*rasterizer)->process(vlist[ilist[i+0]],
-                                                                               vlist[ilist[i+1]],
-                                                                               vlist[ilist[i+2]]));
-                                                   
-                                                   result.insert(result.end(),
-                                                                 fl.begin(), fl.end());
-                                                 }
-
-                                                 return result;
-                                               }));
-              }
-#else
-              for (unsigned i(0); i < ilist.size()-2; ++i) {
-                futures.push_back(boost::async(thread_pool_,
-                                               &rasterizer::base::process_triangle,
-                                               rasterizer.get(),
-                                               vlist[ilist[i+0]],
-                                               vlist[ilist[i+1]],
-                                               vlist[ilist[i+2]]));
-              }
-#endif
-            }
-          
-            for (auto& f : futures) {            
-              fragment_list_type const fl(f.get());
+          if (indexed) {
+            for (unsigned i(0); i < ilist.size() - 2; ++i) {
+              fragment_list_type const fl((*rasterizer)->process(vlist[ilist[i+0]],
+                                                                 vlist[ilist[i+1]],
+                                                                 vlist[ilist[i+2]]));
 
               result.insert(result.end(), fl.begin(), fl.end());
             }
-          } else { // task sequential
-            if (ilist.empty()) {
-              for (unsigned i(0); i < vlist.size()-2; ++i) {
-                fragment_list_type const fl((*rasterizer)->process(vlist[i+0],
-                                                                   vlist[i+1],
-                                                                   vlist[i+2]));
+          } else {
+            for (unsigned i(0); i < vlist.size() - 2; ++i) {
+              fragment_list_type const fl((*rasterizer)->process(vlist[i+0],
+                                                                 vlist[i+1],
+                                                                 vlist[i+2]));
 
-                result.insert(result.end(), fl.begin(), fl.end());
-              }
-            } else {
-              for (unsigned i(0); i < ilist.size()-2; ++i) {
-                fragment_list_type const fl((*rasterizer)->process(vlist[ilist[i+0]],
-                                                                   vlist[ilist[i+1]],
-                                                                   vlist[ilist[i+2]]));
-
-                result.insert(result.end(), fl.begin(), fl.end());
-              }
+              result.insert(result.end(), fl.begin(), fl.end());
             }
           }
           
@@ -527,17 +314,13 @@ namespace hugh {
             
             os << '['
                << "v:"
-               << std::setw(width)
-              // << std::setfill('0')
-               << a.vertices.processed
-               << " -> f:"
-               << std::setw(width)
-              //<< std::setfill('0')
-               << a.fragments.created
-               << " -> p:"
-               << std::setw(width)
-              //<< std::setfill('0')
-               << a.fragments.updated
+               << std::setw(width) << a.vertices.processed
+               << ",f:"
+               << std::setw(width) << a.fragments.created
+               << ",s:"
+               << std::setw(width) << a.fragments.shaded
+               << ",p:"
+               << std::setw(width) << a.fragments.updated
                << ']';
           }
 

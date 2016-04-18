@@ -38,10 +38,15 @@ namespace hugh {
 
         public:
 
-          explicit fixed(unsigned /* thread-pool size */ = boost::thread::hardware_concurrency()+1);
+          explicit fixed();
           virtual ~fixed();
 
           virtual void process(primitive::base const&);          
+
+        protected:
+
+          vertex   transform(vertex const&)   const;
+          fragment shade    (fragment const&) const;
           
         };
         
