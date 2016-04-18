@@ -92,7 +92,7 @@ BOOST_AUTO_TEST_CASE(test_hugh_render_software_rasterizer_simple_process_line)
   for (auto const& lp : lines) {
     using fragment_list = rasterizer::simple::fragment_list_type;
     
-    fragment_list const fl(rs.process(lp.first));
+    fragment_list const fl(rs.process(lp.first.p0, lp.first.p1));
     
     BOOST_CHECK(lp.second == fl.size());
 
@@ -177,7 +177,7 @@ BOOST_AUTO_TEST_CASE(test_hugh_render_software_rasterizer_simple_process_triangl
   for (auto const& tp : triangles) {
     using fragment_list = rasterizer::simple::fragment_list_type;
     
-    fragment_list const fl(rs.process(tp.first));
+    fragment_list const fl(rs.process(tp.first.p0, tp.first.p1, tp.first.p2));
     
     BOOST_CHECK(tp.second == fl.size());
 

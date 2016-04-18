@@ -48,23 +48,26 @@ namespace hugh {
 
           virtual ~base();
 
-          virtual fragment_list_type process(vertex const&) const   =0;
-          virtual fragment_list_type process(line const&) const     =0;
-          virtual fragment_list_type process(triangle const&) const =0;
+          virtual fragment_list_type process(vertex const&)                               const =0;
+          virtual fragment_list_type process(vertex const&, vertex const&)                const =0;
+          virtual fragment_list_type process(vertex const&, vertex const&, vertex const&) const =0;
 
-          inline fragment_list_type process_vertex(vertex const& a) const
+          inline fragment_list_type
+            process_vertex(vertex const& a) const
           {
             return process(a);
           }
           
-          inline fragment_list_type process_line(line const& a) const
+          inline fragment_list_type
+            process_line(vertex const& a, vertex const& b) const
           {
-            return process(a);
+            return process(a, b);
           }
 
-          inline fragment_list_type process_triangle(triangle const& a) const
+          inline fragment_list_type
+            process_triangle(vertex const& a, vertex const& b, vertex const& c) const
           {
-            return process(a);
+            return process(a, b, c);
           }
 
         protected:

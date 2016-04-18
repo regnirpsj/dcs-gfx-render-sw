@@ -69,7 +69,7 @@ namespace hugh {
         }
         
         /* virtual */ base::fragment_list_type
-        base::process(line const&) const
+        base::process(vertex const&, vertex const&) const
         {
           TRACE_NEVER("hugh::render::software::rasterizer::base::process(line)");
 
@@ -79,7 +79,7 @@ namespace hugh {
         }
       
         /* virtual */ base::fragment_list_type
-        base::process(triangle const&) const
+        base::process(vertex const&, vertex const&, vertex const&) const
         {
           TRACE_NEVER("hugh::render::software::rasterizer::base::process(triangle)");
         

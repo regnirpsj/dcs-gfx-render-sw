@@ -42,8 +42,8 @@ namespace hugh {
           virtual ~simple();
 
           virtual fragment_list_type process(vertex const&) const;
-          virtual fragment_list_type process(line const&) const;
-          virtual fragment_list_type process(triangle const&) const;
+          virtual fragment_list_type process(vertex const&, vertex const&) const;
+          virtual fragment_list_type process(vertex const&, vertex const&, vertex const&) const;
           
     
         };
