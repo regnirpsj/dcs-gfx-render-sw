@@ -44,6 +44,9 @@ namespace hugh {
 
           virtual void clear ();
           virtual bool update(fragment const&);
+          
+          bool zcull(fragment const&) const;
+          bool ztest(fragment const&);
 
         private:
 

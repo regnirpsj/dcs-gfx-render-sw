@@ -82,15 +82,38 @@ namespace hugh {
         {
           TRACE("hugh:render::software::depth::update");
 
-          bool result(false);
-
+          return ztest(f);
+        }
+        
+        /* virtual */ bool
+        depth::zcull(fragment const& f) const
+        {
+          TRACE("hugh:render::software::depth::zcull");
+          
+          bool result(true);
+          
           if (!(viewport_.near > f.depth)) {
             auto const idx(f.position.y * (viewport_.width-viewport_.x) + f.position.x);
-
+            
             if ((buffer_.size() > idx) && (f.depth < buffer_[idx].x)) {
-              buffer_[idx].x = f.depth;
-              result         = true;
+              result = false;
             }
+          }
+          
+          return result;
+        }
+        
+        /* virtual */ bool
+        depth::ztest(fragment const& f)
+        {
+          TRACE("hugh:render::software::depth::ztest");
+          
+          bool result(!zcull(f));
+          
+          if (result) {
+            auto const idx(f.position.y * (viewport_.width-viewport_.x) + f.position.x);
+            
+            buffer_[idx].x = f.depth;
           }
           
           return result;
