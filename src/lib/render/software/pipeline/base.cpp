@@ -129,7 +129,7 @@ namespace hugh {
             xform_view               (*this, "xform_view"),
             xform_projection         (*this, "xform_projection"),
             lights                   (*this, "lights"),
-            material                 (*this, "material"),
+            material                 (*this, "material",    nullptr),
             rasterizer               (*this, "rasterizer",  nullptr),
             colorbuffer              (*this, "colorbuffer", nullptr),
             depthbuffer              (*this, "depthbuffer", nullptr),

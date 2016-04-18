@@ -82,7 +82,7 @@ namespace hugh {
           field::value::single<glm::mat4>         xform_view;
           field::value::single<glm::mat4>         xform_projection;
           field::value::multi<light_type>         lights;
-          field::value::single<material_type>     material;
+          field::value::single<material_type*>    material;
           field::value::single<rasterizer_type>   rasterizer;
           field::value::single<color_buffer_type> colorbuffer;
           field::value::single<depth_buffer_type> depthbuffer;
