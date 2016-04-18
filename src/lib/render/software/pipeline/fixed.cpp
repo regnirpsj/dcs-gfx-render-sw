@@ -69,7 +69,7 @@ namespace hugh {
         /* virtual */ void
         fixed::process(primitive::base const& p)
         {
-          TRACE("hugh::render::software::pipeline::fixed::process(" +
+          TRACE_ALWAYS("hugh::render::software::pipeline::fixed::process(" +
                 std::to_string(unsigned(p.topology)) + ")");
 
           using topology = primitive::topology;
@@ -94,19 +94,19 @@ namespace hugh {
           
           switch (p.topology) {
           case topology::point_list:
-            fragments = raster<topology::point_list>    (p.indices, vertices,  false); break;
+            fragments = raster<topology::point_list>    (p.indices, vertices, false); break;
             
           case topology::line_list:
-            fragments = raster<topology::line_list>     (p.indices, vertices, !async); break;
+            fragments = raster<topology::line_list>     (p.indices, vertices, async); break;
             
           case topology::line_strip:
-            fragments = raster<topology::line_strip>    (p.indices, vertices, !async); break;
+            fragments = raster<topology::line_strip>    (p.indices, vertices, async); break;
             
           case topology::triangle_list:
-            fragments = raster<topology::triangle_list> (p.indices, vertices, !async); break;
+            fragments = raster<topology::triangle_list> (p.indices, vertices, async); break;
             
           case topology::triangle_strip:
-            fragments = raster<topology::triangle_strip>(p.indices, vertices, !async); break;
+            fragments = raster<topology::triangle_strip>(p.indices, vertices, async); break;
             
           default:
             {
@@ -132,15 +132,15 @@ namespace hugh {
           
           const_cast<statistics&>(*stats) += lstats;
           
-#if 0
+#if 1
           {
             std::cout << support::trace::prefix()
               // << "hugh::render::software::pipeline::fixed::process: "
                       << (p.indices.empty() ? "!" : " ") << "idx "
                       << p.topology
-                      << "     \t"
+                      << "   \t"
                       << lstats
-                      << "     \t"
+                      << '\t'
                       << *stats
                       << '\n';
           }

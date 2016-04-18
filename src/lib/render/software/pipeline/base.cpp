@@ -18,6 +18,7 @@
 
 // includes, system
 
+#include <boost/io/ios_state.hpp>  // boost::io::ios_all_saver
 #define BOOST_THREAD_PROVIDES_EXECUTORS
 #define BOOST_THREAD_PROVIDES_FUTURE
 #include <boost/thread/future.hpp> // boost::future<>
@@ -217,16 +218,16 @@ namespace hugh {
                 futures.push_back(boost::async(thread_pool_,
                                                &rasterizer::base::process_line,
                                                rasterizer.get(),
-                                               line(vlist[i+0],
-                                                    vlist[i+1])));
+                                               vlist[i+0],
+                                               vlist[i+1]));
               }
             } else {
               for (unsigned i(0); i < ilist.size(); i += 2) {
                 futures.push_back(boost::async(thread_pool_,
                                                &rasterizer::base::process_line,
                                                rasterizer.get(),
-                                               line(vlist[ilist[i+0]],
-                                                    vlist[ilist[i+1]])));
+                                               vlist[ilist[i+0]],
+                                               vlist[ilist[i+1]]));
               }
             }
           
@@ -238,15 +239,15 @@ namespace hugh {
           } else { // task sequential
             if (ilist.empty()) {
               for (unsigned i(0); i < vlist.size(); i += 2) {
-                fragment_list_type const fl((*rasterizer)->process(line(vlist[i+0],
-                                                                        vlist[i+1])));
+                fragment_list_type const fl((*rasterizer)->process(vlist[i+0],
+                                                                   vlist[i+1]));
 
                 result.insert(result.end(), fl.begin(), fl.end());
               }
             } else {
               for (unsigned i(0); i < ilist.size(); i += 2) {
-                fragment_list_type const fl((*rasterizer)->process(line(vlist[ilist[i+0]],
-                                                                        vlist[ilist[i+1]])));
+                fragment_list_type const fl((*rasterizer)->process(vlist[ilist[i+0]],
+                                                                   vlist[ilist[i+1]]));
 
                 result.insert(result.end(), fl.begin(), fl.end());
               }
@@ -277,16 +278,16 @@ namespace hugh {
                 futures.push_back(boost::async(thread_pool_,
                                                &rasterizer::base::process_line,
                                                rasterizer.get(),
-                                               line(vlist[i+0],
-                                                    vlist[i+1])));
+                                               vlist[i+0],
+                                               vlist[i+1]));
               }
             } else {
               for (unsigned i(0); i < ilist.size()-1; ++i) {
                 futures.push_back(boost::async(thread_pool_,
                                                &rasterizer::base::process_line,
                                                rasterizer.get(),
-                                               line(vlist[ilist[i+0]],
-                                                    vlist[ilist[i+1]])));
+                                               vlist[ilist[i+0]],
+                                               vlist[ilist[i+1]]));
               }
             }
           
@@ -298,15 +299,15 @@ namespace hugh {
           } else { // task sequential
             if (ilist.empty()) {
               for (unsigned i(0); i < vlist.size()-1; ++i) {
-                fragment_list_type const fl((*rasterizer)->process(line(vlist[i+0],
-                                                                        vlist[i+1])));
+                fragment_list_type const fl((*rasterizer)->process(vlist[i+0],
+                                                                   vlist[i+1]));
 
                 result.insert(result.end(), fl.begin(), fl.end());
               }
             } else {
               for (unsigned i(0); i < ilist.size()-1; ++i) {
-                fragment_list_type const fl((*rasterizer)->process(line(vlist[ilist[i+0]],
-                                                                        vlist[ilist[i+1]])));
+                fragment_list_type const fl((*rasterizer)->process(vlist[ilist[i+0]],
+                                                                   vlist[ilist[i+1]]));
 
                 result.insert(result.end(), fl.begin(), fl.end());
               }
@@ -337,18 +338,18 @@ namespace hugh {
                 futures.push_back(boost::async(thread_pool_,
                                                &rasterizer::base::process_triangle,
                                                rasterizer.get(),
-                                               triangle(vlist[i+0],
-                                                        vlist[i+1],
-                                                        vlist[i+2])));
+                                               vlist[i+0],
+                                               vlist[i+1],
+                                               vlist[i+2]));
               }
             } else {
               for (unsigned i(0); i < ilist.size(); i += 3) {
                 futures.push_back(boost::async(thread_pool_,
                                                &rasterizer::base::process_triangle,
                                                rasterizer.get(),
-                                               triangle(vlist[ilist[i+0]],
-                                                        vlist[ilist[i+1]],
-                                                        vlist[ilist[i+2]])));
+                                               vlist[ilist[i+0]],
+                                               vlist[ilist[i+1]],
+                                               vlist[ilist[i+2]]));
               }
             }
           
@@ -360,17 +361,17 @@ namespace hugh {
           } else { // task sequential
             if (ilist.empty()) {
               for (unsigned i(0); i < vlist.size(); i += 3) {
-                fragment_list_type const fl((*rasterizer)->process(triangle(vlist[i+0],
-                                                                            vlist[i+1],
-                                                                            vlist[i+2])));
+                fragment_list_type const fl((*rasterizer)->process(vlist[i+0],
+                                                                   vlist[i+1],
+                                                                   vlist[i+2]));
 
                 result.insert(result.end(), fl.begin(), fl.end());
               }
             } else {
               for (unsigned i(0); i < ilist.size(); i += 3) {
-                fragment_list_type const fl((*rasterizer)->process(triangle(vlist[ilist[i+0]],
-                                                                            vlist[ilist[i+1]],
-                                                                            vlist[ilist[i+2]])));
+                fragment_list_type const fl((*rasterizer)->process(vlist[ilist[i+0]],
+                                                                   vlist[ilist[i+1]],
+                                                                   vlist[ilist[i+2]]));
 
                 result.insert(result.end(), fl.begin(), fl.end());
               }
@@ -395,25 +396,93 @@ namespace hugh {
             std::vector<boost::future<fragment_list_type>> futures;
 
             futures.reserve((ilist.empty() ? vlist.size() : ilist.size()) - 2);
+
+            unsigned const tris_per_task(2500);
             
             if (ilist.empty()) {
+#if 1
+              unsigned const task_count(std::ceil((vlist.size()-2) / tris_per_task));
+
+              for (unsigned t(0); t <= task_count; ++t) {
+                unsigned const begin(t * tris_per_task);
+                unsigned       end  (begin + tris_per_task + 2);
+
+                if (end > vlist.size()) {
+                  end = vlist.size();
+                }
+                
+                futures.push_back(boost::async(thread_pool_,
+                                               [&, begin, end]()
+                                               {
+                                                 fragment_list_type result;
+
+                                                 result.reserve(end-begin);
+                                                 
+                                                 for (unsigned i(begin); i < end-2; ++i) {
+                                                   fragment_list_type const
+                                                     fl((*rasterizer)->process(vlist[i+0],
+                                                                               vlist[i+1],
+                                                                               vlist[i+2]));
+                                                   
+                                                   result.insert(result.end(),
+                                                                 fl.begin(), fl.end());
+                                                 }
+
+                                                 return result;
+                                               }));
+              }
+#else
               for (unsigned i(0); i < vlist.size()-2; ++i) {
                 futures.push_back(boost::async(thread_pool_,
                                                &rasterizer::base::process_triangle,
                                                rasterizer.get(),
-                                               triangle(vlist[i+0],
-                                                        vlist[i+1],
-                                                        vlist[i+2])));
+                                               vlist[i+0],
+                                               vlist[i+1],
+                                               vlist[i+2]));
               }
+#endif
             } else {
+#if 1
+              unsigned const task_count(std::ceil((ilist.size()-2) / tris_per_task));
+
+              for (unsigned t(0); t <= task_count; ++t) {
+                unsigned const begin(t * tris_per_task);
+                unsigned       end  (begin + tris_per_task + 2);
+
+                if (end > ilist.size()) {
+                  end = ilist.size();
+                }
+                
+                futures.push_back(boost::async(thread_pool_,
+                                               [&, begin, end]()
+                                               {
+                                                 fragment_list_type result;
+
+                                                 result.reserve(end-begin);
+                                                 
+                                                 for (unsigned i(begin); i < end-2; ++i) {
+                                                   fragment_list_type const
+                                                     fl((*rasterizer)->process(vlist[ilist[i+0]],
+                                                                               vlist[ilist[i+1]],
+                                                                               vlist[ilist[i+2]]));
+                                                   
+                                                   result.insert(result.end(),
+                                                                 fl.begin(), fl.end());
+                                                 }
+
+                                                 return result;
+                                               }));
+              }
+#else
               for (unsigned i(0); i < ilist.size()-2; ++i) {
                 futures.push_back(boost::async(thread_pool_,
                                                &rasterizer::base::process_triangle,
                                                rasterizer.get(),
-                                               triangle(vlist[ilist[i+0]],
-                                                        vlist[ilist[i+1]],
-                                                        vlist[ilist[i+2]])));
+                                               vlist[ilist[i+0]],
+                                               vlist[ilist[i+1]],
+                                               vlist[ilist[i+2]]));
               }
+#endif
             }
           
             for (auto& f : futures) {            
@@ -424,17 +493,17 @@ namespace hugh {
           } else { // task sequential
             if (ilist.empty()) {
               for (unsigned i(0); i < vlist.size()-2; ++i) {
-                fragment_list_type const fl((*rasterizer)->process(triangle(vlist[i+0],
-                                                                            vlist[i+1],
-                                                                            vlist[i+2])));
+                fragment_list_type const fl((*rasterizer)->process(vlist[i+0],
+                                                                   vlist[i+1],
+                                                                   vlist[i+2]));
 
                 result.insert(result.end(), fl.begin(), fl.end());
               }
             } else {
               for (unsigned i(0); i < ilist.size()-2; ++i) {
-                fragment_list_type const fl((*rasterizer)->process(triangle(vlist[ilist[i+0]],
-                                                                            vlist[ilist[i+1]],
-                                                                            vlist[ilist[i+2]])));
+                fragment_list_type const fl((*rasterizer)->process(vlist[ilist[i+0]],
+                                                                   vlist[ilist[i+1]],
+                                                                   vlist[ilist[i+2]]));
 
                 result.insert(result.end(), fl.begin(), fl.end());
               }
@@ -452,12 +521,22 @@ namespace hugh {
           std::ostream::sentry const cerberus(os);
 
           if (cerberus) {
+            boost::io::ios_all_saver const ias(os);
+
+            static unsigned const width(9);
+            
             os << '['
                << "v:"
+               << std::setw(width)
+              // << std::setfill('0')
                << a.vertices.processed
                << " -> f:"
+               << std::setw(width)
+              //<< std::setfill('0')
                << a.fragments.created
                << " -> p:"
+               << std::setw(width)
+              //<< std::setfill('0')
                << a.fragments.updated
                << ']';
           }

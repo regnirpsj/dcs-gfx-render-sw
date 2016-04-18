@@ -60,9 +60,10 @@ BOOST_AUTO_TEST_CASE(test_hugh_render_software_pipeline_fixed_process)
   using namespace hugh::render::software;
   using viewport = hugh::scene::object::camera::viewport;
 
-  //viewport const  vp(0, 0, 80, 60, 0, 1);
+  viewport const  vp(0, 0, 80, 60, 0, 1);
   //viewport const  vp(0, 0, 160, 120, 0, 1);
-  viewport const  vp(0, 0, 320, 240, 0, 1);
+  //viewport const  vp(0, 0, 320, 240, 0, 1);
+  //viewport const  vp(0, 0, 640, 480, 0, 1);
   //viewport const  vp(0, 0, 1600, 1200, 0, 1);
   pipeline::fixed ppl;
 
@@ -112,6 +113,8 @@ BOOST_AUTO_TEST_CASE(test_hugh_render_software_pipeline_fixed_process)
     BOOST_CHECK(ilstats.fragments.created  >  lstats.fragments.created);
     BOOST_CHECK(ilstats.fragments.updated  == lstats.fragments.updated);
   }
+
+  (*ppl.depthbuffer)->clear();
   
   {
     using line_list   = primitive::line_list;
@@ -154,6 +157,8 @@ BOOST_AUTO_TEST_CASE(test_hugh_render_software_pipeline_fixed_process)
     BOOST_CHECK(ilstats.fragments.created  >  lstats.fragments.created);
     BOOST_CHECK(ilstats.fragments.updated  == lstats.fragments.updated);
   }
+
+  (*ppl.depthbuffer)->clear();
   
   {
     using line_strip  = primitive::line_strip;
@@ -195,6 +200,8 @@ BOOST_AUTO_TEST_CASE(test_hugh_render_software_pipeline_fixed_process)
     BOOST_CHECK(ilstats.fragments.created  >  lstats.fragments.created);
     BOOST_CHECK(ilstats.fragments.updated  == lstats.fragments.updated);
   }
+
+  (*ppl.depthbuffer)->clear();
   
   {
     using triangle_list = primitive::triangle_list;
@@ -241,6 +248,8 @@ BOOST_AUTO_TEST_CASE(test_hugh_render_software_pipeline_fixed_process)
     BOOST_CHECK(ilstats.fragments.created  >  lstats.fragments.created);
     BOOST_CHECK(ilstats.fragments.updated  == lstats.fragments.updated);
   }
+
+  (*ppl.depthbuffer)->clear();
   
   {
     using triangle_strip = primitive::triangle_strip;
