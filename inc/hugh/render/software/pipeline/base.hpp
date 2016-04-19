@@ -92,11 +92,6 @@ namespace hugh {
 
           virtual void process(primitive::base const&) =0;
 
-          glm::vec4 object_to_world(glm::vec4 const&) const;
-          glm::vec4 world_to_eye   (glm::vec4 const&) const;
-          glm::vec4 eye_to_clip    (glm::vec4 const&) const;
-          glm::vec3 clip_to_ndc    (glm::vec4 const&) const;
-
         protected:
           
           explicit base();
@@ -104,6 +99,12 @@ namespace hugh {
           using fragment_list_type = rasterizer::base::fragment_list_type;
           using index_list_type    = primitive::base::index_list_type;
           using vertex_list_type   = primitive::base::vertex_list_type;
+          
+          virtual glm::vec4 object_to_world(glm::vec4 const&) const;
+          virtual glm::vec4 world_to_eye   (glm::vec4 const&) const;
+          virtual glm::vec4 eye_to_clip    (glm::vec4 const&) const;
+          virtual glm::vec3 clip_to_ndc    (glm::vec4 const&) const;
+          virtual glm::vec3 ndc_to_window  (glm::vec3 const&) const =0;
           
           template <primitive::topology>
             fragment_list_type raster(index_list_type const&  /* indices   */,

@@ -89,6 +89,23 @@ namespace hugh {
                                  "'hugh::render::software::pipeline::base::process' called");
         }
           
+        /* explicit */
+        base::base()
+          : field::container         (),
+            support::refcounted<base>(),
+            xform_model              (*this, "xform_model"),
+            xform_view               (*this, "xform_view"),
+            xform_projection         (*this, "xform_projection"),
+            lights                   (*this, "lights"),
+            material                 (*this, "material",    nullptr),
+            rasterizer               (*this, "rasterizer",  nullptr),
+            colorbuffer              (*this, "colorbuffer", nullptr),
+            depthbuffer              (*this, "depthbuffer", nullptr),
+            stats                    (*this, "stats")
+        {
+          TRACE("hugh::render::software::pipeline::base::base");
+        }
+
         glm::vec4
         base::object_to_world(glm::vec4 const& a) const
         {
@@ -119,25 +136,20 @@ namespace hugh {
           TRACE_NEVER("hugh::render::software::pipeline::base::clip_to_ndc");
 
           return glm::vec3(a.x / a.w, a.y / a.w, a.z / a.w);
+        }        
+
+        /* virtual */ glm::vec3
+        base::ndc_to_window(glm::vec3 const&) const
+        {
+          TRACE_NEVER("hugh::render::software::pipeline::base::ndc_to_window");
+
+          throw std::logic_error("pure virtual function "
+                                 "'hugh::render::software::pipeline::base::ndc_to_window' "
+                                 "called");
+
+          return glm::vec3();
         }
         
-        /* explicit */
-        base::base()
-          : field::container         (),
-            support::refcounted<base>(),
-            xform_model              (*this, "xform_model"),
-            xform_view               (*this, "xform_view"),
-            xform_projection         (*this, "xform_projection"),
-            lights                   (*this, "lights"),
-            material                 (*this, "material",    nullptr),
-            rasterizer               (*this, "rasterizer",  nullptr),
-            colorbuffer              (*this, "colorbuffer", nullptr),
-            depthbuffer              (*this, "depthbuffer", nullptr),
-            stats                    (*this, "stats")
-        {
-          TRACE("hugh::render::software::pipeline::base::base");
-        }
-
         template <>
         base::fragment_list_type
         base::raster<primitive::topology::point_list>(index_list_type const&  ilist,

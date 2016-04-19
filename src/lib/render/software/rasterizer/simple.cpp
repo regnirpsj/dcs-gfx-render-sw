@@ -86,7 +86,7 @@ namespace hugh {
           
           fragment_list_type result;
 
-          if (viewport_.contains(glm::vec3(v.position.xy(), 0))) {
+          if (viewport->contains(glm::vec3(v.position.xy(), 0))) {
             result.push_back(fragment(glm::uvec2(v.position.x, v.position.y),
                                       v.position.z,
                                       v.attributes));
@@ -104,8 +104,8 @@ namespace hugh {
 
           fragment_list_type result;
           
-          if (viewport_.contains(glm::vec3(v0.position.xy(), 0)) ||
-              viewport_.contains(glm::vec3(v1.position.xy(), 0))) {
+          if (viewport->contains(glm::vec3(v0.position.xy(), 0)) ||
+              viewport->contains(glm::vec3(v1.position.xy(), 0))) {
             std::vector<std::pair<attribute::type, std::array<glm::vec4, 2>>> base_attributes;
 
             if (!v0.attributes.empty() ||
@@ -135,11 +135,11 @@ namespace hugh {
             std::array<glm::ivec2, 2> line = {
               {
                 glm::min(glm::max(glm::ivec2(v0.position.x, v0.position.y),
-                                  glm::ivec2(viewport_.x, viewport_.y)),
-                         glm::ivec2(viewport_.width, viewport_.height)),
+                                  glm::ivec2(viewport->x, viewport->y)),
+                         glm::ivec2(viewport->width, viewport->height)),
                 glm::min(glm::max(glm::ivec2(v1.position.x, v1.position.y),
-                                  glm::ivec2(viewport_.x, viewport_.y)),
-                         glm::ivec2(viewport_.width, viewport_.height))
+                                  glm::ivec2(viewport->x, viewport->y)),
+                         glm::ivec2(viewport->width, viewport->height))
               }
             };
 
@@ -217,9 +217,9 @@ namespace hugh {
                                     (v1.position.y - v0.position.y)));
 
           if ((0.0 < area2) &&
-              (viewport_.contains(glm::vec3(v0.position.xy(), 0)) ||
-               viewport_.contains(glm::vec3(v1.position.xy(), 0)) ||
-               viewport_.contains(glm::vec3(v2.position.xy(), 0)))) {
+              (viewport->contains(glm::vec3(v0.position.xy(), 0)) ||
+               viewport->contains(glm::vec3(v1.position.xy(), 0)) ||
+               viewport->contains(glm::vec3(v2.position.xy(), 0)))) {
             std::vector<std::pair<attribute::type, std::array<glm::vec4, 3>>> base_attributes;
 
             if (!v0.attributes.empty() ||
@@ -255,13 +255,13 @@ namespace hugh {
             
             std::array<glm::ivec2 const, 2> const bbox = {
               {
-                glm::max(glm::ivec2(viewport_.x, viewport_.y),
-                         glm::min(glm::ivec2(viewport_.width, viewport_.height),
+                glm::max(glm::ivec2(viewport->x, viewport->y),
+                         glm::min(glm::ivec2(viewport->width, viewport->height),
                                   glm::min(glm::ivec2(v0.position.x, v0.position.y),
                                            glm::min(glm::ivec2(v1.position.x, v1.position.y),
                                                     glm::ivec2(v2.position.x, v2.position.y))))),
-                glm::max(glm::ivec2(viewport_.x, viewport_.y),
-                         glm::min(glm::ivec2(viewport_.width, viewport_.height),
+                glm::max(glm::ivec2(viewport->x, viewport->y),
+                         glm::min(glm::ivec2(viewport->width, viewport->height),
                                   glm::max(glm::ivec2(v0.position.x, v0.position.y),
                                            glm::max(glm::ivec2(v1.position.x, v1.position.y),
                                                     glm::ivec2(v2.position.x, v2.position.y))))),

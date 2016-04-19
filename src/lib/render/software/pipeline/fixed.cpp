@@ -153,9 +153,14 @@ namespace hugh {
         {
           TRACE("hugh::render::software::pipeline::fixed::transform");
 
-          glm::vec4 const vh(v.position, 1);
+          glm::vec4 const homogeneous_coord(v.position, 1);
+          glm::vec4 const world_coord      (object_to_world(homogeneous_coord));
+          glm::vec4 const eye_coord        (world_to_eye   (world_coord));
+          glm::vec4 const clip_coord       (eye_to_clip    (eye_coord));
+          glm::vec3 const ndc_coord        (clip_to_ndc    (clip_coord));
+          glm::vec3 const window_coord     (ndc_to_window  (ndc_coord));
           
-          return vertex(clip_to_ndc(eye_to_clip(world_to_eye(object_to_world(vh)))), v.attributes);
+          return vertex(window_coord, v.attributes);
         }
         
         fragment
@@ -216,7 +221,65 @@ namespace hugh {
           
           return fragment(f.position, f.depth, attr);
         }
+
+        /* explicit */
+        d3d::d3d()
+          : fixed()
+        {
+          TRACE("hugh::render::software::pipeline::d3d::d3d");
+        }
         
+        /* virtual */
+        d3d::~d3d()
+        {
+          TRACE("hugh::render::software::pipeline::d3d::~d3d");
+        }
+
+        /* virtual */ glm::vec3
+        d3d::ndc_to_window(glm::vec3 const& a) const
+        {
+          TRACE("hugh::render::software::pipeline::d3d::ndc_to_window");
+
+          rasterizer::base::viewport_type const& vp(*(*rasterizer)->viewport);
+          glm::vec3                              result;
+
+          // http://msdn.microsoft.com/en-us/library/windows/desktop/bb205126%28v=vs.85%29.aspx
+          result.x = ((a.x + 1) * (vp.width  / 2.0f)) + vp.x;
+          result.y = ((1 - a.y) * (vp.height / 2.0f)) + vp.y;
+          result.z = ( a.z      * (vp.far - vp.near)) + vp.near;
+
+          return result;
+        }
+
+        /* explicit */
+        opengl::opengl()
+          : fixed()
+        {
+          TRACE("hugh::render::software::pipeline::opengl::opengl");
+        }
+
+        /* virtual */
+        opengl::~opengl()
+        {
+          TRACE("hugh::render::software::pipeline::opengl::~opengl");
+        }
+
+        /* virtual */ glm::vec3
+        opengl::ndc_to_window(glm::vec3 const& a) const
+        {
+          TRACE("hugh::render::software::pipeline::opengl::ndc_to_window");
+
+          rasterizer::base::viewport_type const& vp(*(*rasterizer)->viewport);
+          glm::vec3                              result;
+
+          // glspec43.core20120806:13.6.1
+          result.x  = ((a.x + 1) * (vp.width  / 2.0f))          + vp.x;
+          result.y  = ((a.y + 1) * (vp.height / 2.0f))          + vp.y;
+          result.z  = ((a.z      * ((vp.far - vp.near) / 2.0f)) + ((vp.near + vp.far) / 2.0f));
+
+          return result;
+        }
+
       } // namespace pipeline {
 
     } // namespace software {

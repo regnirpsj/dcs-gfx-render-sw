@@ -49,6 +49,40 @@ namespace hugh {
           fragment shade    (fragment const&) const;
           
         };
+
+        class HUGH_RENDER_SOFTWARE_EXPORT d3d : public fixed {
+
+        public:
+
+          explicit d3d();
+          virtual ~d3d();
+
+          // exposing previously 'protected' methods
+          using fixed::object_to_world;
+          using fixed::world_to_eye;
+          using fixed::eye_to_clip;;
+          using fixed::clip_to_ndc;
+          
+          virtual glm::vec3 ndc_to_window(glm::vec3 const&) const;
+          
+        };
+        
+        class HUGH_RENDER_SOFTWARE_EXPORT opengl : public fixed {
+
+        public:
+
+          explicit opengl();
+          virtual ~opengl();
+
+          // exposing previously 'protected' methods
+          using fixed::object_to_world;
+          using fixed::world_to_eye;
+          using fixed::eye_to_clip;;
+          using fixed::clip_to_ndc;
+          
+          virtual glm::vec3 ndc_to_window(glm::vec3 const&) const;
+          
+        };
         
         // variables, exported (extern)
 

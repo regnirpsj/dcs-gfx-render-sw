@@ -66,6 +66,8 @@ namespace hugh {
           throw std::logic_error("pure virtual function "
                                  "'hugh::render::software::rasterizer::base::process(vertex)' "
                                  "called");
+
+          return fragment_list_type();
         }
         
         /* virtual */ base::fragment_list_type
@@ -76,6 +78,8 @@ namespace hugh {
           throw std::logic_error("pure virtual function "
                                  "'hugh::render::software::rasterizer::base::process(line)' "
                                  "called");
+
+          return fragment_list_type();
         }
       
         /* virtual */ base::fragment_list_type
@@ -86,12 +90,15 @@ namespace hugh {
           throw std::logic_error("pure virtual function "
                                  "'hugh::render::software::rasterizer::base::process(triangle)' "
                                  "called");
+
+          return fragment_list_type();
         }
       
         /* explicit */
         base::base(viewport_type const& a)
-          : support::refcounted<base>(),
-            viewport_                (a)
+          : field::container         (),
+            support::refcounted<base>(),
+            viewport                 (*this, "viewport", a)
         {
           TRACE("hugh::render::software::rasterizer::base::base");
         }

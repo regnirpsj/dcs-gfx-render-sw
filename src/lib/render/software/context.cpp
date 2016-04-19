@@ -126,7 +126,7 @@ namespace hugh {
           colorbuffer.set(new buffer::color     (vp));
           depthbuffer.set(new buffer::depth     (vp));
           rasterizer .set(new rasterizer::simple(vp));
-          pipeline   .set(new pipeline::fixed);
+          pipeline   .set(new pipeline::opengl);
 
           (*pipeline)->colorbuffer.set(*colorbuffer);
           (*pipeline)->depthbuffer.set(*depthbuffer);

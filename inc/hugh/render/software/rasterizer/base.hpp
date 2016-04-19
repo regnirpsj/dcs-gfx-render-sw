@@ -22,6 +22,8 @@
 
 // includes, project
 
+#include <hugh/field/container.hpp>
+#include <hugh/field/value/single.hpp>
 #include <hugh/render/software/export.h>
 #include <hugh/render/software/fragment.hpp>
 #include <hugh/render/software/line.hpp>
@@ -39,13 +41,16 @@ namespace hugh {
         
         // types, exported (class, enum, struct, union, typedef)
 
-        class HUGH_RENDER_SOFTWARE_EXPORT base : public support::refcounted<base> {
+        class HUGH_RENDER_SOFTWARE_EXPORT base : public field::container,
+                                                 public support::refcounted<base> {
 
         public:
 
           using fragment_list_type = std::vector<fragment>;
           using viewport_type      = scene::object::camera::viewport;
 
+          field::value::single<viewport_type> viewport; //<
+          
           virtual ~base();
 
           virtual fragment_list_type process(vertex const&)                               const =0;
@@ -71,8 +76,6 @@ namespace hugh {
           }
 
         protected:
-
-          viewport_type viewport_;
           
           explicit base(viewport_type const& = viewport_type());
     
