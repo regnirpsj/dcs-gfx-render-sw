@@ -21,7 +21,7 @@ set(SRC)
 list(APPEND SRC main.cpp)
 
 set(LIBS)
-list(APPEND LIBS common)
+list(APPEND LIBS hugh_render_software)
 list(APPEND LIBS ${HUGH_LIBRARIES})
 list(APPEND LIBS ${Boost_LIBRARIES})
 

@@ -25,10 +25,10 @@
 
 #include <glm/gtx/utilities.hpp>
 #include <hugh/platform/posix/application/base.hpp>
+#include <hugh/render/software/pipelines.hpp>
+#include <hugh/render/software/rasterizer/simple.hpp>
 #include <hugh/scene/object/camera/frustum.hpp>
 #include <hugh/support/io_utils.hpp>
-
-#include <../common/pipeline.hpp>
 
 #define HUGH_USE_TRACE
 #undef HUGH_USE_TRACE
@@ -158,30 +158,43 @@ namespace {
       std::cout << glm::io::precision(2) << glm::io::width(1 + 2 + 1 + 2);
       
       normal_ = glm::normalize(normal_);
+
+      using namespace hugh::render::software;
       
       if (show_d3d_) {
-        pipeline::d3d const d3d(xform_model_,
-                                xform_view_,
-                                glm::convert::opengl_to_d3d * xform_projection_,
-                                viewport_);
+        pipeline::fixed::direct3d d3d;
+
+        d3d.xform_model      = xform_model_;
+        d3d.xform_view       = xform_view_;
+        d3d.xform_projection = glm::convert::opengl_to_d3d * xform_projection_;
+        d3d.rasterizer       = new rasterizer::simple(viewport_);
+        d3d.colorbuffer      = new buffer::color     (viewport_);
+        d3d.depthbuffer      = new buffer::depth     (viewport_);
 
         if (1 < verbose_level_) {
           std::cout << "d3d:" << d3d << std::endl;
         }
       
-        std::cout << "d3d(p):" << d3d.transform(position_, true)  << std::endl;
-        std::cout << "d3d(n):" << d3d.transform(normal_,   false) << std::endl;
+        std::cout << "d3d(p):" << d3d.transform(vertex(position_))  << std::endl;
+        //std::cout << "d3d(n):" << d3d.transform(normal_,   false) << std::endl;
       }
 
       if (show_ogl_) {
-        pipeline::opengl const ogl(xform_model_, xform_view_, xform_projection_, viewport_);
+        pipeline::fixed::opengl ogl;
+
+        ogl.xform_model      = xform_model_;
+        ogl.xform_view       = xform_view_;
+        ogl.xform_projection = xform_projection_;
+        ogl.rasterizer       = new rasterizer::simple(viewport_);
+        ogl.colorbuffer      = new buffer::color     (viewport_);
+        ogl.depthbuffer      = new buffer::depth     (viewport_);
 
         if (1 < verbose_level_) {
           std::cout << "ogl:" << ogl << std::endl;
         }
       
-        std::cout << "ogl(p):" << ogl.transform(position_, true)  << std::endl;
-        std::cout << "ogl(n):" << ogl.transform(normal_,   false) << std::endl;
+        std::cout << "ogl(p):" << ogl.transform(vertex(position_))  << std::endl;
+        //std::cout << "ogl(n):" << ogl.transform(normal_,   false) << std::endl;
       }
 
 #if 0
