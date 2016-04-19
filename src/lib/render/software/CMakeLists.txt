@@ -29,7 +29,9 @@ list(APPEND SRC buffer/color.cpp)
 list(APPEND SRC buffer/depth.cpp)
 
 list(APPEND SRC pipeline/base.cpp)
-list(APPEND SRC pipeline/fixed.cpp)
+list(APPEND SRC pipeline/fixed/base.cpp)
+list(APPEND SRC pipeline/fixed/direct3d.cpp)
+list(APPEND SRC pipeline/fixed/opengl.cpp)
 #list(APPEND SRC pipeline/flexible.cpp)
 
 list(APPEND SRC primitive/base.cpp)

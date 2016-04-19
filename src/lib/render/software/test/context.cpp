@@ -19,6 +19,7 @@
 // includes, project
 
 #include <hugh/render/software/context.hpp>
+#include <hugh/render/software/pipelines.hpp>
 
 #define HUGH_USE_TRACE
 #undef HUGH_USE_TRACE
@@ -43,7 +44,7 @@ BOOST_AUTO_TEST_CASE(test_hugh_render_software_context_ctor)
 {
   using namespace hugh::render::software;
 
-  std::unique_ptr<context> const c(new context);
+  std::unique_ptr<context> const c(new context(new pipeline::fixed::opengl));
 
   BOOST_CHECK(nullptr != c);
 }
@@ -52,7 +53,7 @@ BOOST_AUTO_TEST_CASE(test_hugh_render_software_context_clear)
 {
   using namespace hugh::render::software;
 
-  std::unique_ptr<context> c(new context);
+  std::unique_ptr<context> c(new context(new pipeline::fixed::opengl));
 
   BOOST_CHECK(nullptr != c);
 
@@ -63,7 +64,7 @@ BOOST_AUTO_TEST_CASE(test_hugh_render_software_context_submit)
 {
   using namespace hugh::render::software;
 
-  std::unique_ptr<context> c(new context);
+  std::unique_ptr<context> c(new context(new pipeline::fixed::opengl));
 
   BOOST_CHECK(nullptr != c);
 
@@ -74,7 +75,7 @@ BOOST_AUTO_TEST_CASE(test_hugh_render_software_context_flush)
 {
   using namespace hugh::render::software;
 
-  std::unique_ptr<context> c(new context);
+  std::unique_ptr<context> c(new context(new pipeline::fixed::opengl));
 
   BOOST_CHECK(nullptr != c);
 
@@ -85,7 +86,7 @@ BOOST_AUTO_TEST_CASE(test_hugh_render_software_context_print_on)
 {
   using namespace hugh::render::software;
 
-  context c;
+  context c(new pipeline::fixed::opengl);
 
   {
     context::eval_manager().evaluate();

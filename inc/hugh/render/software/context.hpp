@@ -48,7 +48,7 @@ namespace hugh {
         
         field::value::single<viewport_type> viewport; //< [ x, y, w, h, n, f ]
         
-        explicit context(viewport_type const& = viewport_type());
+        explicit context(pipeline::base*, viewport_type const& = viewport_type());
         virtual ~context();
 
         virtual void clear ();

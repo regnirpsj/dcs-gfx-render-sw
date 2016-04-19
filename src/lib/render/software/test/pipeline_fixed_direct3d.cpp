@@ -6,7 +6,7 @@
 /*                                                                                                */
 /**************************************************************************************************/
 /*                                                                                                */
-/*  module     :  hugh/render/software/test/pipeline_fixed.cpp                                    */
+/*  module     :  hugh/render/software/test/pipeline_fixed_direct3d.cpp                           */
 /*  project    :                                                                                  */
 /*  description:                                                                                  */
 /*                                                                                                */
@@ -20,7 +20,7 @@
 
 #include <hugh/render/software/buffer/color.hpp>
 #include <hugh/render/software/buffer/depth.hpp>
-#include <hugh/render/software/pipeline/fixed/base.hpp>
+#include <hugh/render/software/pipeline/fixed/direct3d.hpp>
 #include <hugh/render/software/rasterizer/simple.hpp>
 
 #include <pipeline_fixed_shared.hpp>
@@ -35,17 +35,6 @@ namespace {
   
   // types, internal (class, enum, struct, union, typedef)
 
-  class fixed_generic : public hugh::render::software::pipeline::fixed::base {
-
-  public:
-
-    virtual glm::vec3 ndc_to_window(glm::vec3 const& a) const
-    {
-      return a;
-    }
-    
-  };
-  
   // variables, internal
   
   // functions, internal
@@ -57,13 +46,13 @@ namespace {
 
 BOOST_AUTO_TEST_CASE(test_hugh_render_software_pipeline_fixed_process)
 {
-  TRACE("test_hugh_render_software_pipeline_fixed_process");
+  TRACE("test_hugh_render_software_pipeline_fixed_direct3d_process");
   
   using namespace hugh::render::software;
   using viewport = hugh::scene::object::camera::viewport;
 
-  viewport const vp(0, 0, 80, 60, 0, 1);
-  fixed_generic  ppl;
+  viewport const            vp(0, 0, 80, 60, 0, 1);
+  pipeline::fixed::direct3d ppl;
 
   ppl.rasterizer  = new rasterizer::simple(vp);
   ppl.colorbuffer = new buffer::color     (vp);

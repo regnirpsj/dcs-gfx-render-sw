@@ -22,7 +22,6 @@
 
 // includes, project
 
-#include <hugh/render/software/pipeline/fixed.hpp>
 #include <hugh/render/software/rasterizer/simple.hpp>
 
 #define HUGH_USE_TRACE
@@ -52,13 +51,13 @@ namespace hugh {
       // functions, exported
 
       /* explicit */
-      context::context(viewport_type const& a)
+      context::context(pipeline::base* a, viewport_type const& b)
         : field::container(),
-          viewport        (*this, "viewport",    a),
+          viewport        (*this, "viewport",    b),
           colorbuffer     (*this, "colorbuffer", nullptr),
           depthbuffer     (*this, "depthbuffer", nullptr),
           rasterizer      (*this, "rasterizer",  nullptr),
-          pipeline        (*this, "pipeline",    nullptr)
+          pipeline        (*this, "pipeline",    a)
       {
         TRACE("hugh::render::software::context::context");
 
@@ -126,13 +125,14 @@ namespace hugh {
           colorbuffer.set(new buffer::color     (vp));
           depthbuffer.set(new buffer::depth     (vp));
           rasterizer .set(new rasterizer::simple(vp));
-          pipeline   .set(new pipeline::opengl);
 
-          (*pipeline)->colorbuffer.set(*colorbuffer);
-          (*pipeline)->depthbuffer.set(*depthbuffer);
-          (*pipeline)->rasterizer .set(*rasterizer);
+          if (*pipeline) {
+            (*pipeline)->colorbuffer.set(*colorbuffer);
+            (*pipeline)->depthbuffer.set(*depthbuffer);
+            (*pipeline)->rasterizer .set(*rasterizer);
+          }
         }
-
+        
         else if (&f == &colorbuffer) { /* ??? */ }
         else if (&f == &depthbuffer) { /* ??? */ }
         else if (&f == &rasterizer)  { /* ??? */ }
