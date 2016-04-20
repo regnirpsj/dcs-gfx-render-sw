@@ -136,10 +136,10 @@ namespace hugh {
               {
                 glm::min(glm::max(glm::ivec2(v0.position.x, v0.position.y),
                                   glm::ivec2(viewport->x, viewport->y)),
-                         glm::ivec2(viewport->width, viewport->height)),
+                         glm::ivec2(viewport->width-1, viewport->height-1)),
                 glm::min(glm::max(glm::ivec2(v1.position.x, v1.position.y),
                                   glm::ivec2(viewport->x, viewport->y)),
-                         glm::ivec2(viewport->width, viewport->height))
+                         glm::ivec2(viewport->width-1, viewport->height-1))
               }
             };
 
@@ -256,12 +256,12 @@ namespace hugh {
             std::array<glm::ivec2 const, 2> const bbox = {
               {
                 glm::max(glm::ivec2(viewport->x, viewport->y),
-                         glm::min(glm::ivec2(viewport->width, viewport->height),
+                         glm::min(glm::ivec2(viewport->width-1, viewport->height-1),
                                   glm::min(glm::ivec2(v0.position.x, v0.position.y),
                                            glm::min(glm::ivec2(v1.position.x, v1.position.y),
                                                     glm::ivec2(v2.position.x, v2.position.y))))),
                 glm::max(glm::ivec2(viewport->x, viewport->y),
-                         glm::min(glm::ivec2(viewport->width, viewport->height),
+                         glm::min(glm::ivec2(viewport->width-1, viewport->height-1),
                                   glm::max(glm::ivec2(v0.position.x, v0.position.y),
                                            glm::max(glm::ivec2(v1.position.x, v1.position.y),
                                                     glm::ivec2(v2.position.x, v2.position.y))))),
