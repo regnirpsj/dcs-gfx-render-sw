@@ -21,10 +21,11 @@ find_package(HUGH REQUIRED COMPONENTS support)
 include_directories(SYSTEM ${GTKMM_INCLUDE_DIRS})
 include_directories(SYSTEM ${HUGH_INCLUDE_DIRS})
 
-#add_definitions(-DHUGH_GTKMM_TRACE)
+#add_definitions(-DHUGH_ALL_TRACE)
 
 set(SRC)
 list(APPEND SRC application.cpp)
+list(APPEND SRC utilities.cpp)
 list(APPEND SRC window.cpp)
 
 set(LIBS)

@@ -24,9 +24,8 @@
 
 //#include <>
 
-#if defined(HUGH_GTKMM_TRACE)
-#  define HUGH_USE_TRACE
-#endif
+#define HUGH_USE_TRACE
+#undef HUGH_USE_TRACE
 #include <hugh/support/trace.hpp>
 
 // internal unnamed namespace

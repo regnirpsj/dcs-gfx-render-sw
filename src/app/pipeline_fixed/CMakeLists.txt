@@ -27,6 +27,8 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 set(SRC)
 list(APPEND SRC main.cpp)
+list(APPEND SRC window_buffer.cpp)
+list(APPEND SRC window_control.cpp)
 
 #add_definitions(-DHUGH_ALL_TRACE)
 

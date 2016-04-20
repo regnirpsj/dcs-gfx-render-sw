@@ -6,74 +6,54 @@
 /*                                                                                                */
 /**************************************************************************************************/
 /*                                                                                                */
-/*  module     :  pipeline_fixed/main.cpp                                                         */
+/*  module     :  pipeline_fixed/window_buffer.cpp                                                */
 /*  project    :                                                                                  */
 /*  description:                                                                                  */
 /*                                                                                                */
 /**************************************************************************************************/
 
+// include i/f header
+
+#include "window_buffer.hpp"
+
 // includes, system
 
-#include <cstdlib> // EXIT_SUCCESS
+//#include <>
 
 // includes, project
 
-#include <hugh/platform/posix/application/base.hpp>
-
-#include <gtkmm_wrap/application.hpp>
-#include <window_control.hpp>
+//#include <>
 
 #define HUGH_USE_TRACE
 //#undef HUGH_USE_TRACE
 #include <hugh/support/trace.hpp>
 
+// internal unnamed namespace
 
 namespace {
   
   // types, internal (class, enum, struct, union, typedef)
-  
-  class app : public hugh::platform::posix::application::base,
-              public hugh::gtkmm::application {
-    
-  public:
 
-    using command_line      = hugh::platform::application::command_line;
-    using gtkmm_application = hugh::gtkmm::application;
-    using posix_application = hugh::platform::posix::application::base;
-    
-    explicit app(command_line const& a)
-      : posix_application(a),
-        gtkmm_application(),
-        win_             (new window_control)
-    {
-      TRACE("<unnamed>::app::app");
-    }
-
-    virtual signed run()
-    {
-      TRACE("<unnamed>::app::run");
-      
-      return hugh::gtkmm::application::run(*win_);
-    }
-
-  private:
-    
-    std::unique_ptr<window_control> win_;
-    
-  };
-  
   // variables, internal
   
   // functions, internal
 
 } // namespace {
 
-int
-main(int argc, char const* argv[])
-{
-  TRACE("main");
+// variables, exported
 
-  using namespace hugh::platform::application;
-  
-  return execute<app>(command_line(argc, argv), std::nothrow);
+// functions, exported
+
+/* explicit */
+window_buffer::window_buffer()
+  : hugh::gtkmm::window(),
+    buffer_            (nullptr)
+{
+  TRACE("window_buffer::window_buffer");
+}
+
+/* virtual */
+window_buffer::~window_buffer()
+{
+  TRACE("window_buffer::~window_buffer");
 }
