@@ -59,31 +59,26 @@ BOOST_AUTO_TEST_CASE(test_hugh_render_software_rasterizer_simple_process_line)
   static attribute::list const al0({ {attribute::type::color, glm::vec4(1,0,0,1) }, });
   static attribute::list const al1({ {attribute::type::color, glm::vec4(0,1,0,1) }, });
 
-  viewport const  v(0, 0,  4,  3); // adj:  0
-  //viewport const  v(0, 0,  8,  6); // adj: -1
-  //viewport const  v(0, 0, 16, 12); // adj: -3
-  //viewport const  v(0, 0, 24, 18); // adj: -5
-  //viewport const  v(0, 0, 40, 30); // adj: -9
-  // w*w+h*h needs to be a square number for 'd' to make sense
-  unsigned const  d(std::sqrt((v. width * v. width) + (v.height * v.height)));
-  glm::vec3 const o(      0,        0, 0);
-  glm::vec3 const x(v.width,        0, 0);
-  glm::vec3 const y(      0, v.height, 0);
-  glm::vec3 const z(      0,        0, 1);
+  viewport const  v(0, 0,  3,  6);
+  unsigned const  d(std::max(v. width, v.height));
+  glm::vec3 const o(        0,          0, 0);
+  glm::vec3 const x(v.width-1,          0, 0);
+  glm::vec3 const y(        0, v.height-1, 0);
+  glm::vec3 const z(        0,          0, 1);
   
   std::array<std::pair<line const, unsigned const>, 22> const lines = {
     {
-      { line(vertex(o), vertex(  x)), v. width+1 }, { line(vertex(  x), vertex(o)), v. width+1 },
-      { line(vertex(o), vertex( -x)),          1 }, { line(vertex( -x), vertex(o)),          1 },
-      { line(vertex(x), vertex( -x)), v. width+1 }, { line(vertex( -x), vertex(x)), v. width+1 },
-      { line(vertex(o), vertex(  y)), v.height+1 }, { line(vertex(  y), vertex(o)), v.height+1 },
-      { line(vertex(o), vertex( -y)),          1 }, { line(vertex( -y), vertex(o)),          1 },
-      { line(vertex(y), vertex( -y)), v.height+1 }, { line(vertex( -y), vertex(y)), v.height+1 },
-      { line(vertex(o), vertex(  z)),          1 }, { line(vertex(  z), vertex(o)),          1 },
-      { line(vertex(o), vertex( -z)),          1 }, { line(vertex( -z), vertex(o)),          1 },
-      { line(vertex(z), vertex( -z)),          1 }, { line(vertex( -z), vertex(z)),          1 },
-      { line(vertex(o, al0), vertex(x+y, al1)),d }, { line(vertex(x+y, al0), vertex(o, al1)),d },
-      { line(vertex(y, al0), vertex(  x, al1)),d }, { line(vertex(  x, al0), vertex(y, al1)),d },
+      { line(vertex(o), vertex(  x)),    v. width }, { line(vertex(  x), vertex(o)),    v. width },
+      { line(vertex(o), vertex( -x)),           1 }, { line(vertex( -x), vertex(o)),           1 },
+      { line(vertex(x), vertex( -x)),    v. width }, { line(vertex( -x), vertex(x)),    v. width },
+      { line(vertex(o), vertex(  y)),    v.height }, { line(vertex(  y), vertex(o)),    v.height },
+      { line(vertex(o), vertex( -y)),           1 }, { line(vertex( -y), vertex(o)),           1 },
+      { line(vertex(y), vertex( -y)),    v.height }, { line(vertex( -y), vertex(y)),    v.height },
+      { line(vertex(o), vertex(  z)),           1 }, { line(vertex(  z), vertex(o)),           1 },
+      { line(vertex(o), vertex( -z)),           1 }, { line(vertex( -z), vertex(o)),           1 },
+      { line(vertex(z), vertex( -z)),           1 }, { line(vertex( -z), vertex(z)),           1 },
+      { line(vertex(o, al0), vertex(x+y, al1)), d }, { line(vertex(x+y, al0), vertex(o, al1)), d },
+      { line(vertex(y, al0), vertex(  x, al1)), d }, { line(vertex(  x, al0), vertex(y, al1)), d },
     }
   };
   
@@ -130,16 +125,18 @@ BOOST_AUTO_TEST_CASE(test_hugh_render_software_rasterizer_simple_process_triangl
   static attribute::list const al1({ {attribute::type::color, glm::vec4(0,1,0,1) }, });
   static attribute::list const al2({ {attribute::type::color, glm::vec4(0,0,1,1) }, });
   
-  viewport const  v(0, 0,  4,  3); // adj: +1, -2
-  //viewport const  v(0, 0,  8,  6); // adj: +2, -3
-  //viewport const  v(0, 0, 16, 12); // adj: +3
-  //viewport const  v(0, 0, 24, 18); // adj: +4
-  //viewport const  v(0, 0, 40, 30); // adj: +6
-  unsigned const  a((((v.width+1) * (v.height+1)) / 2) + 1);
-  glm::vec3 const o(      0,        0, 0);
-  glm::vec3 const x(v.width,        0, 0);
-  glm::vec3 const y(      0, v.height, 0);
-  glm::vec3 const z(      0,        0, 1);
+  viewport const  v(0, 0,  4,  4); // w == h -> 1/2 slope
+
+  unsigned a(0);
+
+  for (unsigned i(0); i < v.height; ++i) {
+    a += v.width - i;
+  }
+  
+  glm::vec3 const o(        0,          0, 0);
+  glm::vec3 const x(v.width-1,          0, 0);
+  glm::vec3 const y(        0, v.height-1, 0);
+  glm::vec3 const z(        0,          0, 1);
   
   std::array<std::pair<triangle const, unsigned const>, 18> const triangles = {
     {
@@ -151,7 +148,7 @@ BOOST_AUTO_TEST_CASE(test_hugh_render_software_rasterizer_simple_process_triangl
       
       { triangle(vertex(y), vertex(o), vertex(x)), a },
       { triangle(vertex(x), vertex(o), vertex(y)), 0 },
-      
+
       { triangle(vertex(  x), vertex(x+y), vertex(  y)), a },
       { triangle(vertex(  x), vertex(  y), vertex(x+y)), 0 },
       
@@ -160,15 +157,15 @@ BOOST_AUTO_TEST_CASE(test_hugh_render_software_rasterizer_simple_process_triangl
       
       { triangle(vertex(  y), vertex(x), vertex(x+y)), a },
       { triangle(vertex(x+y), vertex(x), vertex(  y)), 0 },
+      
+      { triangle(vertex(     o), vertex(two(x)), vertex(two(y))), v.width * v.height },
+      { triangle(vertex(     o), vertex( 2.f*y), vertex( 2.f*x)),                  0 },
 
-      { triangle(vertex(     o), vertex(two(x)), vertex(two(y))), (2.f*a)-2 },
-      { triangle(vertex(     o), vertex( 2.f*y), vertex( 2.f*x)),         0 },
+      { triangle(vertex(two(x)), vertex(two(y)), vertex(o)), v.width * v.height },
+      { triangle(vertex( 2.f*y), vertex( 2.f*x), vertex(o)),                  0 },
       
-      { triangle(vertex(two(x)), vertex(two(y)), vertex(o)), (2.f*a)-2 },
-      { triangle(vertex( 2.f*y), vertex( 2.f*x), vertex(o)),         0 },
-      
-      { triangle(vertex(two(y), al0), vertex(o, al1), vertex(two(x), al2)), (2.f*a)-2 },
-      { triangle(vertex( 2.f*x, al0), vertex(o, al1), vertex( 2.f*y, al2)),         0 },
+      { triangle(vertex(two(y), al0), vertex(o, al1), vertex(two(x), al2)), v.width * v.height },
+      { triangle(vertex( 2.f*x, al0), vertex(o, al1), vertex( 2.f*y, al2)),                  0 },
     }
   };
   
