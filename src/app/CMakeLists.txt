@@ -6,4 +6,5 @@
 #                                                                                                  #
 ####################################################################################################
 
+add_subdirectory(pipeline_fixed)
 add_subdirectory(projection)
