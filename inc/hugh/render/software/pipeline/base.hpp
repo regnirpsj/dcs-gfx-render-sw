@@ -55,18 +55,22 @@ namespace hugh {
             struct {
 
               unsigned created;
+              unsigned zculled;
               unsigned shaded;
+              unsigned ztestfailed;
               unsigned updated;
               
             } fragments;
             
             struct {
               
-              unsigned processed;
+              unsigned transformed;
               
             } vertices;
 
             statistics();
+
+            void reset();
             
             statistics& operator+=(statistics const&);
             

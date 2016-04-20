@@ -85,7 +85,7 @@ namespace hugh {
               vertices.push_back(transform(v));
             }
 
-            lstats.vertices.processed += vertices.size();
+            lstats.vertices.transformed += vertices.size();
 
             fragment_list_type fragments;
           
@@ -129,7 +129,11 @@ namespace hugh {
                   (*colorbuffer)->update(fs);
               
                   ++lstats.fragments.updated;
+                } else {
+                  ++lstats.fragments.ztestfailed;
                 }
+              } else {
+                ++lstats.fragments.zculled;
               }
             }
           

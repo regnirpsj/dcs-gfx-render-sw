@@ -22,7 +22,7 @@
 
 // includes, project
 
-//#include <>
+#include <hugh/scene/object/camera/viewport.hpp>
 
 namespace hugh {
 
@@ -46,6 +46,10 @@ namespace hugh {
 
         // variables, exported (extern)
 
+        using viewport_type = hugh::scene::object::camera::viewport;
+
+        extern viewport_type const default_viewport;
+        
         // functions, inlined (inline)
 
         // functions, exported (extern)

@@ -51,18 +51,16 @@ BOOST_AUTO_TEST_CASE(test_hugh_render_software_pipeline_fixed_process)
   using namespace hugh::render::software;
   using viewport = hugh::scene::object::camera::viewport;
 
-  viewport const            vp(0, 0, 80, 60, 0, 1);
+  viewport const            vp(test::default_viewport);
   pipeline::fixed::direct3d ppl;
 
   ppl.rasterizer  = new rasterizer::simple(vp);
   ppl.colorbuffer = new buffer::color     (vp);
   ppl.depthbuffer = new buffer::depth     (vp);
-
-  using namespace hugh::render::software::test;
   
-  (*ppl.depthbuffer)->clear(); process_point_list    (ppl);
-  (*ppl.depthbuffer)->clear(); process_line_list     (ppl);
-  (*ppl.depthbuffer)->clear(); process_line_strip    (ppl);
-  (*ppl.depthbuffer)->clear(); process_triangle_list (ppl);
-  (*ppl.depthbuffer)->clear(); process_triangle_strip(ppl);
+  (*ppl.depthbuffer)->clear(); test::process_point_list    (ppl);
+  (*ppl.depthbuffer)->clear(); test::process_line_list     (ppl);
+  (*ppl.depthbuffer)->clear(); test::process_line_strip    (ppl);
+  (*ppl.depthbuffer)->clear(); test::process_triangle_list (ppl);
+  (*ppl.depthbuffer)->clear(); test::process_triangle_strip(ppl);
 }

@@ -50,7 +50,9 @@ namespace hugh {
       namespace test {
 
         // variables, exported
-  
+
+        viewport_type const default_viewport(0, 0, 160, 120, 0, 1);
+        
         // functions, exported
         
         void
@@ -96,9 +98,12 @@ namespace hugh {
           
           auto const ilstats(*ppl.stats);
           
-          BOOST_CHECK(ilstats.vertices.processed >  lstats.vertices.processed);
-          BOOST_CHECK(ilstats.fragments.created  >  lstats.fragments.created);
-          BOOST_CHECK(ilstats.fragments.updated  == lstats.fragments.updated);
+          BOOST_CHECK(ilstats.vertices.transformed  >  lstats.vertices.transformed);
+          BOOST_CHECK(ilstats.fragments.created     >  lstats.fragments.created);
+          BOOST_CHECK(ilstats.fragments.zculled     >  lstats.fragments.zculled);
+          BOOST_CHECK(ilstats.fragments.shaded      == lstats.fragments.shaded);
+          BOOST_CHECK(ilstats.fragments.ztestfailed == lstats.fragments.ztestfailed);
+          BOOST_CHECK(ilstats.fragments.updated     == lstats.fragments.updated);
         }
         
         void
@@ -143,9 +148,12 @@ namespace hugh {
     
           auto const ilstats(*ppl.stats);
 
-          BOOST_CHECK(ilstats.vertices.processed >  lstats.vertices.processed);
-          BOOST_CHECK(ilstats.fragments.created  >  lstats.fragments.created);
-          BOOST_CHECK(ilstats.fragments.updated  == lstats.fragments.updated);
+          BOOST_CHECK(ilstats.vertices.transformed  >  lstats.vertices.transformed);
+          BOOST_CHECK(ilstats.fragments.created     >  lstats.fragments.created);
+          BOOST_CHECK(ilstats.fragments.zculled     >  lstats.fragments.zculled);
+          BOOST_CHECK(ilstats.fragments.shaded      == lstats.fragments.shaded);
+          BOOST_CHECK(ilstats.fragments.ztestfailed == lstats.fragments.ztestfailed);
+          BOOST_CHECK(ilstats.fragments.updated     == lstats.fragments.updated);
         }
         
         void
@@ -189,9 +197,12 @@ namespace hugh {
     
           auto const ilstats(*ppl.stats);
 
-          BOOST_CHECK(ilstats.vertices.processed >  lstats.vertices.processed);
-          BOOST_CHECK(ilstats.fragments.created  >  lstats.fragments.created);
-          BOOST_CHECK(ilstats.fragments.updated  == lstats.fragments.updated);
+          BOOST_CHECK(ilstats.vertices.transformed  >  lstats.vertices.transformed);
+          BOOST_CHECK(ilstats.fragments.created     >  lstats.fragments.created);
+          BOOST_CHECK(ilstats.fragments.zculled     >  lstats.fragments.zculled);
+          BOOST_CHECK(ilstats.fragments.shaded      == lstats.fragments.shaded);
+          BOOST_CHECK(ilstats.fragments.ztestfailed == lstats.fragments.ztestfailed);
+          BOOST_CHECK(ilstats.fragments.updated     == lstats.fragments.updated);
         }
         
         void
@@ -241,9 +252,12 @@ namespace hugh {
     
           auto const ilstats(*ppl.stats);
 
-          BOOST_CHECK(ilstats.vertices.processed >  lstats.vertices.processed);
-          BOOST_CHECK(ilstats.fragments.created  >  lstats.fragments.created);
-          BOOST_CHECK(ilstats.fragments.updated  == lstats.fragments.updated);
+          BOOST_CHECK(ilstats.vertices.transformed  >  lstats.vertices.transformed);
+          BOOST_CHECK(ilstats.fragments.created     >  lstats.fragments.created);
+          BOOST_CHECK(ilstats.fragments.zculled     >  lstats.fragments.zculled);
+          BOOST_CHECK(ilstats.fragments.shaded      == lstats.fragments.shaded);
+          BOOST_CHECK(ilstats.fragments.ztestfailed == lstats.fragments.ztestfailed);
+          BOOST_CHECK(ilstats.fragments.updated     == lstats.fragments.updated);
         }
         
         void
@@ -292,9 +306,12 @@ namespace hugh {
     
           auto const ilstats(*ppl.stats);
 
-          BOOST_CHECK(ilstats.vertices.processed >  lstats.vertices.processed);
-          BOOST_CHECK(ilstats.fragments.created  >  lstats.fragments.created);
-          BOOST_CHECK(ilstats.fragments.updated  == lstats.fragments.updated);
+          BOOST_CHECK(ilstats.vertices.transformed  >  lstats.vertices.transformed);
+          BOOST_CHECK(ilstats.fragments.created     >  lstats.fragments.created);
+          BOOST_CHECK(ilstats.fragments.zculled     >  lstats.fragments.zculled);
+          BOOST_CHECK(ilstats.fragments.shaded      == lstats.fragments.shaded);
+          BOOST_CHECK(ilstats.fragments.ztestfailed == lstats.fragments.ztestfailed);
+          BOOST_CHECK(ilstats.fragments.updated     == lstats.fragments.updated);
         }
           
       } // namespace test {

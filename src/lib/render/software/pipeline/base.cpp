@@ -55,10 +55,19 @@ namespace hugh {
         // functions, exported
 
         base::statistics::statistics()
-          : fragments({ 0, 0, 0, }),
+          : fragments({ 0, 0, 0, 0, 0, }),
             vertices ({ 0, })
         {
           TRACE("hugh::render::software::pipeline::base::statistics::statistics");
+        }
+
+        void
+        base::statistics::reset()
+        {
+          TRACE("hugh::render::software::pipeline::base::statistics::reset");
+
+          fragments = { 0, 0, 0, 0, 0, };
+          vertices  = { 0, };
         }
         
         base::statistics&
@@ -66,10 +75,12 @@ namespace hugh {
         {
           TRACE_NEVER("hugh::render::software::pipeline::base::statistics::operator+=");
 
-          fragments.created  += a.fragments.created;
-          fragments.shaded   += a.fragments.shaded;
-          fragments.updated  += a.fragments.updated;
-          vertices.processed += a.vertices.processed;
+          fragments.created     += a.fragments.created;
+          fragments.zculled     += a.fragments.zculled;
+          fragments.shaded      += a.fragments.shaded;
+          fragments.ztestfailed += a.fragments.ztestfailed;
+          fragments.updated     += a.fragments.updated;
+          vertices.transformed  += a.vertices.transformed;
           
           return *this;
         }
@@ -322,15 +333,19 @@ namespace hugh {
           if (cerberus) {
             boost::io::ios_all_saver const ias(os);
 
-            static unsigned const width(9);
+            static unsigned const width(7);
             
             os << '['
                << "v:"
-               << std::setw(width) << a.vertices.processed
+               << std::setw(width) << a.vertices.transformed
                << ",f:"
                << std::setw(width) << a.fragments.created
+               << ",c:"
+               << std::setw(width) << a.fragments.zculled
                << ",s:"
                << std::setw(width) << a.fragments.shaded
+               << ",z:"
+               << std::setw(width) << a.fragments.ztestfailed
                << ",p:"
                << std::setw(width) << a.fragments.updated
                << ']';
