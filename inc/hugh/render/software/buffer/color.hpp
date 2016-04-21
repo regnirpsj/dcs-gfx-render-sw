@@ -42,15 +42,19 @@ namespace hugh {
           explicit color(viewport_type const& = viewport_type());
           virtual ~color();
 
-          virtual void clear ();
+          glm::vec4 const& operator[](unsigned a) const
+          {
+            return buffer_[a];
+          }
+          
+          virtual void clear (glm::vec4 const& = glm::vec4(0,0,0,0));
           virtual bool update(fragment const&);
 
         private:
 
           using buffer_type = std::vector<glm::vec4>;
           
-          buffer_type::value_type const clear_value_;
-          buffer_type                   buffer_;
+          buffer_type buffer_;
           
         };
         

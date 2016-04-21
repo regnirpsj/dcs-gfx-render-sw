@@ -55,9 +55,8 @@ namespace hugh {
         /* explicit */
         depth::depth(viewport_type const& a)
           : base        (a),
-            clear_value_(glm::vec1(viewport_.far)),
-            buffer_     ((viewport_.width-viewport_.x) * (viewport_.height-viewport_.y),
-                         clear_value_)
+            buffer_     ((viewport->width-viewport->x) * (viewport->height-viewport->y),
+                         glm::vec1(1))
             
         {
           TRACE("hugh:render::software::depth::depth");
@@ -70,11 +69,11 @@ namespace hugh {
         }
       
         /* virtual */ void
-        depth::clear()
+        depth::clear(glm::vec1 const& a)
         {
           TRACE("hugh:render::software::depth::clear");
 
-          buffer_ = buffer_type(buffer_.size(), clear_value_);
+          buffer_ = buffer_type(buffer_.size(), a);
         }
 
         /* virtual */ bool
@@ -92,8 +91,8 @@ namespace hugh {
           
           bool result(true);
           
-          if (!(viewport_.near > f.depth)) {
-            auto const idx(f.position.y * (viewport_.width-viewport_.x) + f.position.x);
+          if (!(viewport->near > f.depth)) {
+            auto const idx(f.position.y * (viewport->width-viewport->x) + f.position.x);
             
             if ((buffer_.size() > idx) && (f.depth < buffer_[idx].x)) {
               result = false;
@@ -111,7 +110,7 @@ namespace hugh {
           bool result(!zcull(f));
           
           if (result) {
-            auto const idx(f.position.y * (viewport_.width-viewport_.x) + f.position.x);
+            auto const idx(f.position.y * (viewport->width-viewport->x) + f.position.x);
             
             buffer_[idx].x = f.depth;
           }

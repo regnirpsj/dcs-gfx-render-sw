@@ -42,7 +42,12 @@ namespace hugh {
           explicit depth(viewport_type const& = viewport_type());
           virtual ~depth();
 
-          virtual void clear ();
+          glm::vec1 const& operator[](unsigned a) const
+          {
+            return buffer_[a];
+          }
+
+          virtual void clear (glm::vec1 const& = glm::vec1(1));
           virtual bool update(fragment const&);
           
           bool zcull(fragment const&) const;
@@ -52,8 +57,7 @@ namespace hugh {
 
           using buffer_type = std::vector<glm::vec1>;
           
-          buffer_type::value_type const clear_value_;
-          buffer_type                   buffer_;
+          buffer_type buffer_;
           
         };
         

@@ -57,7 +57,8 @@ namespace hugh {
         {
           TRACE("hugh:render::software::base::~base");
         }
-      
+
+#if 0
         /* virtual */ void
         base::clear()
         {
@@ -66,7 +67,8 @@ namespace hugh {
           throw std::logic_error("pure virtual function 'hugh:render::software::base::clear' "
                                  "called");
         }
-
+#endif
+        
         /* virtual */ bool
         base::update(fragment const&)
         {
@@ -80,8 +82,9 @@ namespace hugh {
 
         /* explicit */
         base::base(viewport_type const& a)
-          : support::refcounted<base>(),
-            viewport_                (a)
+          : field::container         (),
+            support::refcounted<base>(),
+            viewport                 (*this, "viewport", a)
         {
           TRACE("hugh:render::software::base::base");
         }

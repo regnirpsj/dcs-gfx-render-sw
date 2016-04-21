@@ -55,9 +55,8 @@ namespace hugh {
         /* explicit */
         color::color(viewport_type const& a)
           : base        (a),
-            clear_value_(glm::vec4(0,0,0,0)),
-            buffer_     ((viewport_.width-viewport_.x) * (viewport_.height-viewport_.y),
-                         clear_value_)
+            buffer_     ((viewport->width-viewport->x) * (viewport->height-viewport->y),
+                         glm::vec4(0,0,0,0))
         {
           TRACE("hugh:render::software::color::color");
         }
@@ -69,11 +68,11 @@ namespace hugh {
         }
       
         /* virtual */ void
-        color::clear()
+        color::clear(glm::vec4 const& a)
         {
           TRACE("hugh:render::software::color::clear");
 
-          buffer_ = buffer_type(buffer_.size(), clear_value_);
+          buffer_ = buffer_type(buffer_.size(), a);
         }
 
         /* virtual */ bool
@@ -82,7 +81,7 @@ namespace hugh {
           TRACE("hugh:render::software::color::update");
 
           bool       result(false);
-          auto const idx   (f.position.y * (viewport_.width-viewport_.x) + f.position.x);
+          auto const idx   (f.position.y * (viewport->width-viewport->x) + f.position.x);
 
           if (buffer_.size() > idx) {
             buffer_[idx] = const_cast<attribute::list&>(f.attributes)[attribute::type::color];

@@ -22,6 +22,8 @@
 
 // includes, project
 
+#include <hugh/field/container.hpp>
+#include <hugh/field/value/single.hpp>
 #include <hugh/render/software/fragment.hpp>
 #include <hugh/scene/object/camera/viewport.hpp>
 #include <hugh/support/refcounted.hpp>
@@ -36,20 +38,21 @@ namespace hugh {
         
         // types, exported (class, enum, struct, union, typedef)
 
-        class HUGH_RENDER_SOFTWARE_EXPORT base : public support::refcounted<base> {
+        class HUGH_RENDER_SOFTWARE_EXPORT base : public field::container,
+                                                 public support::refcounted<base> {
 
         public:
 
           using viewport_type = scene::object::camera::viewport;
+
+          field::value::single<viewport_type> viewport; //<
           
           virtual ~base();
 
-          virtual void clear ()                =0;
+          //virtual void clear ()                =0;
           virtual bool update(fragment const&) =0;
           
         protected:
-
-          viewport_type viewport_;
           
           explicit base(viewport_type const&);
     
