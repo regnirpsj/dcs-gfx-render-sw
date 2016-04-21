@@ -23,7 +23,8 @@
 // includes, project
 
 #include <gtkmm_wrap/window.hpp>
-#include <hugh/render/software/buffer/base.hpp>
+#include <hugh/render/software/buffer/color.hpp>
+#include <hugh/render/software/buffer/depth.hpp>
 
 // types, exported (class, enum, struct, union, typedef)
 
@@ -31,12 +32,25 @@ class window_buffer : public hugh::gtkmm::window {
 
 public:
 
-  explicit window_buffer();
+  using cbuffer_type = hugh::render::software::buffer::color;
+  using dbuffer_type = hugh::render::software::buffer::depth;
+  
+  explicit window_buffer(std::string const&, cbuffer_type*);
+  explicit window_buffer(std::string const&, dbuffer_type*);
   virtual ~window_buffer();
   
 private:
 
-  boost::intrusive_ptr<hugh::render::software::buffer::base> buffer_;
+  using buffer_type = hugh::render::software::buffer::base;
+  
+  enum class type { color, depth };
+  
+  boost::intrusive_ptr<buffer_type> buffer_;
+  type const                        type_;
+
+  explicit window_buffer(std::string const&, buffer_type*, type);
+
+  virtual bool on_draw(::Cairo::RefPtr<::Cairo::Context> const&);
   
 };
 

@@ -10,8 +10,9 @@ cma_print_current_directory()
 
 find_package(PkgConfig)
 pkg_check_modules(GTKMM gtkmm-3.0)
+pkg_check_modules(GDKMM gdkmm-3.0)
 
-if(NOT GTKMM_FOUND)
+if((NOT GTKMM_FOUND) OR (NOT GDKMM_FOUND))
   return()
 endif()
 
@@ -22,6 +23,7 @@ find_package(HUGH                           REQUIRED COMPONENTS glm platform pla
 include_directories(SYSTEM ${Boost_INCLUDE_DIR})
 include_directories(SYSTEM ${GLM_INCLUDE_DIR})
 include_directories(SYSTEM ${GTKMM_INCLUDE_DIRS})
+include_directories(SYSTEM ${GDKMM_INCLUDE_DIRS})
 include_directories(SYSTEM ${HUGH_INCLUDE_DIRS})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -37,6 +39,7 @@ list(APPEND LIBS hugh_render_software)
 list(APPEND LIBS gtkmm_wrap)
 list(APPEND LIBS ${HUGH_LIBRARIES})
 list(APPEND LIBS ${GTKMM_LIBRARIES})
+list(APPEND LIBS ${GDKMM_LIBRARIES})
 list(APPEND LIBS ${Boost_LIBRARIES})
 
 set(APP "pipeline_fixed")

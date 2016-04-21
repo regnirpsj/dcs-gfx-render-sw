@@ -18,7 +18,7 @@
 
 // includes, system
 
-#include <gtkmm.h> // Gtk::*
+#include <gtkmm/application.h> // Gtk::Application
 
 // includes, project
 

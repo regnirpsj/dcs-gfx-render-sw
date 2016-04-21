@@ -6,51 +6,44 @@
 /*                                                                                                */
 /**************************************************************************************************/
 /*                                                                                                */
-/*  module     :  pipeline_fixed/window_control.hpp                                               */
+/*  module     :  hugh/proto.cpp                                                                  */
 /*  project    :                                                                                  */
 /*  description:                                                                                  */
 /*                                                                                                */
 /**************************************************************************************************/
 
-#if !defined(HUGH_PIPELINE_FIXED_WINDOW_CONTROL_HPP)
+// include i/f header
 
-#define HUGH_PIPELINE_FIXED_WINDOW_CONTROL_HPP
+#include "hugh/proto.hpp"
 
 // includes, system
 
-#include <memory> // std::unique_ptr<>
+#include <>
 
 // includes, project
 
-#include <hugh/render/software/pipeline/fixed/base.hpp>
-#include <gtkmm_wrap/window.hpp>
-#include <window_buffer.hpp>
+#include <>
 
-// types, exported (class, enum, struct, union, typedef)
+#define HUGH_USE_TRACE
+#undef HUGH_USE_TRACE
+#include <hugh/support/trace.hpp>
 
-class window_control : public hugh::gtkmm::window {
+// internal unnamed namespace
 
-public:
-
-  explicit window_control();
-  virtual ~window_control();
+namespace {
   
-private:
+  // types, internal (class, enum, struct, union, typedef)
+
+  // variables, internal
   
-  using viewport_type = hugh::scene::object::camera::viewport;
-  using pipeline_type = hugh::render::software::pipeline::fixed::base;
+  // functions, internal
 
-  viewport_type                  viewport_;
-  std::unique_ptr<pipeline_type> pipeline_;
-  std::unique_ptr<window_buffer> win_color_;
-  std::unique_ptr<window_buffer> win_depth_;
+} // namespace {
+
+namespace hugh {
   
-};
-
-// variables, exported (extern)
-
-// functions, inlined (inline)
+  // variables, exported
   
-// functions, exported (extern)  
-
-#endif // #if !defined(HUGH_PIPELINE_FIXED_WINDOW_CONTROL_HPP)
+  // functions, exported
+  
+} // namespace hugh {

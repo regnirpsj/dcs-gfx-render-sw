@@ -25,6 +25,8 @@ include_directories(SYSTEM ${HUGH_INCLUDE_DIRS})
 
 set(SRC)
 list(APPEND SRC application.cpp)
+list(APPEND SRC check_button_input.cpp)
+#list(APPEND SRC text_input.cpp)
 list(APPEND SRC utilities.cpp)
 list(APPEND SRC window.cpp)
 

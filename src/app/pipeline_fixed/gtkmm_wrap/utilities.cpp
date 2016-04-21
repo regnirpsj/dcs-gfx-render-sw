@@ -18,7 +18,7 @@
 
 // includes, system
 
-//#include <>
+#include <gtkmm/label.h> // Gtk::Label
 
 // includes, project
 
