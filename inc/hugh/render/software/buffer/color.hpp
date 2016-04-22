@@ -18,8 +18,7 @@
 
 // includes, system
 
-#include <glm/glm.hpp> // glm::*
-#include <vector>      // std::vector<>
+#include <vector> // std::vector<>
 
 // includes, project
 
@@ -34,20 +33,22 @@ namespace hugh {
       namespace buffer {
         
         // types, exported (class, enum, struct, union, typedef)
-
+        
         class HUGH_RENDER_SOFTWARE_EXPORT color : public base {
 
         public:
           
+          field::value::single<glm::vec4> clear_value; //< dflt: [0,0,0,0]
+          
           explicit color(viewport_type const& = viewport_type());
           virtual ~color();
-
-          glm::vec4 const& operator[](unsigned a) const
+          
+          inline glm::vec4 const& operator[](unsigned a) const
           {
             return buffer_[a];
           }
-          
-          virtual void clear (glm::vec4 const& = glm::vec4(0,0,0,0));
+
+          virtual void clear ();
           virtual bool update(fragment const&);
 
         private:
@@ -55,6 +56,8 @@ namespace hugh {
           using buffer_type = std::vector<glm::vec4>;
           
           buffer_type buffer_;
+
+          virtual void do_changed(field::base&);
           
         };
         
@@ -71,5 +74,7 @@ namespace hugh {
   } // namespace render {
   
 } // namespace hugh {
+
+//#include <hugh/render/software/buffer/color.inl>
 
 #endif // #if !defined(HUGH_RENDER_SOFTWARE_BUFFER_COLOR_HPP)

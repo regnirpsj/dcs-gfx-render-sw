@@ -38,16 +38,18 @@ namespace hugh {
         class HUGH_RENDER_SOFTWARE_EXPORT depth : public base {
 
         public:
+
+          field::value::single<glm::vec1> clear_value; //< dflt: [1]
           
           explicit depth(viewport_type const& = viewport_type());
           virtual ~depth();
 
-          glm::vec1 const& operator[](unsigned a) const
+          inline glm::vec1 const& operator[](unsigned a) const
           {
             return buffer_[a];
           }
 
-          virtual void clear (glm::vec1 const& = glm::vec1(1));
+          virtual void clear ();
           virtual bool update(fragment const&);
           
           bool zcull(fragment const&) const;
@@ -58,6 +60,8 @@ namespace hugh {
           using buffer_type = std::vector<glm::vec1>;
           
           buffer_type buffer_;
+
+          virtual void do_changed(field::base&);
           
         };
         
@@ -74,5 +78,7 @@ namespace hugh {
   } // namespace render {
   
 } // namespace hugh {
+
+//#include <hugh/render/software/buffer/depth.inl>
 
 #endif // #if !defined(HUGH_RENDER_SOFTWARE_BUFFER_DEPTH_HPP)

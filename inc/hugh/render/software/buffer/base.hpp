@@ -45,11 +45,11 @@ namespace hugh {
 
           using viewport_type = scene::object::camera::viewport;
 
-          field::value::single<viewport_type> viewport; //<
+          field::value::single<viewport_type> viewport; //< [x,y.w.h,dn,df]
           
           virtual ~base();
 
-          //virtual void clear ()                =0;
+          virtual void clear ()                =0;
           virtual bool update(fragment const&) =0;
           
         protected:

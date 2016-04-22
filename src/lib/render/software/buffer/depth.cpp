@@ -18,7 +18,8 @@
 
 // includes, system
 
-#include <stdexcept> // std::logic_error
+#include <glm/gtx/io.hpp> // glm::operator<<
+#include <stdexcept>      // std::logic_error
 
 // includes, project
 
@@ -54,32 +55,33 @@ namespace hugh {
 
         /* explicit */
         depth::depth(viewport_type const& a)
-          : base        (a),
-            buffer_     ((viewport->width-viewport->x) * (viewport->height-viewport->y),
-                         glm::vec1(1))
+          : base       (a),
+            clear_value(*this, "clear_value", glm::vec1(viewport->far)),
+            buffer_    ((viewport->width-viewport->x) * (viewport->height-viewport->y),
+                        *clear_value)
             
         {
-          TRACE("hugh:render::software::depth::depth");
+          TRACE("hugh:render::software::buffer::depth::depth");
         }
       
         /* virtual */
         depth::~depth()
         {
-          TRACE("hugh:render::software::depth::~depth");
+          TRACE("hugh:render::software::buffer::depth::~depth");
         }
       
         /* virtual */ void
-        depth::clear(glm::vec1 const& a)
+        depth::clear()
         {
-          TRACE("hugh:render::software::depth::clear");
+          TRACE("hugh:render::software::buffer::depth::clear");
 
-          buffer_ = buffer_type(buffer_.size(), a);
+          buffer_ = buffer_type(buffer_.size(), *clear_value);
         }
 
         /* virtual */ bool
         depth::update(fragment const& f)
         {
-          TRACE("hugh:render::software::depth::update");
+          TRACE("hugh:render::software::buffer::depth::update");
 
           return ztest(f);
         }
@@ -87,7 +89,7 @@ namespace hugh {
         /* virtual */ bool
         depth::zcull(fragment const& f) const
         {
-          TRACE("hugh:render::software::depth::zcull");
+          TRACE("hugh:render::software::buffer::depth::zcull");
           
           bool result(true);
           
@@ -105,7 +107,7 @@ namespace hugh {
         /* virtual */ bool
         depth::ztest(fragment const& f)
         {
-          TRACE("hugh:render::software::depth::ztest");
+          TRACE("hugh:render::software::buffer::depth::ztest");
           
           bool result(!zcull(f));
           
@@ -118,6 +120,20 @@ namespace hugh {
           return result;
         }
 
+        /* virtual */ void
+        depth::do_changed(field::base& f)
+        {
+          TRACE("hugh:render::software::buffer::depth::do_changed");
+
+          if (&f == &viewport) {
+            buffer_.reserve((viewport->width-viewport->x) * (viewport->height-viewport->y));
+          }
+
+          else {
+            base::do_changed(f);
+          }
+        }
+        
       } // namespace buffer {
       
     } // namespace software {
