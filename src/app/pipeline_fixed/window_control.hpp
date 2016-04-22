@@ -44,6 +44,8 @@ private:
   std::unique_ptr<pipeline_type> pipeline_;
   std::unique_ptr<window_buffer> win_color_;
   std::unique_ptr<window_buffer> win_depth_;
+
+  void render();
   
 };
 
