@@ -6,7 +6,7 @@
 /*                                                                                                */
 /**************************************************************************************************/
 /*                                                                                                */
-/*  module     :  hugh/render/software/pipeline/fixed/opengl.cpp                                */
+/*  module     :  hugh/render/software/pipeline/fixed/opengl.cpp                                  */
 /*  project    :                                                                                  */
 /*  description:                                                                                  */
 /*                                                                                                */
