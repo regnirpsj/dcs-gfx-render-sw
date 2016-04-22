@@ -18,8 +18,9 @@
 
 // includes, system
 
-#include <sstream>   // std::ostringstream
-#include <stdexcept> // std::logic_error
+#include <glm/gtc/constants.hpp> // glm::pi<>
+#include <sstream>               // std::ostringstream
+#include <stdexcept>             // std::logic_error
 
 // includes, project
 
@@ -139,7 +140,7 @@ namespace hugh {
           
             const_cast<statistics&>(*stats) += lstats;
           
-#if 1
+#if 0
             {
               std::cout << support::trace::prefix()
                 // << "hugh::render::software::pipeline::fixed::base::process: "
@@ -168,7 +169,82 @@ namespace hugh {
           
             return vertex(window_coord, v.attributes);
           }
-        
+
+          namespace {
+
+            template <typename T>
+            inline T
+            saturate(T a)
+            {
+              return glm::clamp(a, T(0), T(1));
+            }
+            
+            using light_t = hugh::scene::object::light::base::rep;
+
+            struct light_cone_parameter_t {
+              
+              float cos_inner_angle;
+              float cos_outer_angle;
+              float diff_inner_outer;
+              bool  compute_falloff_spot;
+
+              explicit light_cone_parameter_t(light_t const& l)
+                : cos_inner_angle     (0.0f),
+                  cos_outer_angle     (0.0f),
+                  diff_inner_outer    (0.0f),
+                  compute_falloff_spot((0.0f != l.position.w) && (glm::pi<float>() != l.cutoff))
+              {
+                if (compute_falloff_spot) {
+                  float const cos_cutoff(std::cos(l.cutoff));
+
+                  cos_outer_angle = saturate(cos_cutoff);
+
+                  // inner = (1 - (spotExp / 128)) * outer
+                  cos_inner_angle  = saturate(cos((1.0f - (l.exponent / 128.0f)) * cos_cutoff));
+                  diff_inner_outer = (cos_inner_angle - cos_outer_angle);
+                }
+              }
+              
+            };
+
+            glm::vec3
+            light_vector(light_t const& l, glm::vec3 const& P)
+            {
+              glm::vec4 result(l.position); // assume directional: lvec = lpos
+
+              if (0.0f != result.w) {
+                result.xyz() -= P;          // no it's positional: lvec = lpos - opos
+              }
+
+              return result.xyz();
+            }
+
+            float
+            light_attenuation(light_t const& l, float d)
+            {
+              float const attenuation_at_lpos_infty(1.0f);
+
+              return ((0.0f != l.position.w)
+                      ? 1.0f / ((l.attenuation.x        ) +
+                                (l.attenuation.y * d    ) +
+                                (l.attenuation.z * d * d))
+                      : attenuation_at_lpos_infty);
+            }
+
+            glm::vec4
+            lit(float NdotL, float NdotH, float exponent)
+            {
+              float const ambient (1.0f);
+              float const diffuse (NdotL);
+              float const specular((0.0f > std::min(NdotL, NdotH))
+                                   ? 0.0f
+                                   : std::pow(NdotH, exponent));
+              
+              return glm::vec4(ambient, diffuse, specular, 1.0f);
+            }
+            
+          }
+          
           fragment
           base::shade(fragment const& f) const
           {
@@ -176,7 +252,7 @@ namespace hugh {
 
             attribute::list attr(f.attributes);
 
-            if (nullptr != *material) {
+            if (nullptr != *material) {              
               glm::vec3 const P;
               glm::vec3 const N;
               glm::mat4 const C;
@@ -187,26 +263,36 @@ namespace hugh {
             
               for (auto const& l : *lights) {
                 if (l.active) {
-                  glm::vec3 L;
-                  float     att(1.0);
+                  glm::vec3 L          (light_vector     (l, P));
+                  float     attenuation(light_attenuation(l, glm::length(L)));
 
                   L = glm::normalize(L);
                 
                   float const NdotL(std::max(glm::dot(N, L), 0.0f));
                 
                   if (0.0 < NdotL) {
-                    float const     exp  (glm::clamp((*material)->shininess, 0.0f, 128.0f));
-                    glm::vec3 const V    (C[3].xyz() - P);
-                    glm::vec3 const H    (L + V);
-                    float const     NdotV(std::max(glm::dot(N, V), 0.0f));
-                    float const     NdotH(std::max(glm::dot(N, H), 0.0f));
-                    // glm::vec4 const lresult(lit(NdotL, NdotH, exp));
+                    light_cone_parameter_t lcp(l);
+
+                    if (lcp.compute_falloff_spot) {
+                      float const cos_cur_angle(glm::dot(-L, normalize(l.direction)));
+
+                      // avoids dynamic branching
+                      attenuation *= saturate((cos_cur_angle - lcp.cos_outer_angle) /
+                                              lcp.diff_inner_outer);
+                    }
+      
+                    float const     exponent  (glm::clamp((*material)->shininess, 0.0f, 128.0f));
+                    glm::vec3 const V         (C[3].xyz() - P);
+                    glm::vec3 const H         (L + V);
+                    // float const     NdotV     (std::max(glm::dot(N, V), 0.0f));
+                    float const     NdotH     (std::max(glm::dot(N, H), 0.0f));
+                    glm::vec4 const lit_result(lit(NdotL, NdotH, exponent));
                   
-                    // laccum_diffuse  += (att * l.diffuse  * lresult.y);
-                    // laccum_specular += (att * l.specular * lresult.z);
+                    laccum_diffuse  += (attenuation * l.diffuse  * lit_result.y);
+                    laccum_specular += (attenuation * l.specular * lit_result.z);
                   }
                 
-                  laccum_ambient += att * l.ambient;
+                  laccum_ambient += attenuation * l.ambient;
                 }
               }
             
