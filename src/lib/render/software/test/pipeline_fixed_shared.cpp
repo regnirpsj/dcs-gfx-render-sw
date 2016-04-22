@@ -51,7 +51,9 @@ namespace hugh {
 
         // variables, exported
 
-        viewport_type const default_viewport(0, 0, 160, 120, 0, 1);
+        viewport_type const default_viewport(   0, 0,  160,  120, 0, 1);
+                                             // 0, 0,  640,  480, 0, 1);
+                                             // 0, 0, 1600, 1200, 0, 1);
         
         // functions, exported
         
@@ -65,7 +67,7 @@ namespace hugh {
           using vertex_list = point_list::vertex_list_type;
 
           auto const&    vp    (*(*ppl.rasterizer)->viewport);
-          unsigned const stride((vp.width-vp.x)/std::min(vp.width-vp.x, float(200)));
+          unsigned const stride((vp.width-vp.x) / std::min(vp.width-vp.x, float(200)));
           vertex_list    vl;
     
           for (unsigned x(vp.x); x < (vp.x + vp.width); x += stride) {
@@ -116,7 +118,7 @@ namespace hugh {
           using vertex_list = line_list::vertex_list_type;
 
           auto const&    vp    (*(*ppl.rasterizer)->viewport);
-          unsigned const stride((vp.width-vp.x)/std::min(vp.width-vp.x, float(100)));
+          unsigned const stride((vp.width-vp.x) / std::min(vp.width-vp.x, float(100)));
           vertex_list    vl;
     
           for (unsigned x(vp.x); x < (vp.x + vp.width); x += stride) {
@@ -166,7 +168,7 @@ namespace hugh {
           using vertex_list = line_strip::vertex_list_type;
     
           auto const&    vp    (*(*ppl.rasterizer)->viewport);
-          unsigned const stride((vp.width-vp.x)/std::min(vp.width-vp.x, float(100)));
+          unsigned const stride((vp.width-vp.x) / std::min(vp.width-vp.x, float(100)));
           vertex_list    vl;
     
           for (unsigned x(vp.x); x < (vp.x + vp.width); x += stride) {
@@ -216,7 +218,7 @@ namespace hugh {
   
     
           auto const&    vp    (*(*ppl.rasterizer)->viewport);
-          unsigned const stride((vp.width-vp.x)/std::min(vp.width-vp.x, float(50)));
+          unsigned const stride((vp.width-vp.x) / std::min(vp.width-vp.x, float(50)));
           vertex_list    vl;
     
           for (unsigned x(vp.x); x < (vp.x + vp.width); x += stride) {
@@ -270,7 +272,7 @@ namespace hugh {
           using vertex_list    = triangle_strip::vertex_list_type;
     
           auto const&    vp    (*(*ppl.rasterizer)->viewport);
-          unsigned const stride((vp.width-vp.x)/std::min(vp.width-vp.x, float(50)));
+          unsigned const stride((vp.width-vp.x) / std::min(vp.width-vp.x, float(50)));
           vertex_list    vl;
     
           for (unsigned x(vp.x); x < (vp.x + vp.width); x += stride) {
