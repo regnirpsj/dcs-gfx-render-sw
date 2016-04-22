@@ -25,7 +25,7 @@
 //#include <>
 
 #define HUGH_USE_TRACE
-//#undef HUGH_USE_TRACE
+#undef HUGH_USE_TRACE
 #include <hugh/support/trace.hpp>
 #if defined(HUGH_USE_TRACE) || defined(HUGH_ALL_TRACE)
 #  include <typeinfo>
@@ -59,7 +59,7 @@ namespace hugh {
             ">::check_button_input");
       
       set_border_width(1);
-
+      
       if (!a.empty()) {
         label_.set_justify    (Gtk::JUSTIFY_RIGHT);
         label_.set_width_chars(label_.get_text().length());
@@ -79,9 +79,9 @@ namespace hugh {
           check_btn_.set_tooltip_markup(d);
         }
       }
-      
-      pack_start(check_btn_, Gtk::PACK_SHRINK);
 
+      pack_start(check_btn_, Gtk::PACK_SHRINK);
+      
       if (editable_ && immediate_) {
         check_btn_.signal_clicked().
           connect(sigc::mem_fun(this, &check_button_input<T>::on_clicked));
