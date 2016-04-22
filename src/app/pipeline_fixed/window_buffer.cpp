@@ -27,7 +27,7 @@
 #include <hugh/render/software/buffer/depth.hpp>
 
 #define HUGH_USE_TRACE
-//#undef HUGH_USE_TRACE
+#undef HUGH_USE_TRACE
 #include <hugh/support/trace.hpp>
 
 // internal unnamed namespace
@@ -98,33 +98,36 @@ window_buffer::on_draw(::Cairo::RefPtr<::Cairo::Context> const& cr)
   buffer_type::viewport_type const& vp  (*buffer_->viewport);
   glm::uvec2 const                  size(vp.width - vp.x, vp.height - vp.y);
 
-  ::Cairo::RefPtr<::Cairo::ImageSurface> img(::Cairo::ImageSurface::create(::Cairo::FORMAT_RGB24,
-                                                                           size.x, size.y));
-
-  unsigned idx(0);
+  using ImageSurface = ::Cairo::ImageSurface;
   
-  for (unsigned y(0); y < unsigned(img->get_height()); ++y) {
-    for (unsigned x(0); x < unsigned(img->get_stride()); x += 4) {
+  ::Cairo::RefPtr<ImageSurface> dst(ImageSurface::create(::Cairo::FORMAT_RGB24, size.x, size.y));
+
+  unsigned const dst_row_len(dst->get_stride());
+  guint8*        dst_data   (dst->get_data());
+  unsigned       buf_idx(0);
+  
+  for (unsigned y(0); y < size.y; ++y) {
+    for (unsigned x(0); x < dst_row_len; x += 4) {
       switch (type_) {
       case type::color:
         {
-          glm::vec4 const& c(static_cast<cbuffer_type const&>(*buffer_)[idx]);
+          glm::vec4 const& src(static_cast<cbuffer_type const&>(*buffer_)[buf_idx]);
       
-          *(img->get_data() + ((y * img->get_stride()) + x + 0)) = 255 * c.b; // b
-          *(img->get_data() + ((y * img->get_stride()) + x + 1)) = 255 * c.g; // g
-          *(img->get_data() + ((y * img->get_stride()) + x + 2)) = 255 * c.r; // r
-          *(img->get_data() + ((y * img->get_stride()) + x + 3)) = 255 * c.a; // a
+          *(dst_data + ((y * dst_row_len) + x + 0)) = 255 * src.b; // b
+          *(dst_data + ((y * dst_row_len) + x + 1)) = 255 * src.g; // g
+          *(dst_data + ((y * dst_row_len) + x + 2)) = 255 * src.r; // r
+          *(dst_data + ((y * dst_row_len) + x + 3)) = 255 * src.a; // a
         }
         break;
 
       case type::depth:
         {
-          glm::vec1 const& d(static_cast<dbuffer_type const&>(*buffer_)[idx]);
+          glm::vec1 const& src(static_cast<dbuffer_type const&>(*buffer_)[buf_idx]);
       
-          *(img->get_data() + ((y * img->get_stride()) + x + 0)) = 255 * d.x;  // b
-          *(img->get_data() + ((y * img->get_stride()) + x + 1)) = 255 * d.x;  // g
-          *(img->get_data() + ((y * img->get_stride()) + x + 2)) = 255 * d.x;  // r
-          *(img->get_data() + ((y * img->get_stride()) + x + 3)) = 255;        // a
+          *(dst_data + ((y * dst_row_len) + x + 0)) = 255 * src.x;  // b
+          *(dst_data + ((y * dst_row_len) + x + 1)) = 255 * src.x;  // g
+          *(dst_data + ((y * dst_row_len) + x + 2)) = 255 * src.x;  // r
+          *(dst_data + ((y * dst_row_len) + x + 3)) = 255;          // a
         }
         break;
 
@@ -136,13 +139,13 @@ window_buffer::on_draw(::Cairo::RefPtr<::Cairo::Context> const& cr)
         break;
       }
 
-      ++idx;
+      ++buf_idx;
     }
   }
   
   cr->scale     (get_allocation().get_width()  / double(size.x),
                  get_allocation().get_height() / double(size.y));
-  cr->set_source(img, 0, 0);
+  cr->set_source(dst, 0, 0);
   cr->paint     ();
   
   return false;
