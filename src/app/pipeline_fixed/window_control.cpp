@@ -55,7 +55,10 @@ namespace {
 /* explicit */
 window_control::window_control()
   : hugh::gtkmm::window(),
+    // viewport_          (0, 0, 80, 60, 0, 1),
     viewport_          (0, 0, 320, 240, 0, 1),
+    // viewport_          (0, 0, 640, 480, 0, 1),
+    // viewport_          (0, 0, 1200, 900, 0, 1),
     pipeline_          (nullptr),
     win_color_         (nullptr),
     win_depth_         (nullptr)
@@ -73,7 +76,7 @@ window_control::window_control()
   using namespace hugh::render::software;
   
   {
-    pipeline_.reset(new hugh::render::software::pipeline::fixed::direct3d);
+    pipeline_.reset(new hugh::render::software::pipeline::fixed::opengl);
     
     pipeline_->rasterizer  = new rasterizer::simple(viewport_);
     pipeline_->colorbuffer = new buffer::color     (viewport_);
@@ -218,20 +221,41 @@ window_control::render()
   (*pipeline_->colorbuffer)->clear();
   (*pipeline_->depthbuffer)->clear();
 
-  attribute::list const attr0({ { attribute::type::color, glm::vec4(1,1,1,1) } });
-  attribute::list const attr1({ { attribute::type::color, glm::vec4(1,0,0,1) } });
-  attribute::list const attr2({ { attribute::type::color, glm::vec4(0,1,0,1) } });
-  attribute::list const attr3({ { attribute::type::color, glm::vec4(0,0,1,1) } });
+  static attribute::list const attr0({ { attribute::type::color, glm::vec4(1,1,1,0) } });
+  static attribute::list const attr1({ { attribute::type::color, glm::vec4(1,0,0,0) } });
+  static attribute::list const attr2({ { attribute::type::color, glm::vec4(0,1,0,0) } });
+  static attribute::list const attr3({ { attribute::type::color, glm::vec4(0,0,1,0) } });
+  static attribute::list const attr4({ { attribute::type::color, glm::vec4(1,1,0,0) } });
+  static attribute::list const attr5({ { attribute::type::color, glm::vec4(1,0,1,0) } });
+  static attribute::list const attr6({ { attribute::type::color, glm::vec4(0,1,1,0) } });
 
+#if 1
   {
-    auto const&     vp    (*(*pipeline_->rasterizer)->viewport);
-    glm::vec2 const offset(.75, .75); //(vp.width-vp.x) / 100.0f, (vp.height-vp.y) / 100.0f);
-    std::array<vertex const, 4> const vertices = {
+    static std::array<glm::vec3 const, 9> const p = {
       {
-        vertex(glm::vec3(              0,               0, 0.25), attr0),
-        vertex(glm::vec3(vp.x + offset.x, vp.y + offset.y, 0.35), attr1),
-        vertex(glm::vec3(vp.x - offset.x, vp.y + offset.y, 0.45), attr2),
-        vertex(glm::vec3(vp.x + offset.x, vp.y - offset.y, 0.55), attr3),
+        {  .0,  .0, .0078 }, // 0:  0  0
+        {  .9,  .0, .0078 }, // 1: +x  0
+        {  .9,  .9, .0078 }, // 2: +x +y
+        {  .0,  .9, .0078 }, // 3:  0 +y
+        { -.9,  .9, .0078 }, // 4: -x +y
+        { -.9,  .0, .0078 }, // 5: -x  0
+        { -.9, -.9, .0078 }, // 6: -x -y
+        {  .0, -.9, .0078 }, // 7:  0 -y
+        {  .9, -.9, .0078 }, // 8: +x -y
+      }
+    };
+    
+    static std::array<vertex const, 9> const vertices = {
+      {
+        vertex(p[0], attr0),
+        vertex(p[1], attr1),
+        vertex(p[2], attr1),
+        vertex(p[3], attr2),
+        vertex(p[4], attr2),
+        vertex(p[5], attr3),
+        vertex(p[6], attr3),
+        vertex(p[7], attr4),
+        vertex(p[8], attr4),
       }
     };
 
@@ -240,16 +264,57 @@ window_control::render()
     
     pipeline_->process(point_list(vertex_list(vertices.begin(), vertices.end())));
   }
-
+#endif
+  
+#if 1
   {
-    auto const&     vp    (*(*pipeline_->rasterizer)->viewport);
-    glm::vec2 const offset(.5, .5); //(vp.width-vp.x) / 100.0f, (vp.height-vp.y) / 100.0f);
-    std::array<vertex const, 4> const vertices = {
+    static std::array<glm::vec3 const, 9> const p = {
       {
-        vertex(glm::vec3(vp.x - offset.x, vp.y - offset.y, 0.35), attr1),
-        vertex(glm::vec3(vp.x + offset.x, vp.y + offset.y, 0.45), attr3),
-        vertex(glm::vec3(vp.x - offset.x, vp.y + offset.y, 0.45), attr3),
-        vertex(glm::vec3(vp.x + offset.x, vp.y - offset.y, 0.35), attr1),
+        {  .0,  .0, .5 }, // 0:  0  0
+        {  .5,  .0, .5 }, // 1: +x  0
+        {  .5,  .5, .5 }, // 2: +x +y
+        {  .0,  .5, .5 }, // 3:  0 +y
+        { -.5,  .5, .5 }, // 4: -x +y
+        { -.5,  .0, .5 }, // 5: -x  0
+        { -.5, -.5, .5 }, // 6: -x -y
+        {  .0, -.5, .5 }, // 7:  0 -y
+        {  .5, -.5, .5 }, // 8: +x -y
+      }
+    };
+
+    static std::array<glm::vec3 const, 3> const o = {
+      {
+        { .05, .00, .00 },
+        { .00, .05, .00 },
+        { .00, .00, .05 },
+      }
+    };
+    
+    static std::array<vertex const, 40> const vertices = {
+      {
+        vertex(p[0], attr0), vertex(p[1], attr2),
+        vertex(p[0], attr0), vertex(p[2], attr3),
+        vertex(p[0], attr0), vertex(p[3], attr2),
+        vertex(p[0], attr0), vertex(p[4], attr3),
+        vertex(p[0], attr0), vertex(p[5], attr2),
+        vertex(p[0], attr0), vertex(p[6], attr3),
+        vertex(p[0], attr0), vertex(p[7], attr2),
+        vertex(p[0], attr0), vertex(p[8], attr3),
+
+        vertex(p[2]+o[0], attr0), vertex(p[6]+o[0], attr1),
+        vertex(p[6]-o[0], attr0), vertex(p[2]-o[0], attr1),
+        vertex(p[4]+o[0], attr0), vertex(p[8]+o[0], attr1),
+        vertex(p[8]-o[0], attr0), vertex(p[4]-o[0], attr1),
+
+        vertex(p[6]+o[0], attr0), vertex(p[4]+o[0], attr1),
+        vertex(p[4]-o[0], attr0), vertex(p[6]-o[0], attr1),
+        vertex(p[8]+o[0], attr0), vertex(p[2]+o[0], attr1),
+        vertex(p[2]-o[0], attr0), vertex(p[8]-o[0], attr1),
+
+        vertex(p[4]+o[1], attr0), vertex(p[2]+o[1], attr1),
+        vertex(p[2]-o[1], attr0), vertex(p[4]-o[1], attr1),
+        vertex(p[6]+o[1], attr0), vertex(p[8]+o[1], attr1),
+        vertex(p[8]-o[1], attr0), vertex(p[6]-o[1], attr1),
       }
     };
 
@@ -258,21 +323,36 @@ window_control::render()
     
     pipeline_->process(line_list(vertex_list(vertices.begin(), vertices.end())));
   }
-
+#endif
+  
+#if 1
   {
-    auto const&     vp    (*(*pipeline_->rasterizer)->viewport);
-    glm::vec2 const offset(.25, .25); //(vp.width-vp.x) / 100.0f, (vp.height-vp.y) / 100.0f);
+    static std::array<glm::vec3 const, 9> const p = {
+      {
+        {  .0,  .0, .0625 }, // 0:  0  0
+        {  .5,  .0, .25 },   // 1: +x  0
+        {  .5,  .5, .95 },   // 2: +x +y
+        {  .0,  .5, .25 },   // 3:  0 +y
+        { -.5,  .5, .95 },   // 4: -x +y
+        { -.5,  .0, .25 },   // 5: -x  0
+        { -.5, -.5, .95 },   // 6: -x -y
+        {  .0, -.5, .25 },   // 7:  0 -y
+        {  .5, -.5, .95 },   // 8: +x -y
+      }
+    };
     
-    std::array<vertex const, 6> const vertices = {
+    static std::array<vertex const, 24> const vertices = {
       {
         // ccw
-        vertex(glm::vec3(vp.x - offset.x, vp.y - offset.y, 0.45), attr1),
-        vertex(glm::vec3(vp.x + offset.x, vp.y - offset.y, 0.55), attr2),
-        vertex(glm::vec3(vp.x - offset.x, vp.y + offset.y, 0.65), attr3),
+        vertex(p[0], attr0), vertex(p[1], attr2), vertex(p[3], attr3),
+        vertex(p[0], attr0), vertex(p[3], attr3), vertex(p[5], attr2),
+        vertex(p[0], attr0), vertex(p[5], attr2), vertex(p[7], attr3),
+        vertex(p[0], attr0), vertex(p[7], attr3), vertex(p[1], attr2),
         // cw
-        vertex(glm::vec3(vp.x - offset.x, vp.y - offset.y, 0.45), attr1),
-        vertex(glm::vec3(vp.x - offset.x, vp.y + offset.y, 0.55), attr2),
-        vertex(glm::vec3(vp.x + offset.x, vp.y - offset.y, 0.65), attr3),
+        vertex(p[0], attr0), vertex(p[3], attr3), vertex(p[1], attr2),
+        vertex(p[0], attr0), vertex(p[5], attr2), vertex(p[3], attr3),
+        vertex(p[0], attr0), vertex(p[7], attr3), vertex(p[5], attr2),
+        vertex(p[0], attr0), vertex(p[1], attr2), vertex(p[7], attr3),
       }
     };
 
@@ -281,6 +361,7 @@ window_control::render()
     
     pipeline_->process(triangle_list(vertex_list(vertices.begin(), vertices.end())));
   }
+#endif
   
   win_color_->queue_draw();
   win_depth_->queue_draw();
