@@ -158,5 +158,5 @@ window_buffer::on_draw(::Cairo::RefPtr<::Cairo::Context> const& cr)
   cr->set_source(dst, 0, 0);
   cr->paint     ();
   
-  return false;
+  return true;
 }
