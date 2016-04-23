@@ -6,40 +6,48 @@
 /*                                                                                                */
 /**************************************************************************************************/
 /*                                                                                                */
-/*  module     :  hugh/app/gtkmm/text_input.hpp                                                   */
+/*  module     :  hugh/app/gtkmm/text_output.cpp                                                  */
 /*  project    :                                                                                  */
 /*  description:                                                                                  */
 /*                                                                                                */
 /**************************************************************************************************/
 
-#if !defined(HUGH_APP_GTKMM_TEXT_INPUT_HPP)
+// include i/f header
 
-#define HUGH_APP_GTKMM_TEXT_INPUT_HPP
+#include "gtkmm_wrap/text_output.hpp"
 
 // includes, system
 
-//#include <
+//#include <>
 
 // includes, project
 
-// #include <>
+//#include <>
+
+#define HUGH_USE_TRACE
+#undef HUGH_USE_TRACE
+#include <hugh/support/trace.hpp>
+
+// internal unnamed namespace
+
+namespace {
+  
+  // types, internal (class, enum, struct, union, typedef)
+
+  // variables, internal
+  
+  // functions, internal
+
+} // namespace {
 
 namespace hugh {
 
   namespace gtkmm {
     
-    // types, exported (class, enum, struct, union, typedef)
-    
-    // variables, exported (extern)
-
-    // functions, inlined (inline)
+    // variables, exported
   
-    // functions, exported (extern)
+    // functions, exported
 
   } // namespace gtkmm {
   
 } // namespace hugh {
-
-#include <gtkmm_wrap/text_input.inl>
-
-#endif // #if !defined(HUGH_APP_GTKMM_TEXT_INPUT_HPP)

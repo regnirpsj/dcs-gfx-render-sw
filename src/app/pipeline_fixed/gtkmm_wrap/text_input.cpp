@@ -6,7 +6,7 @@
 /*                                                                                                */
 /**************************************************************************************************/
 /*                                                                                                */
-/*  module     :  hugh/proto.cpp                                                                  */
+/*  module     :  hugh/app/gtkmm/text_input.cpp                                                   */
 /*  project    :                                                                                  */
 /*  description:                                                                                  */
 /*                                                                                                */
@@ -14,15 +14,15 @@
 
 // include i/f header
 
-#include "hugh/proto.hpp"
+#include "gtkmm_wrap/text_input.hpp"
 
 // includes, system
 
-#include <>
+//#include <>
 
 // includes, project
 
-#include <>
+//#include <>
 
 #define HUGH_USE_TRACE
 #undef HUGH_USE_TRACE
@@ -41,9 +41,13 @@ namespace {
 } // namespace {
 
 namespace hugh {
+
+  namespace gtkmm {
+    
+    // variables, exported
   
-  // variables, exported
-  
-  // functions, exported
+    // functions, exported
+
+  } // namespace gtkmm {
   
 } // namespace hugh {
