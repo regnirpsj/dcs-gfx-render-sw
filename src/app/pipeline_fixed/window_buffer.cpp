@@ -142,9 +142,19 @@ window_buffer::on_draw(::Cairo::RefPtr<::Cairo::Context> const& cr)
       ++buf_idx;
     }
   }
-  
-  cr->scale     (get_allocation().get_width()  / double(size.x),
-                 get_allocation().get_height() / double(size.y));
+
+  cr->set_identity_matrix();
+  {
+    glm::vec2 const alloc(get_allocation().get_width(), get_allocation().get_height());
+    double const    xx( alloc.x / size.x);
+    double const    yx( 0.0);
+    double const    xy( 0.0);
+    double const    yy(-alloc.y / size.y);
+    double const    x0( 0.0);
+    double const    y0( alloc.y);
+    
+    cr->set_matrix(::Cairo::Matrix(xx, yx, xy, yy, x0, y0));
+  }
   cr->set_source(dst, 0, 0);
   cr->paint     ();
   
