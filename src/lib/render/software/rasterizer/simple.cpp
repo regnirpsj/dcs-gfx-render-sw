@@ -83,6 +83,8 @@ namespace hugh {
         simple::process(vertex const& v) const
         {
           TRACE("hugh::render::software::rasterizer::simple::process(vertex)");
+
+          const_cast<base::statistics&>(*stats).points += 1;
           
           fragment_list_type result;
 
@@ -100,6 +102,8 @@ namespace hugh {
         {
           TRACE("hugh::render::software::rasterizer::simple::process(line)");
 
+          const_cast<base::statistics&>(*stats).lines += 1;
+          
           // std::cout << "v0:" << v0 << ", v1:" << v1 << std::endl;
 
           fragment_list_type result;
@@ -234,6 +238,8 @@ namespace hugh {
         {
           TRACE("hugh::render::software::rasterizer::simple::process(triangle)");
 
+          const_cast<base::statistics&>(*stats).triangles += 1;
+          
           std::array<glm::ivec2 const, 3> const v = {
             {
               { v0.position.x, v0.position.y },

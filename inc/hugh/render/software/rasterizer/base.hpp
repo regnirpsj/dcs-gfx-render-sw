@@ -46,10 +46,25 @@ namespace hugh {
 
         public:
 
+          struct statistics {
+            
+            unsigned points;
+            unsigned lines;
+            unsigned triangles;
+            
+            statistics();
+
+            void reset();
+            
+            statistics& operator+=(statistics const&);
+            
+          };
+          
           using fragment_list_type = std::vector<fragment>;
           using viewport_type      = scene::object::camera::viewport;
 
           field::value::single<viewport_type> viewport; //<
+          field::value::single<statistics>    stats;    //<
           
           virtual ~base();
 
@@ -69,6 +84,9 @@ namespace hugh {
   
         // functions, exported (extern)
 
+        HUGH_RENDER_SOFTWARE_EXPORT std::ostream& operator<<(std::ostream&,
+                                                             base::statistics const&);
+        
       } // namespace rasterizer {
 
     } // namespace software {

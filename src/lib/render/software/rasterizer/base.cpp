@@ -18,7 +18,9 @@
 
 // includes, system
 
-#include <stdexcept> // std::logic_error
+#include <boost/io/ios_state.hpp> // boost::io::ios_all_saver
+#include <iomanip>                // std::setw
+#include <stdexcept>              // std::logic_error
 
 // includes, project
 
@@ -52,6 +54,34 @@ namespace hugh {
   
         // functions, exported
 
+        base::statistics::statistics()
+          : points(0), lines(0), triangles(0)
+        {
+          TRACE("hugh::render::software::rasterizer::base::statistics::statistics");
+        }
+
+        void
+        base::statistics::reset()
+        {
+          TRACE("hugh::render::software::rasterizer::base::statistics::reset");
+
+          points    = 0;
+          lines     = 0;
+          triangles = 0;
+        }
+
+        base::statistics&
+        base::statistics::operator+=(statistics const& a)
+        {
+          TRACE_NEVER("hugh::render::software::rasterizer::base::statistics::operator+=");
+
+          points    = a.points;
+          lines     = a.lines;
+          triangles = a.triangles;
+          
+          return *this;
+        }
+        
         /* virtual */
         base::~base()
         {
@@ -98,11 +128,37 @@ namespace hugh {
         base::base(viewport_type const& a)
           : field::container         (),
             support::refcounted<base>(),
-            viewport                 (*this, "viewport", a)
+            viewport                 (*this, "viewport", a),
+            stats                    (*this, "stats")
         {
           TRACE("hugh::render::software::rasterizer::base::base");
         }
 
+        std::ostream&
+        operator<<(std::ostream& os, base::statistics const& a)
+        {
+          TRACE_NEVER("hugh::render::software::rasterizer::operator<<(base::statistics)");
+
+          std::ostream::sentry const cerberus(os);
+
+          if (cerberus) {
+            boost::io::ios_all_saver const ias(os);
+
+            static unsigned const width(7);
+            
+            os << '['
+               << "p:"
+               << std::setw(width) << a.points
+               << ",l:"
+               << std::setw(width) << a.lines
+               << ",t:"
+               << std::setw(width) << a.triangles
+               << ']';
+          }
+
+          return os;
+        }
+        
       } // namespace rasterizer {
       
     } // namespace software {
