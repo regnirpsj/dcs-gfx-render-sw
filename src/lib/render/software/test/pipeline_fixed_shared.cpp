@@ -19,6 +19,7 @@
 // includes, system
 
 #include <boost/test/unit_test.hpp>
+#include <numeric>                   // std::iota<>
 
 // includes, project
 

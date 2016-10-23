@@ -32,8 +32,7 @@ namespace {
   
   // types, internal (class, enum, struct, union, typedef)
   
-  class app : public hugh::platform::posix::application::base,
-              public hugh::gtkmm::application {
+  class app : public hugh::platform::posix::application::base {
     
   public:
 
@@ -43,7 +42,7 @@ namespace {
     
     explicit app(command_line const& a)
       : posix_application(a),
-        gtkmm_application(),
+        app_             (new gtkmm_application),
         win_             (new window_control)
     {
       TRACE("<unnamed>::app::app");
@@ -53,12 +52,13 @@ namespace {
     {
       TRACE("<unnamed>::app::run");
       
-      return hugh::gtkmm::application::run(*win_);
+      return app_->run(*win_);
     }
 
   private:
-    
-    std::unique_ptr<window_control> win_;
+
+    std::unique_ptr<gtkmm_application> app_;
+    std::unique_ptr<window_control>    win_;
     
   };
   

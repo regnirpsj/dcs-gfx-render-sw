@@ -24,6 +24,8 @@
 
 #include <hugh/render/software/pipeline/fixed/direct3d.hpp>
 #include <hugh/render/software/pipeline/fixed/opengl.hpp>
+#include <hugh/render/software/pipeline/flexible/direct3d.hpp>
+#include <hugh/render/software/pipeline/flexible/opengl.hpp>
 
 namespace hugh {
 

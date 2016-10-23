@@ -3,11 +3,6 @@
 sudo: false # request container-base infrastructure
 language: cpp
 
-cache:
-  apt: true
-  directories:
-    - ${HOME}/extra
-
 matrix:
   include:
     - compiler: gcc
