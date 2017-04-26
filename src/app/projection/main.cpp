@@ -2,7 +2,7 @@
 
 /**************************************************************************************************/
 /*                                                                                                */
-/* Copyright (C) 2016 University of Hull                                                          */
+/* Copyright (C) 2016-2017 University of Hull                                                     */
 /*                                                                                                */
 /**************************************************************************************************/
 /*                                                                                                */
@@ -28,7 +28,7 @@
 #include <hugh/render/software/pipelines.hpp>
 #include <hugh/render/software/rasterizer/simple.hpp>
 #include <hugh/scene/object/camera/frustum.hpp>
-#include <hugh/support/io_utils.hpp>
+#include <hugh/support/io.hpp>
 
 #define HUGH_USE_TRACE
 #undef HUGH_USE_TRACE

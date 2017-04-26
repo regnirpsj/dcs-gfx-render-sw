@@ -2,7 +2,7 @@
 
 /**************************************************************************************************/
 /*                                                                                                */
-/* Copyright (C) 2016 University of Hull                                                          */
+/* Copyright (C) 2016-2017 University of Hull                                                     */
 /*                                                                                                */
 /**************************************************************************************************/
 /*                                                                                                */
@@ -32,7 +32,7 @@
 #include <hugh/render/software/primitive/base.hpp>
 #include <hugh/render/software/rasterizer/base.hpp>
 #include <hugh/scene/object/light/base.hpp>
-#include <hugh/scene/object/material.hpp>
+#include <hugh/scene/object/material/simple.hpp>
 #include <hugh/support/refcounted.hpp>
 
 namespace hugh {
@@ -77,7 +77,7 @@ namespace hugh {
           };
           
           using light_type        = hugh::scene::object::light::base::rep;
-          using material_type     = hugh::scene::object::material::rep;
+          using material_type     = hugh::scene::object::material::simple::rep;
           using rasterizer_type   = boost::intrusive_ptr<rasterizer::base>;
           using color_buffer_type = boost::intrusive_ptr<buffer::color>;
           using depth_buffer_type = boost::intrusive_ptr<buffer::depth>;
