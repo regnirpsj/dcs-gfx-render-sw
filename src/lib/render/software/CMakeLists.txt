@@ -2,17 +2,19 @@
 
 ####################################################################################################
 #                                                                                                  #
-# Copyright (C) 2016 University of Hull                                                            #
+# Copyright (C) 2016-2017 University of Hull                                                       #
 #                                                                                                  #
 ####################################################################################################
 
 cma_print_current_directory()
 
 find_package(Boost ${BOOST_MINIMUM_VERSION} REQUIRED)
+find_package(GLI   ${GLI_MINIMUM_VERSION}   REQUIRED)
 find_package(GLM   ${GLM_MINIMUM_VERSION}   REQUIRED)
 find_package(HUGH                           REQUIRED COMPONENTS field glm scene support)
 
 include_directories(SYSTEM ${Boost_INCLUDE_DIR})
+include_directories(SYSTEM ${GLI_INCLUDE_DIR})
 include_directories(SYSTEM ${GLM_INCLUDE_DIR})
 include_directories(SYSTEM ${HUGH_INCLUDE_DIRS})
 
